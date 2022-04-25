@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.advancement.AdvancementTab;
 import net.minecraft.client.gui.screen.advancement.AdvancementWidget;
 import net.minecraft.client.gui.screen.advancement.AdvancementsScreen;
@@ -22,6 +23,8 @@ import java.util.Map;
 
 public class PaginatedAdvancementScreen extends AdvancementsScreen implements ClientAdvancementManager.Listener {
 	
+	private static final Identifier PAGINATION_TEXTURE = new Identifier("paginatedadvancements", "textures/gui/buttons.png");
+	
 	private static final Identifier WINDOW_TEXTURE = new Identifier("textures/gui/advancements/window.png");
 	private static final Identifier TABS_TEXTURE = new Identifier("textures/gui/advancements/tabs.png");
 	
@@ -34,7 +37,10 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	@Nullable private PaginatedAdvancementTab selectedTab;
 	private boolean movingTab;
 	
-	public static final int ADDITIONAL_PADDING_TOP = 20; // to account for the advancement tabs
+	// pagination
+	private int currentPage = 0;
+	
+	public static final int ADDITIONAL_PADDING_TOP = 20; // to account for the advancement tabs at the top
 	public static final int BORDER_PADDING = 32;
 	public static final int ELEMENT_WIDTH = 15;
 	public static final int TOP_ELEMENT_HEIGHT = 22;
@@ -70,42 +76,131 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	
 	// instead of drawing the full texture here, we cut it into pieces and draw
 	// the top, sides and more piece by piece, making the size variable with the mc window size
-	public void drawWindow(MatrixStack matrices, int minWidth, int minHeight, int maxWidth, int maxHeight) {
+	public void drawWindow(MatrixStack matrices, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.enableBlend();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, WINDOW_TEXTURE);
 		
-
-		
 		drawFrame(matrices, minWidth, minHeight, maxWidth, maxHeight);
 		
 		// draw tabs
 		if (this.tabs.size() > 1) {
-			drawTabs(matrices, minWidth, minHeight);
+			drawTabs(matrices, mouseX, mouseY, minWidth, minHeight, maxWidth);
 		}
 		
 		this.textRenderer.draw(matrices, ADVANCEMENTS_TEXT, minWidth + 8, minHeight + 6, 4210752);
 	}
 	
-	private void drawTabs(MatrixStack matrices, int minWidth, int minHeight) {
-		RenderSystem.setShaderTexture(0, TABS_TEXTURE);
+	public int getMaxAdvancementTabsToRender(int minWidth, int maxWidth) {
+		int usableWidth = maxWidth - minWidth;
+		return usableWidth / PaginatedAdvancementTabType.WIDTH;
+	}
+	
+	private boolean isPaginated(int startX, int endX) {
+		return getMaxAdvancementTabsToRender(startX, endX) < tabs.size();
+	}
+	
+	private boolean isPaginated() {
+		// TODO remove test code
+		return true;
+		/*
+		int minWidth = BORDER_PADDING;
+		int maxWidth = this.width - BORDER_PADDING;
+		return maxWidth - minWidth / PaginatedAdvancementTabType.WIDTH < tabs.size();*/
+	}
+	
+	private void drawTabs(MatrixStack matrices, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth) {
+
 		Iterator<PaginatedAdvancementTab> tabIterator = this.tabs.values().iterator();
 		
-		PaginatedAdvancementTab advancementTab;
-		while(tabIterator.hasNext()) {
-			advancementTab = tabIterator.next();
-			advancementTab.drawBackground(matrices, minWidth, minHeight, advancementTab == this.selectedTab);
-		}
-		
-		RenderSystem.defaultBlendFunc();
-		tabIterator = this.tabs.values().iterator();
-		while(tabIterator.hasNext()) {
-			advancementTab = tabIterator.next();
-			advancementTab.drawIcon(minWidth, minHeight, this.itemRenderer);
+		int maxAdvancementTabsToRender = getMaxAdvancementTabsToRender(minWidth, maxWidth);
+		if(isPaginated()) { // overflows
+			// draw forward and back button tabs, fill the rest with the remaining tabs
+			
+			// TODO: draw buttons
+			drawPaginationButtons(matrices, mouseX, mouseY, minWidth, maxWidth);
+			
+			RenderSystem.setShaderTexture(0, TABS_TEXTURE);
+			int index = 1;
+			PaginatedAdvancementTab advancementTab;
+			while(tabIterator.hasNext()) {
+				advancementTab = tabIterator.next();
+				advancementTab.drawBackground(matrices, minWidth, minHeight, advancementTab == this.selectedTab, index);
+				index++;
+			}
+			
+			RenderSystem.defaultBlendFunc();
+			index = 1;
+			tabIterator = this.tabs.values().iterator();
+			while(tabIterator.hasNext()) {
+				advancementTab = tabIterator.next();
+				advancementTab.drawIcon(minWidth, minHeight, this.itemRenderer, index);
+				index++;
+			}
+		} else {
+			RenderSystem.setShaderTexture(0, TABS_TEXTURE);
+			
+			// draw as many tabs as should be displayed
+			int index = 0;
+			PaginatedAdvancementTab advancementTab;
+			while(tabIterator.hasNext()) {
+				advancementTab = tabIterator.next();
+				advancementTab.drawBackground(matrices, minWidth, minHeight, advancementTab == this.selectedTab, index);
+				index++;
+			}
+			
+			index = 0;
+			RenderSystem.defaultBlendFunc();
+			tabIterator = this.tabs.values().iterator();
+			while(tabIterator.hasNext()) {
+				advancementTab = tabIterator.next();
+				advancementTab.drawIcon(minWidth, minHeight, this.itemRenderer, index);
+				index++;
+			}
 		}
 		
 		RenderSystem.disableBlend();
+	}
+	
+	// instead of drawing the full texture here, we cut it into pieces and draw
+	// the top, sides and more piece by piece, making the size variable with the mc window size
+	public void drawPaginationButtons(MatrixStack matrices, int mouseX, int mouseY, int minWidth, int maxWidth) {
+		matrices.push();
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderTexture(0, PAGINATION_TEXTURE);
+		
+		if(isClickOnBackTab(mouseX, mouseY, minWidth, maxWidth)) {
+			// hover
+			this.drawTexture(matrices, minWidth + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 23, 23, 23);
+		} else {
+			// no hover
+			this.drawTexture(matrices, minWidth + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 0, 23, 23);
+		}
+		
+		if(isClickOnForwardTab(mouseX, mouseY, minWidth, maxWidth)) {
+			// hover
+			this.drawTexture(matrices, maxWidth - minWidth + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 23, 23, 23);
+		} else {
+			// no hover
+			this.drawTexture(matrices, maxWidth - minWidth + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 0, 23, 23);
+		}
+		
+		matrices.pop();
+		RenderSystem.applyModelViewMatrix();
+	}
+	
+	public static boolean isClickOnBackTab(double mouseX, double mouseY, int minWidth, int maxWidth) {
+		int startX = minWidth + 4;
+		int startY = PaginatedAdvancementScreen.TOP_ELEMENT_HEIGHT + PaginatedAdvancementScreen.ADDITIONAL_PADDING_TOP - 15;
+		return mouseX > startX && mouseX < startX + 23 && mouseY > startY && mouseY < startY + 23;
+	}
+	
+	public static boolean isClickOnForwardTab(double mouseX, double mouseY, int minWidth, int maxWidth) {
+		int startX = maxWidth - minWidth + 4;
+		int startY = PaginatedAdvancementScreen.TOP_ELEMENT_HEIGHT + PaginatedAdvancementScreen.ADDITIONAL_PADDING_TOP - 15;
+		return mouseX > startX && mouseX < startX + 23 && mouseY > startY && mouseY < startY + 23;
 	}
 	
 	private void drawFrame(MatrixStack matrices, int startX, int startY, int endX, int endY) {
@@ -162,7 +257,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if (advancementTab != null) {
 			advancementTab.addAdvancement(dependent);
 		}
-		
 	}
 	
 	@Override
@@ -204,9 +298,18 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 	
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		boolean isPaginated = isPaginated();
+		
 		if (button == 0) {
+			int startX = BORDER_PADDING;
+			int endX = this.width - BORDER_PADDING;
+			if(isClickOnBackTab(mouseX, mouseY, startX, endX)) {
+				this.currentPage--;
+			} else if(isClickOnForwardTab(mouseX, mouseY, startX, endX)) {
+				this.currentPage++;
+			}
 			for (PaginatedAdvancementTab paginatedAdvancementTab : this.tabs.values()) {
-				if (((AdvancementTab) paginatedAdvancementTab).isClickOnTab(BORDER_PADDING, BORDER_PADDING + ADDITIONAL_PADDING_TOP, mouseX, mouseY)) {
+				if (paginatedAdvancementTab.isClickOnTab(BORDER_PADDING, BORDER_PADDING + ADDITIONAL_PADDING_TOP, mouseX, mouseY, isPaginated)) {
 					this.advancementHandler.selectTab(((AdvancementTab) paginatedAdvancementTab).getRoot(), true);
 					break;
 				}
@@ -261,7 +364,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		
 		if (this.tabs.size() > 1) {
 			for (PaginatedAdvancementTab paginatedAdvancementTab : this.tabs.values()) {
-				if (((AdvancementTab) paginatedAdvancementTab).isClickOnTab(startX, startY, mouseX, mouseY)) {
+				if (paginatedAdvancementTab.isClickOnTab(startX, startY, mouseX, mouseY, isPaginated())) {
 					this.renderTooltip(matrices, ((AdvancementTab) paginatedAdvancementTab).getTitle(), mouseX, mouseY);
 				}
 			}
@@ -276,7 +379,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		
 		this.renderBackground(matrices);
 		this.drawAdvancementTree(matrices, startX, startY, endX, endY);
-		this.drawWindow(matrices, startX, startY, endX, endY);
+		this.drawWindow(matrices, mouseX, mouseY, startX, startY, endX, endY);
 		this.drawWidgetTooltip(matrices, mouseX, mouseY, startX, startY, endX, endY);
 	}
 	
@@ -290,9 +393,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			drawCenteredText(matrices, this.textRenderer, EMPTY_TEXT, textCenterX, textY, -1);
 			drawCenteredText(matrices, this.textRenderer, SAD_LABEL_TEXT, textCenterX, textY + 16, -1);
 		} else {
-			//////////////////////////////////////
-			// TODO FROM HERE
-			//////////////////////////////////////
 			MatrixStack matrixStack = RenderSystem.getModelViewStack();
 			matrixStack.push();
 			matrixStack.translate((startX + 9), (startY + 18), 0.0D);

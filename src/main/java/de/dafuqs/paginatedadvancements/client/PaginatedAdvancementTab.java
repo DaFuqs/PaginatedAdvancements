@@ -23,8 +23,6 @@ import java.util.Objects;
 
 public class PaginatedAdvancementTab extends AdvancementTab {
 	
-	public static final PaginatedAdvancementTabType PAGINATED_ADVANCEMENT_TAB_TYPE = new PaginatedAdvancementTabType();
-	
 	private final MinecraftClient client;
 	private final PaginatedAdvancementScreen screen;
 	private final int index;
@@ -76,12 +74,12 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		return this.display;
 	}
 	
-	public void drawBackground(MatrixStack matrices, int x, int y, boolean selected) {
-		PAGINATED_ADVANCEMENT_TAB_TYPE.drawBackground(matrices, this, x, y, selected, this.index);
+	public void drawBackground(MatrixStack matrices, int x, int y, boolean selected, int atIndex) {
+		PaginatedAdvancementTabType.drawBackground(matrices, this, x, y, selected, atIndex);
 	}
 	
-	public void drawIcon(int x, int y, ItemRenderer itemRenderer) {
-		PAGINATED_ADVANCEMENT_TAB_TYPE.drawIcon(x, y, this.index, itemRenderer, this.icon);
+	public void drawIcon(int x, int y, ItemRenderer itemRenderer, int atIndex) {
+		PaginatedAdvancementTabType.drawIcon(x, y, atIndex, itemRenderer, this.icon);
 	}
 	
 	public void render(MatrixStack matrices, int startX, int startY, int endX, int endY) {
@@ -156,30 +154,28 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 	}
 	
-	public boolean isClickOnTab(int screenX, int screenY, double mouseX, double mouseY) {
-		return PAGINATED_ADVANCEMENT_TAB_TYPE.isClickOnTab(screenX, screenY, this.index, mouseX, mouseY);
+	public boolean isClickOnTab(int screenX, int screenY, double mouseX, double mouseY, boolean paginated) {
+		if(paginated) {
+			return PaginatedAdvancementTabType.isClickOnTab(screenX, screenY, this.index + 1, mouseX, mouseY);
+		} else {
+			return PaginatedAdvancementTabType.isClickOnTab(screenX, screenY, this.index, mouseX, mouseY);
+		}
 	}
 	
 	@Nullable
 	public static PaginatedAdvancementTab create(MinecraftClient client, PaginatedAdvancementScreen screen, int index, Advancement root) {
 		if (root.getDisplay() != null) {
-			for (AdvancementTabType advancementTabType : AdvancementTabType.values()) {
-				if (index < advancementTabType.getTabCount()) {
-					return new PaginatedAdvancementTab(client, screen, index, root, root.getDisplay());
-				}
-				
-				index -= advancementTabType.getTabCount();
-			}
+			return new PaginatedAdvancementTab(client, screen, index, root, root.getDisplay());
 		}
 		return null;
 	}
 	
 	public void move(double offsetX, double offsetY, int startX, int startY, int endX, int endY) {
 		if (this.maxPanX - this.minPanX > endX) {
-			this.originX = MathHelper.clamp(this.originX + offsetX + startX, (double)(-(this.maxPanX - endX)), 0.0D);
+			this.originX = MathHelper.clamp(this.originX + offsetX + startX, -(this.maxPanX - endX), 0.0D);
 		}
 		if (this.maxPanY - this.minPanY > endY) {
-			this.originY = MathHelper.clamp(this.originY + offsetY + startY, (double)(-(this.maxPanY - endY)), 0.0D);
+			this.originY = MathHelper.clamp(this.originY + offsetY + startY, -(this.maxPanY - endY), 0.0D);
 		}
 	}
 	
@@ -204,7 +200,6 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		for (AdvancementWidget advancementWidget : this.widgets.values()) {
 			advancementWidget.addToTree();
 		}
-		
 	}
 	
 	@Nullable
