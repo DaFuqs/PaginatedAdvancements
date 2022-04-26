@@ -152,7 +152,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			
 			if(hasPins) {
 				// draw pinned tab header
-				this.drawTexture(matrices, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 26, 46, 0, 34, 15);
+				this.drawTexture(matrices, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 26, 46, 0, 32, 15);
 			}
 		}
 	}
@@ -179,9 +179,9 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if(tabs.isEmpty()) {
 			return false; // fast fail
 		} else {
-			int minWidth = BORDER_PADDING;
-			int maxWidth = this.width - BORDER_PADDING - BORDER_PADDING;
-			return maxWidth - minWidth < (tabs.size() -1) * PaginatedAdvancementTabType.getWidthWithSpacing();
+			int startX = BORDER_PADDING;
+			int endX = this.width - BORDER_PADDING - BORDER_PADDING;
+			return endX - startX < (tabs.size() -1) * PaginatedAdvancementTabType.getWidthWithSpacing();
 		}
 	}
 	
@@ -406,7 +406,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		
 		if (button == 0) {
 			int startX = BORDER_PADDING;
-			int endX = PaginatedAdvancementsClient.hasPins() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH : this.width - BORDER_PADDING;
+			int endX = PaginatedAdvancementsClient.hasPins() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH - 4 : this.width - BORDER_PADDING;
 			int startY = BORDER_PADDING + ADDITIONAL_PADDING_TOP;
 			int endY = this.height - BORDER_PADDING;
 			
@@ -509,12 +509,10 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			if (!this.movingTab) {
 				this.movingTab = true;
 			} else if (this.selectedTab != null) {
-				int startX = BORDER_PADDING;
-				int startY = BORDER_PADDING + ADDITIONAL_PADDING_TOP;
-				int endX = PaginatedAdvancementsClient.hasPins() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH : this.width - BORDER_PADDING;
+				int endX = PaginatedAdvancementsClient.hasPins() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH - 4 : this.width - BORDER_PADDING;
 				int endY = this.height - BORDER_PADDING;
 				
-				this.selectedTab.move(deltaX, deltaY, startX, startY, endX, endY);
+				this.selectedTab.move(deltaX, deltaY, endX - 60 + 5, endY - 84);
 			}
 			
 			return true;
@@ -560,7 +558,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		boolean hasPins = PaginatedAdvancementsClient.hasPins();
 		int startX = BORDER_PADDING;
 		int startY = BORDER_PADDING + ADDITIONAL_PADDING_TOP;
-		int endX = hasPins ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH : this.width - BORDER_PADDING;
+		int endX = hasPins ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH - 4 : this.width - BORDER_PADDING;
 		int endY = this.height - BORDER_PADDING;
 		
 		this.renderBackground(matrices);

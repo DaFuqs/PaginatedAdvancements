@@ -215,12 +215,12 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		return null;
 	}
 	
-	public void move(double offsetX, double offsetY, int startX, int startY, int endX, int endY) {
+	public void move(double offsetX, double offsetY, int endX, int endY) {
 		if (this.maxPanX - this.minPanX > endX) {
-			this.originX = MathHelper.clamp(this.originX + offsetX + startX, -(this.maxPanX - endX), 0.0D);
+			this.originX = MathHelper.clamp(this.originX + offsetX, -(this.maxPanX - endX), 0.0D);
 		}
 		if (this.maxPanY - this.minPanY > endY) {
-			this.originY = MathHelper.clamp(this.originY + offsetY + startY, -(this.maxPanY - endY), 0.0D);
+			this.originY = MathHelper.clamp(this.originY + offsetY, -(this.maxPanY - endY), 0.0D);
 		}
 	}
 	
@@ -233,17 +233,22 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	
 	private void addWidget(AdvancementWidget widget, Advancement advancement) {
 		this.widgets.put(advancement, widget);
-		int i = widget.getX();
-		int j = i + 28;
-		int k = widget.getY();
-		int l = k + 27;
-		this.minPanX = Math.min(this.minPanX, i);
-		this.maxPanX = Math.max(this.maxPanX, j);
-		this.minPanY = Math.min(this.minPanY, k);
-		this.maxPanY = Math.max(this.maxPanY, l);
-		
 		for (AdvancementWidget advancementWidget : this.widgets.values()) {
 			advancementWidget.addToTree();
+		}
+		calculatePan();
+	}
+	
+	public void calculatePan() {
+		for(AdvancementWidget widget : this.widgets.values()) {
+			int widgetStartX = widget.getX();
+			int widgetEndX = widgetStartX + 28;
+			int widgetStartY = widget.getY();
+			int widgetEndY = widgetStartY + 27;
+			this.minPanX = Math.min(this.minPanX, widgetStartX);
+			this.maxPanX = Math.max(this.maxPanX, widgetEndX);
+			this.minPanY = Math.min(this.minPanY, widgetStartY);
+			this.maxPanY = Math.max(this.maxPanY, widgetEndY);
 		}
 	}
 	
