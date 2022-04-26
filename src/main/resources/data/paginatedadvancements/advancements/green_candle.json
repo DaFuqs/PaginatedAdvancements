@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:green_candle"
+    },
+    "title": {
+      "translate": "advancements.paginatedadvancements.collect_candle.title"
+    },
+    "description": {
+      "translate": "advancements.paginatedadvancements.collect_candle.description"
+    }
+  },
+  "criteria": {
+    "has_candle": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "tag": "minecraft:candles" }] }
+    }
+  }
+}

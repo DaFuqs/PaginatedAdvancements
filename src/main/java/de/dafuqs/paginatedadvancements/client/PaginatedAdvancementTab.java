@@ -2,6 +2,7 @@ package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
+import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementDisplay;
 import net.minecraft.client.MinecraftClient;
@@ -26,6 +27,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	private final MinecraftClient client;
 	private final PaginatedAdvancementScreen screen;
 	private final int index;
+	private int pinnedIndex;
 	private final Advancement root;
 	private final AdvancementDisplay display;
 	private final ItemStack icon;
@@ -41,11 +43,12 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	private float alpha;
 	private boolean initialized;
 	
-	public PaginatedAdvancementTab(MinecraftClient client, PaginatedAdvancementScreen screen, int index, Advancement root, AdvancementDisplay display) {
+	public PaginatedAdvancementTab(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, Advancement root, AdvancementDisplay display) {
 		super(client, screen, AdvancementTabType.ABOVE, index, root, display);
 		this.client = client;
 		this.screen = screen;
 		this.index = index;
+		this.pinnedIndex = pinnedIndex;
 		this.root = root;
 		this.display = display;
 		this.icon = display.getIcon();
@@ -80,6 +83,14 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	
 	public void drawIcon(int x, int y, ItemRenderer itemRenderer, int atIndex) {
 		PaginatedAdvancementTabType.drawIcon(x, y, atIndex, itemRenderer, this.icon);
+	}
+	
+	public void drawPinnedBackground(MatrixStack matrices, int x, int y, boolean selected) {
+		PinnedAdvancementTabType.drawBackground(matrices, this, x, y, selected, this.pinnedIndex);
+	}
+	
+	public void drawPinnedIcon(int x, int y, ItemRenderer itemRenderer) {
+		PinnedAdvancementTabType.drawIcon(x, y, this.pinnedIndex, itemRenderer, this.icon);
 	}
 	
 	public void render(MatrixStack matrices, int startX, int startY, int endX, int endY) {
@@ -132,7 +143,13 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public void drawWidgetTooltip(MatrixStack matrices, int mouseX, int mouseY, int startX, int startY, int endX, int endY) {
 		matrices.push();
 		matrices.translate(0.0D, 0.0D, -200.0D);
-		fill(matrices, 0, 0, endX, endY, MathHelper.floor(this.alpha * 255.0F) << 24);
+		
+		// tinting the background slightly darker
+		// (this is the vanilla default, but able to be disabled via config)
+		if(PaginatedAdvancementsClient.CONFIG.FadeOutBackgroundOnAdvancementHover) {
+			fill(matrices, 0, 0, endX, endY, MathHelper.floor(this.alpha * 255.0F) << 24);
+		}
+		
 		boolean bl = false;
 		int i = MathHelper.floor(this.originX);
 		int j = MathHelper.floor(this.originY);
@@ -154,18 +171,42 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 	}
 	
-	public boolean isClickOnTab(int screenX, int screenY, double mouseX, double mouseY, boolean paginated) {
+	public int getPaginatedDisplayedPage(int maxDisplayedTabs) {
+		return this.index / maxDisplayedTabs;
+	}
+	
+	public int getPaginatedDisplayedPosition(int maxDisplayedTabs, int currentPage) {
+		return 1 + this.index - maxDisplayedTabs * currentPage; // +1 because pos 0 is taken by the back button
+	}
+	
+	public boolean isClickOnTab(int screenX, int screenY, double mouseX, double mouseY, boolean paginated, int maxDisplayedTabs, int currentPage) {
 		if(paginated) {
-			return PaginatedAdvancementTabType.isClickOnTab(screenX, screenY, this.index + 1, mouseX, mouseY);
+			// check if the tab is on another page
+			if(getPaginatedDisplayedPage(maxDisplayedTabs) != currentPage) {
+				return false;
+			}
+			
+			int pageIndex = getPaginatedDisplayedPosition(maxDisplayedTabs, currentPage);
+			if(pageIndex <= maxDisplayedTabs) {
+				return PaginatedAdvancementTabType.isClickOnTab(screenX, screenY, pageIndex, mouseX, mouseY);
+			}
 		} else {
 			return PaginatedAdvancementTabType.isClickOnTab(screenX, screenY, this.index, mouseX, mouseY);
 		}
+		return false;
+	}
+	
+	public boolean isClickOnPinnedTab(int screenX, int screenY, double mouseX, double mouseY) {
+		if(this.pinnedIndex > -1) {
+			return PinnedAdvancementTabType.isClickOnTab(screenX, screenY, this.pinnedIndex, mouseX, mouseY);
+		}
+		return false;
 	}
 	
 	@Nullable
-	public static PaginatedAdvancementTab create(MinecraftClient client, PaginatedAdvancementScreen screen, int index, Advancement root) {
+	public static PaginatedAdvancementTab create(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, Advancement root) {
 		if (root.getDisplay() != null) {
-			return new PaginatedAdvancementTab(client, screen, index, root, root.getDisplay());
+			return new PaginatedAdvancementTab(client, screen, index, pinnedIndex, root, root.getDisplay());
 		}
 		return null;
 	}
@@ -211,4 +252,11 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		return this.screen;
 	}
 	
+	public void setPinIndex(int index) {
+		this.pinnedIndex = index;
+	}
+	
+	public int getPinIndex() {
+		return this.pinnedIndex;
+	}
 }

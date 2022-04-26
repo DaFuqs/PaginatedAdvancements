@@ -7,10 +7,22 @@
   "authors": [
     "DaFuqs"
   ],
-  "contact": {},
+  "contact": {
+    "homepage": "https://github.com/DaFuqs/",
+    "sources": "https://github.com/DaFuqs/PaginatedAdvancements",
+    "issues": "https://github.com/DaFuqs/PaginatedAdvancements/issues"
+  },
   "license": "MIT",
   "icon": "assets/paginatedadvancements/icon.png",
-  "environment": "*",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient"
+    ],
+    "modmenu": [
+      "de.dafuqs.paginatedadvancements.config.ModMenuConfig"
+    ]
+  },
   "accessWidener": "paginatedadvancements.accesswidener",
   "mixins": [
     "paginatedadvancements.mixins.json"
@@ -18,6 +30,6 @@
   "depends": {
     "fabricloader": ">=0.14.2",
     "fabric": "*",
-    "minecraft": "1.18.2"
+    "minecraft": ">=1.18.2"
   }
 }
