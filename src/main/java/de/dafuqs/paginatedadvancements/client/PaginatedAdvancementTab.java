@@ -85,12 +85,16 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		PaginatedAdvancementTabType.drawIcon(x, y, atIndex, itemRenderer, this.icon);
 	}
 	
-	public void drawPinnedBackground(MatrixStack matrices, int x, int y, boolean selected) {
-		PinnedAdvancementTabType.drawBackground(matrices, this, x, y, selected, this.pinnedIndex);
+	public void drawPinnedBackground(MatrixStack matrices, int x, int y, boolean selected, int maxPinnedIndex) {
+		if(this.pinnedIndex <= maxPinnedIndex) {
+			PinnedAdvancementTabType.drawBackground(matrices, this, x, y, selected, this.pinnedIndex);
+		}
 	}
 	
-	public void drawPinnedIcon(int x, int y, ItemRenderer itemRenderer) {
-		PinnedAdvancementTabType.drawIcon(x, y, this.pinnedIndex, itemRenderer, this.icon);
+	public void drawPinnedIcon(int x, int y, ItemRenderer itemRenderer, int maxPinnedIndex) {
+		if(this.pinnedIndex <= maxPinnedIndex) {
+			PinnedAdvancementTabType.drawIcon(x, y, this.pinnedIndex, itemRenderer, this.icon);
+		}
 	}
 	
 	public void render(MatrixStack matrices, int startX, int startY, int endX, int endY) {
@@ -196,8 +200,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		return false;
 	}
 	
-	public boolean isClickOnPinnedTab(int screenX, int screenY, double mouseX, double mouseY) {
-		if(this.pinnedIndex > -1) {
+	public boolean isClickOnPinnedTab(int screenX, int screenY, double mouseX, double mouseY, int maxPinnedTabs) {
+		if(this.pinnedIndex > -1 && this.pinnedIndex <= maxPinnedTabs) {
 			return PinnedAdvancementTabType.isClickOnTab(screenX, screenY, this.pinnedIndex, mouseX, mouseY);
 		}
 		return false;

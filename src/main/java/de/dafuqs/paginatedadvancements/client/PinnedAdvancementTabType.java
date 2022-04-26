@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PinnedAdvancementTabType {
     
-    public static final int TOP_SPACING = 6;
+    public static final int TOP_SPACING = 24; // accounting for the "pin" ribbon
     public static final int WIDTH = 32;
     public static final int HEIGHT = 28;
     
