@@ -113,46 +113,40 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	
 	// instead of drawing the full texture here, we cut it into pieces and draw
 	// the top, sides and more piece by piece, making the size variable with the mc window size
-	public void drawWindow(MatrixStack matrices, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight, boolean hasPins) {
+	public void drawWindow(MatrixStack matrices, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.enableBlend();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, WINDOW_TEXTURE);
 		
 		drawFrame(matrices, minWidth, minHeight, maxWidth, maxHeight);
-		
-		// draw tabs
-		if (this.tabs.size() > 1) {
-			drawTabs(matrices, mouseX, mouseY, minWidth, minHeight, maxWidth, maxHeight, hasPins);
-		}
-
 		this.textRenderer.draw(matrices, ADVANCEMENTS_TEXT, minWidth + 8, minHeight + 6, 4210752);
 	}
 	
-	public void drawPinButton(MatrixStack matrices, int mouseX, int mouseY, int startY, int startX, int endX, int endY, boolean hasPins) {
+	public void drawPinButtonAndHeader(MatrixStack matrices, int mouseX, int mouseY, int startX, int startY, int endX, int endY, boolean hasPins) {
 		if(this.selectedTab != null) {
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.enableBlend();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderTexture(0, PAGINATION_TEXTURE);
 			
-			if(isClickOnFavouritesButton(mouseX, mouseY, startX, endX)) {
+			if(isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
 				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRoot().getId())) {
-					this.drawTexture(matrices, endX - FAVOURITES_BUTTON_OFFSET_X, startX + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
+					this.drawTexture(matrices, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
 				} else {
-					this.drawTexture(matrices, endX - FAVOURITES_BUTTON_OFFSET_X, startX + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
+					this.drawTexture(matrices, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
 				}
 			} else {
 				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRoot().getId())) {
-					this.drawTexture(matrices, endX - FAVOURITES_BUTTON_OFFSET_X, startX + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
+					this.drawTexture(matrices, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
 				} else {
-					this.drawTexture(matrices, endX - FAVOURITES_BUTTON_OFFSET_X, startX + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
+					this.drawTexture(matrices, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
 				}
 			}
 			
 			if(hasPins) {
 				// draw pinned tab header
-				this.drawTexture(matrices, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 26, 46, 0, 32, 15);
+				this.drawTexture(matrices, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 6, 46, 0, 32, 15);
 			}
 		}
 	}
@@ -161,47 +155,32 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		return mouseX > maxWidth - FAVOURITES_BUTTON_OFFSET_X && mouseX < maxWidth - FAVOURITES_BUTTON_OFFSET_X + FAVOURITES_BUTTON_WIDTH && mouseY > minHeight + FAVOURITES_BUTTON_OFFSET_Y && mouseY < minHeight + FAVOURITES_BUTTON_OFFSET_Y + FAVOURITES_BUTTON_HEIGHT;
 	}
 	
-	public int getMaxPaginatedTabsToRender(int minWidth, int maxWidth, boolean paginated) {
-		int usableWidth = maxWidth - minWidth;
+	public int getMaxPaginatedTabsToRender(int startX, int endXTitle, int endXWindow, boolean paginated) {
 		if(paginated) {
-			return (usableWidth - 58) / PaginatedAdvancementTabType.getWidthWithSpacing(); // room for forward and back button
+			int usableWidth = endXTitle - startX;
+			return ((usableWidth - 58) / PaginatedAdvancementTabType.getWidthWithSpacing()); // room for forward and back button
 		} else {
-			return usableWidth / PaginatedAdvancementTabType.getWidthWithSpacing();
+			int usableWidth = endXWindow - startX;
+			return ((usableWidth - 28) / PaginatedAdvancementTabType.getWidthWithSpacing());
 		}
 	}
 	
-	public int getMaxPinnedTabsToRender(int minHeight, int maxHeight) {
-		int usableHeight = maxHeight - minHeight;
-		return (usableHeight - 56) / PinnedAdvancementTabType.getHeightWithSpacing(); // room for pin button + spacing
+	public int getMaxPinnedTabsToRender(int startY, int endY) {
+		int usableHeight = endY - startY;
+		return (usableHeight - 56 + PaginatedAdvancementTabType.getWidthWithSpacing()) / PinnedAdvancementTabType.getHeightWithSpacing(); // room for pin button + spacing
 	}
 	
-	private boolean isPaginated() {
-		if(tabs.isEmpty()) {
-			return false; // fast fail
+	private boolean isPaginated(int startX, int endXWindow) {
+		if(tabs.size() < 3) {
+			return false; // fast fail. Does not make sense to paginate
 		} else {
-			int startX = BORDER_PADDING;
-			int endX = this.width - BORDER_PADDING - BORDER_PADDING;
-			return endX - startX < (tabs.size() -1) * PaginatedAdvancementTabType.getWidthWithSpacing();
+			return endXWindow - startX < tabs.size() * PaginatedAdvancementTabType.getWidthWithSpacing();
 		}
 	}
 	
-	private void drawTabs(MatrixStack matrices, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight, boolean hasPins) {
-		clampCurrentPage(minWidth, maxWidth); // if the screen has been resized
-		if(isPaginated()) { // overflows
-			// draw forward and back button tabs, fill the rest with the remaining tabs
-			drawPaginationButtons(matrices, mouseX, mouseY, minWidth, maxWidth);
-			renderTabs(matrices, minWidth, minHeight, maxWidth, true);
-		} else {
-			renderTabs(matrices, minWidth, minHeight, maxWidth, false);
-		}
-		if(hasPins) {
-			renderPinnedTabs(matrices, minWidth, minHeight, maxWidth, maxHeight);
-		}
-	}
-	
-	private void renderTabs(MatrixStack matrices, int startX, int startY, int endX, boolean paginated) {
+	private void renderPaginatedTabs(MatrixStack matrices, int startX, int startY, int endXTitle, int endXWindow, boolean paginated) {
 		Iterator<PaginatedAdvancementTab> tabIterator = this.tabs.values().iterator();
-		int maxAdvancementTabsToRender = getMaxPaginatedTabsToRender(startX, endX, paginated);
+		int maxAdvancementTabsToRender = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, paginated);
 		
 		RenderSystem.setShaderTexture(0, TABS_TEXTURE);
 		
@@ -261,42 +240,42 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	
 	// instead of drawing the full texture here, we cut it into pieces and draw
 	// the top, sides and more piece by piece, making the size variable with the mc window size
-	public void drawPaginationButtons(MatrixStack matrices, int mouseX, int mouseY, int minWidth, int maxWidth) {
+	public void drawPaginationButtons(MatrixStack matrices, int mouseX, int mouseY, int startX, int endX) {
 		matrices.push();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, PAGINATION_TEXTURE);
 		
-		if(isClickOnBackTab(mouseX, mouseY, minWidth, maxWidth)) {
+		if(isClickOnBackTab(mouseX, mouseY, startX, endX)) {
 			// hover
-			this.drawTexture(matrices, minWidth + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 23, 23, 23);
+			this.drawTexture(matrices, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 23, 23, 23);
 		} else {
 			// no hover
-			this.drawTexture(matrices, minWidth + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 0, 23, 23);
+			this.drawTexture(matrices, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 0, 23, 23);
 		}
 		
-		if(isClickOnForwardTab(mouseX, mouseY, minWidth, maxWidth)) {
+		if(isClickOnForwardTab(mouseX, mouseY, startX, endX)) {
 			// hover
-			this.drawTexture(matrices, maxWidth - minWidth + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 23, 23, 23);
+			this.drawTexture(matrices, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 23, 23, 23);
 		} else {
 			// no hover
-			this.drawTexture(matrices, maxWidth - minWidth + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 0, 23, 23);
+			this.drawTexture(matrices, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 0, 23, 23);
 		}
 		
 		matrices.pop();
 		RenderSystem.applyModelViewMatrix();
 	}
 	
-	public static boolean isClickOnBackTab(double mouseX, double mouseY, int minWidth, int maxWidth) {
-		int startX = minWidth + 4;
-		int startY = PaginatedAdvancementScreen.TOP_ELEMENT_HEIGHT + PaginatedAdvancementScreen.ADDITIONAL_PADDING_TOP - 15;
-		return mouseX > startX && mouseX < startX + 23 && mouseY > startY && mouseY < startY + 23;
+	public static boolean isClickOnBackTab(double mouseX, double mouseY, int startX, int enX) {
+		int buttonStartX = startX + 4;
+		int buttonStartY = PaginatedAdvancementScreen.TOP_ELEMENT_HEIGHT + PaginatedAdvancementScreen.ADDITIONAL_PADDING_TOP - 15;
+		return mouseX > buttonStartX && mouseX < buttonStartX + 23 && mouseY > buttonStartY && mouseY < buttonStartY + 23;
 	}
 	
-	public static boolean isClickOnForwardTab(double mouseX, double mouseY, int minWidth, int maxWidth) {
-		int startX = maxWidth - minWidth + 4;
-		int startY = PaginatedAdvancementScreen.TOP_ELEMENT_HEIGHT + PaginatedAdvancementScreen.ADDITIONAL_PADDING_TOP - 15;
-		return mouseX > startX && mouseX < startX + 23 && mouseY > startY && mouseY < startY + 23;
+	public static boolean isClickOnForwardTab(double mouseX, double mouseY, int startX, int endX) {
+		int buttonStartX = endX - startX + 4;
+		int buttonStartY = PaginatedAdvancementScreen.TOP_ELEMENT_HEIGHT + PaginatedAdvancementScreen.ADDITIONAL_PADDING_TOP - 15;
+		return mouseX > buttonStartX && mouseX < buttonStartX + 23 && mouseY > buttonStartY && mouseY < buttonStartY + 23;
 	}
 	
 	private void drawFrame(MatrixStack matrices, int startX, int startY, int endX, int endY) {
@@ -402,15 +381,16 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 	
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		boolean isPaginated = isPaginated();
-		
 		if (button == 0) {
 			int startX = BORDER_PADDING;
-			int endX = PaginatedAdvancementsClient.hasPins() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH - 4 : this.width - BORDER_PADDING;
+			int endXWindow = !this.pinnedTabs.isEmpty() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH : this.width - BORDER_PADDING;
+			int endXTitle = this.width - BORDER_PADDING;
 			int startY = BORDER_PADDING + ADDITIONAL_PADDING_TOP;
 			int endY = this.height - BORDER_PADDING;
 			
-			if(this.selectedTab != null && isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
+			boolean isPaginated = isPaginated(startX, endXWindow);
+			
+			if(this.selectedTab != null && isClickOnFavouritesButton(mouseX, mouseY, startY, endXWindow)) {
 				Identifier pageIdentifier = this.selectedTab.getRoot().getId();
 				if(PaginatedAdvancementsClient.isPinned(pageIdentifier)) {
 					unpinTab(pageIdentifier);
@@ -420,14 +400,14 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			}
 			
 			if(isPaginated) {
-				if (isClickOnBackTab(mouseX, mouseY, startX, endX)) {
-					pageBackward(startX, endX);
-				} else if (isClickOnForwardTab(mouseX, mouseY, startX, endX)) {
-					pageForward(startX, endX);
+				if (isClickOnBackTab(mouseX, mouseY, startX, endXTitle)) {
+					pageBackward(startX, endXTitle, endXWindow);
+				} else if (isClickOnForwardTab(mouseX, mouseY, startX, endXTitle)) {
+					pageForward(startX, endXTitle, endXWindow);
 				}
 			}
 
-			int maxDisplayedTabs = getMaxPaginatedTabsToRender(startX, endX, isPaginated);
+			int maxDisplayedTabs = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, isPaginated);
 			for (PaginatedAdvancementTab paginatedAdvancementTab : this.tabs.values()) {
 				if (paginatedAdvancementTab.isClickOnTab(BORDER_PADDING, BORDER_PADDING + ADDITIONAL_PADDING_TOP, mouseX, mouseY, isPaginated, maxDisplayedTabs, currentPage)) {
 					this.advancementHandler.selectTab(paginatedAdvancementTab.getRoot(), true);
@@ -438,7 +418,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			if(this.pinnedTabs.size() > 0) {
 				int maxPinnedTabs = getMaxPinnedTabsToRender(startY, endY);
 				for (PaginatedAdvancementTab paginatedAdvancementTab : this.pinnedTabs.values()) {
-					if (paginatedAdvancementTab.isClickOnPinnedTab(endX, startY, mouseX, mouseY, maxPinnedTabs)) {
+					if (paginatedAdvancementTab.isClickOnPinnedTab(endXWindow, startY, mouseX, mouseY, maxPinnedTabs)) {
 						this.advancementHandler.selectTab(paginatedAdvancementTab.getRoot(), true);
 					}
 				}
@@ -468,22 +448,22 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 	
-	public int getMaxPageIndex(int startX, int endX) {
-		int maxDisplayedTabsPerPage = getMaxPaginatedTabsToRender(startX, endX, true);
+	public int getMaxPageIndex(int startX, int endXTitle, int endXWindow) {
+		int maxDisplayedTabsPerPage = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, true);
 		return (this.tabs.size() - 1) / maxDisplayedTabsPerPage;
 	}
 	
-	public void clampCurrentPage(int startX, int endX) {
-		this.currentPage = Math.min(this.currentPage, getMaxPageIndex(startX, endX));
+	public void clampCurrentPage(int startX, int endXTitle, int endXWindow) {
+		this.currentPage = Math.min(this.currentPage, getMaxPageIndex(startX, endXTitle, endXWindow));
 	}
 	
-	public void pageForward(int startX, int endX) {
+	public void pageForward(int startX, int endXTitle, int endXWindow) {
 		this.currentPage++;
-		this.currentPage = this.currentPage % (getMaxPageIndex(startX, endX) + 1);
+		this.currentPage = this.currentPage % (getMaxPageIndex(startX, endXTitle, endXWindow) + 1);
 	}
 	
-	public void pageBackward(int startX, int endX) {
-		int maxPageIndex = getMaxPageIndex(startX, endX);
+	public void pageBackward(int startX, int endXTitle, int endXWindow) {
+		int maxPageIndex = getMaxPageIndex(startX, endXTitle, endXWindow);
 		if(this.currentPage == 0) {
 			this.currentPage = maxPageIndex;
 		} else {
@@ -509,7 +489,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			if (!this.movingTab) {
 				this.movingTab = true;
 			} else if (this.selectedTab != null) {
-				int endX = PaginatedAdvancementsClient.hasPins() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH - 4 : this.width - BORDER_PADDING;
+				int endX = !this.pinnedTabs.isEmpty() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH - 4 : this.width - BORDER_PADDING;
 				int endY = this.height - BORDER_PADDING;
 				
 				this.selectedTab.move(deltaX, deltaY, endX - 60 + 5, endY - 84);
@@ -519,7 +499,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 	
-	private void drawWidgetTooltip(MatrixStack matrices, int mouseX, int mouseY, int startX, int startY, int endX, int endY) {
+	private void drawWidgetTooltip(MatrixStack matrices, int mouseX, int mouseY, int startX, int startY, int endXTitle, int endXWindow, int endY) {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		if (this.selectedTab != null) {
 			MatrixStack matrixStack = RenderSystem.getModelViewStack();
@@ -527,15 +507,15 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			matrixStack.translate((startX + 9), (startY + 18), 400.0D);
 			RenderSystem.applyModelViewMatrix();
 			RenderSystem.enableDepthTest();
-			this.selectedTab.drawWidgetTooltip(matrices, mouseX - startX - 9, mouseY - startY - 18, startX, startY, endX, endY);
+			this.selectedTab.drawWidgetTooltip(matrices, mouseX - startX - 9, mouseY - startY - 18, startX, startY, endXWindow, endY);
 			RenderSystem.disableDepthTest();
 			matrixStack.pop();
 			RenderSystem.applyModelViewMatrix();
 		}
 		
 		if (this.tabs.size() > 1) {
-			boolean isPaginated = isPaginated();
-			int maxDisplayedTabs = getMaxPaginatedTabsToRender(startX, endX, isPaginated);
+			boolean isPaginated = isPaginated(startX, endXWindow);
+			int maxDisplayedTabs = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, isPaginated);
 			
 			for (PaginatedAdvancementTab paginatedAdvancementTab : this.tabs.values()) {
 				if (paginatedAdvancementTab.isClickOnTab(startX, startY, mouseX, mouseY, isPaginated, maxDisplayedTabs, currentPage)) {
@@ -547,7 +527,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if(this.pinnedTabs.size() > 0) {
 			int maxPinnedTabs = getMaxPinnedTabsToRender(startY, endY);
 			for (PaginatedAdvancementTab paginatedAdvancementTab : this.pinnedTabs.values()) {
-				if (paginatedAdvancementTab.isClickOnPinnedTab(endX, startY, mouseX, mouseY, maxPinnedTabs)) {
+				if (paginatedAdvancementTab.isClickOnPinnedTab(endXWindow, startY, mouseX, mouseY, maxPinnedTabs)) {
 					this.renderTooltip(matrices, paginatedAdvancementTab.getTitle(), mouseX, mouseY);
 				}
 			}
@@ -555,17 +535,33 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 	
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		boolean hasPins = PaginatedAdvancementsClient.hasPins();
+		boolean hasPins = !this.pinnedTabs.isEmpty();
 		int startX = BORDER_PADDING;
 		int startY = BORDER_PADDING + ADDITIONAL_PADDING_TOP;
-		int endX = hasPins ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH - 4 : this.width - BORDER_PADDING;
+		int endXWindow = hasPins ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH : this.width - BORDER_PADDING;
+		int endXTitle = this.width - BORDER_PADDING;
 		int endY = this.height - BORDER_PADDING;
 		
+		clampCurrentPage(startX, endXTitle, endXWindow); // if the screen has been resized
+		
 		this.renderBackground(matrices);
-		this.drawAdvancementTree(matrices, startX, startY, endX, endY);
-		this.drawWindow(matrices, mouseX, mouseY, startX, startY, endX, endY, hasPins);
-		this.drawPinButton(matrices, mouseX, mouseY, startX, startY, endX, endY, hasPins);
-		this.drawWidgetTooltip(matrices, mouseX, mouseY, startX, startY, endX, endY);
+		this.drawAdvancementTree(matrices, startX, startY, endXWindow, endY);
+		this.drawWindow(matrices, mouseX, mouseY, startX, startY, endXWindow, endY);
+		
+		if (this.tabs.size() > 1) {
+			if (isPaginated(startX, endXWindow)) { // overflows
+				// draw forward and back button tabs, fill the rest with the remaining tabs
+				drawPaginationButtons(matrices, mouseX, mouseY, startX, endXTitle);
+				renderPaginatedTabs(matrices, startX, startY, endXTitle, endXWindow, true);
+			} else {
+				renderPaginatedTabs(matrices, startX, startY, endXTitle, endXWindow, false);
+			}
+		}
+		if(hasPins) {
+			renderPinnedTabs(matrices, startX, startY, endXWindow, endY);
+		}
+		this.drawPinButtonAndHeader(matrices, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
+		this.drawWidgetTooltip(matrices, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
 	}
 	
 	private void drawAdvancementTree(MatrixStack matrices, int startX, int startY, int endX, int endY) {

@@ -98,13 +98,15 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	}
 	
 	public void render(MatrixStack matrices, int startX, int startY, int endX, int endY) {
+		int advancementTreeWindowWidth  = endX -startX - 10;
+		int advancementTreeWindowHeight = endY -startY - 20;
+		
 		if (!this.initialized) {
 			// the center of the advancement tree render at the start
-			this.originX = (double)((((endX - startX) / 2)) - (this.maxPanX + this.minPanX) / 2);
-			this.originY = (double)((((endY - startY) / 2)) - (this.maxPanY + this.minPanY) / 2);
+			this.originX = (double)((((advancementTreeWindowWidth) / 2)) - (this.maxPanX + this.minPanX) / 2);
+			this.originY = (double)((((advancementTreeWindowHeight) / 2)) - (this.maxPanY + this.minPanY) / 2);
 			this.initialized = true;
 		}
-		
 		matrices.push();
 		matrices.translate(0.0D, 0.0D, 950.0D);
 		RenderSystem.enableDepthTest();
@@ -113,7 +115,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		RenderSystem.colorMask(true, true, true, true);
 		matrices.translate(0.0D, 0.0D, -950.0D);
 		RenderSystem.depthFunc(518);
-		fill(matrices, endX - startX - 16, endY - startY - 26, 0, 0, -16777216);
+		fill(matrices, advancementTreeWindowWidth, advancementTreeWindowHeight, 0, 0, -16777216);
 		RenderSystem.depthFunc(515);
 		Identifier identifier = this.display.getBackground();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -124,8 +126,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		int k = i % 16;
 		int l = j % 16;
 		
-		int textureCountX = (endX - startX) / 16;
-		int textureCountY = (endY - startY) / 16;
+		int textureCountX = (advancementTreeWindowWidth) / 16 + 1;
+		int textureCountY = (advancementTreeWindowHeight) / 16 + 1;
 		for(int m = -1; m < textureCountX; ++m) {
 			for(int n = -1; n < textureCountY; ++n) {
 				drawTexture(matrices, k + 16 * m, l + 16 * n, 0.0F, 0.0F, 16, 16, 16, 16);
