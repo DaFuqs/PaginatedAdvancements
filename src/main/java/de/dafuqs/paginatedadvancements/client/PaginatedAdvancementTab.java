@@ -153,7 +153,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		// tinting the background slightly darker
 		// (this is the vanilla default, but able to be disabled via config)
 		if(PaginatedAdvancementsClient.CONFIG.FadeOutBackgroundOnAdvancementHover) {
-			fill(matrices, 0, 0, endX, endY, MathHelper.floor(this.alpha * 255.0F) << 24);
+			fill(matrices, 0, 0, endX - startX - 18, endY - startY - 26, MathHelper.floor(this.alpha * 255.0F) << 24);
 		}
 		
 		boolean bl = false;
