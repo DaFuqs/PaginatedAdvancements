@@ -560,8 +560,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if(hasPins) {
 			renderPinnedTabs(matrices, startX, startY, endXWindow, endY);
 		}
-		this.drawPinButtonAndHeader(matrices, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
 		this.drawWidgetTooltip(matrices, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
+		this.drawPinButtonAndHeader(matrices, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
 	}
 	
 	private void drawAdvancementTree(MatrixStack matrices, int startX, int startY, int endX, int endY) {
