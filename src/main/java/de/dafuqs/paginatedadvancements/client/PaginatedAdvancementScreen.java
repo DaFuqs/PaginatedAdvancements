@@ -14,7 +14,6 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.c2s.play.AdvancementTabC2SPacket;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,9 +27,9 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	private static final Identifier WINDOW_TEXTURE = new Identifier("textures/gui/advancements/window.png");
 	private static final Identifier TABS_TEXTURE = new Identifier("textures/gui/advancements/tabs.png");
 	
-	private static final Text SAD_LABEL_TEXT = new TranslatableText("advancements.sad_label");
-	private static final Text EMPTY_TEXT = new TranslatableText("advancements.empty");
-	private static final Text ADVANCEMENTS_TEXT = new TranslatableText("gui.advancements");
+	private static final Text SAD_LABEL_TEXT = Text.translatable("advancements.sad_label");
+	private static final Text EMPTY_TEXT = Text.translatable("advancements.empty");
+	private static final Text ADVANCEMENTS_TEXT = Text.translatable("gui.advancements");
 	
 	private final ClientAdvancementManager advancementHandler;
 	private final Map<Advancement, PaginatedAdvancementTab> tabs = Maps.newLinkedHashMap();
