@@ -33,6 +33,7 @@
     "minecraft": ">=1.18.1"
   },
   "breaks": {
-    "advancements-enlarger": "*"
+    "advancements-enlarger": "*",
+    "advancementinfo": "*"
   }
 }

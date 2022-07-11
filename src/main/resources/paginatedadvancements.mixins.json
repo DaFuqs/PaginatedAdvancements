@@ -6,7 +6,9 @@
   "mixins": [
   ],
   "client": [
-    "MinecraftClientMixin"
+    "AdvancementWidgetMixin",
+    "MinecraftClientMixin",
+    "AdvancementProgressMixin"
   ],
   "injectors": {
     "defaultRequire": 1
