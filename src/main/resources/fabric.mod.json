@@ -33,6 +33,7 @@
     "minecraft": ">=1.19.0"
   },
   "breaks": {
-    "advancements-enlarger": "*"
+    "advancements-enlarger": "*",
+    "advancementinfo": "*"
   }
 }

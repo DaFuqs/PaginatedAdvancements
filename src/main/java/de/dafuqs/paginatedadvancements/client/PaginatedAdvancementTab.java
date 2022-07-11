@@ -3,8 +3,11 @@ package de.dafuqs.paginatedadvancements.client;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
+import de.dafuqs.paginatedadvancements.accessors.AdvancementProgressAccessor;
+import de.dafuqs.paginatedadvancements.accessors.AdvancementWidgetAccessor;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementDisplay;
+import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.advancement.AdvancementTab;
 import net.minecraft.client.gui.screen.advancement.AdvancementTabType;
@@ -14,7 +17,10 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
@@ -164,6 +170,11 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 				if (advancementWidget.shouldRender(i, j, mouseX, mouseY)) {
 					bl = true;
 					advancementWidget.drawTooltip(matrices, i, j, this.alpha, startX, startY);
+					
+					if(MinecraftClient.getInstance().options.advancedItemTooltips) {
+						renderDebugCriteria(matrices, advancementWidget, i, j, this.alpha, startX, startY);
+					}
+					
 					break;
 				}
 			}
@@ -174,6 +185,41 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			this.alpha = MathHelper.clamp(this.alpha + 0.02F, 0.0F, 0.3F);
 		} else {
 			this.alpha = MathHelper.clamp(this.alpha - 0.04F, 0.0F, 1.0F);
+		}
+	}
+	
+	private void renderDebugCriteria(MatrixStack stack, AdvancementWidget widget, int originX, int originY, float alpha, int x, int y) {
+		AdvancementWidgetAccessor advancementWidgetAccessor = ((AdvancementWidgetAccessor) widget);
+		AdvancementProgress progress = advancementWidgetAccessor.getProgress();
+		Iterable<String> obtainedCriteria = progress.getObtainedCriteria();
+		
+		AdvancementProgressAccessor advancementProgressAccessor = (AdvancementProgressAccessor) progress;
+		String[][] requirements = advancementProgressAccessor.getRequirements();
+		
+		int startY = originY + 10;
+		MinecraftClient.getInstance().textRenderer.draw(stack, advancementWidgetAccessor.getAdvancementID().toString(), originX, originY, 0xFFFFFF);
+		
+		for(String[] requirementGroup : requirements) {
+			MutableText text = new LiteralText("Group: ").formatted(Formatting.RED);
+			boolean anyDone = false;
+			for(String requirementString : requirementGroup) {
+				Formatting formatting = Formatting.RED;
+				for(String s : obtainedCriteria) {
+					if (s.equals(requirementString)) {
+						formatting = Formatting.GREEN;
+						anyDone = true;
+						break;
+					}
+				}
+				text.append(new LiteralText(requirementString + " ").formatted(formatting));
+			}
+			
+			if(anyDone) {
+				text.formatted(Formatting.GREEN);
+			}
+			
+			MinecraftClient.getInstance().textRenderer.draw(stack, text, originX, startY, 0x00ff00);
+			startY += 10;
 		}
 	}
 	
