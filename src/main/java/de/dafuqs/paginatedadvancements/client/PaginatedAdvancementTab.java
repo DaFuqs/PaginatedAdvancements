@@ -15,11 +15,13 @@ import net.minecraft.client.gui.screen.advancement.AdvancementWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
+import net.minecraft.client.util.Clipboard;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -48,6 +50,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	private int maxPanY = -2147483648;
 	private float alpha;
 	private boolean initialized;
+	
+	private @Nullable AdvancementWidget hoveredWidget;
 	
 	public PaginatedAdvancementTab(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, Advancement root, AdvancementDisplay display) {
 		super(client, screen, AdvancementTabType.ABOVE, index, root, display);
@@ -162,18 +166,19 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			fill(matrices, 0, 0, endX - startX - 18, endY - startY - 26, MathHelper.floor(this.alpha * 255.0F) << 24);
 		}
 		
-		boolean bl = false;
+		boolean hoversWidget = false;
 		int i = MathHelper.floor(this.originX);
 		int j = MathHelper.floor(this.originY);
 		if (mouseX > 0 && mouseX < endX - startX - 10 && mouseY > 0 && mouseY < endY - startY) {
 			for (AdvancementWidget advancementWidget : this.widgets.values()) {
 				if (advancementWidget.shouldRender(i, j, mouseX, mouseY)) {
-					bl = true;
+					hoversWidget = true;
 					advancementWidget.drawTooltip(matrices, i, j, this.alpha, startX, startY);
 					
 					if(MinecraftClient.getInstance().options.advancedItemTooltips) {
 						renderDebugCriteria(matrices, advancementWidget, i, j, this.alpha, startX, startY);
 					}
+					this.hoveredWidget = advancementWidget;
 					
 					break;
 				}
@@ -181,9 +186,10 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 		
 		matrices.pop();
-		if (bl) {
+		if (hoversWidget) {
 			this.alpha = MathHelper.clamp(this.alpha + 0.02F, 0.0F, 0.3F);
 		} else {
+			this.hoveredWidget = null;
 			this.alpha = MathHelper.clamp(this.alpha - 0.04F, 0.0F, 1.0F);
 		}
 	}
@@ -316,4 +322,13 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public int getPinIndex() {
 		return this.pinnedIndex;
 	}
+	
+	public void copyHoveredAdvancementID() {
+		if(this.hoveredWidget != null) {
+			AdvancementWidgetAccessor awa = (AdvancementWidgetAccessor) this.hoveredWidget;
+			MinecraftClient.getInstance().keyboard.setClipboard(awa.getAdvancementID().toString());
+			MinecraftClient.getInstance().inGameHud.setOverlayMessage(new TranslatableText("text.paginated_advancements.copied_to_clipboard"), false);
+		}
+	}
+	
 }

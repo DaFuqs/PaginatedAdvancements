@@ -476,6 +476,9 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			this.client.setScreen(null);
 			this.client.mouse.lockCursor();
 			return true;
+		} else if (keyCode == 67 && modifiers == 2) { // ctrl + c
+			this.selectedTab.copyHoveredAdvancementID();
+			return true;
 		} else {
 			return super.keyPressed(keyCode, scanCode, modifiers);
 		}
