@@ -30,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Objects;
 
+import static de.dafuqs.paginatedadvancements.client.PaginatedAdvancementScreen.*;
+
 public class PaginatedAdvancementTab extends AdvancementTab {
 	
 	private final MinecraftClient client;
@@ -203,7 +205,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		String[][] requirements = advancementProgressAccessor.getRequirements();
 		
 		int startY = originY + 10;
-		MinecraftClient.getInstance().textRenderer.draw(stack, advancementWidgetAccessor.getAdvancementID().toString(), originX, originY, 0xFFFFFF);
+		MinecraftClient.getInstance().textRenderer.draw(stack, "ID: " + advancementWidgetAccessor.getAdvancementID().toString(), originX, originY, 0xFFFFFF);
 		
 		for(String[] requirementGroup : requirements) {
 			MutableText text = new LiteralText("Group: ").formatted(Formatting.RED);
@@ -226,6 +228,79 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			
 			MinecraftClient.getInstance().textRenderer.draw(stack, text, originX, startY, 0x00ff00);
 			startY += 10;
+		}
+	}
+	
+	public void drawDebugFrame(MatrixStack matrices, int startX, int endX, int endY) {
+		if(this.hoveredWidget != null) {
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+			RenderSystem.enableBlend();
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
+			RenderSystem.setShaderTexture(0, PaginatedAdvancementScreen.WINDOW_TEXTURE);
+			
+			AdvancementWidgetAccessor advancementWidgetAccessor = (AdvancementWidgetAccessor) this.hoveredWidget;
+			AdvancementProgressAccessor advancementProgressAccessor = (AdvancementProgressAccessor) advancementWidgetAccessor.getProgress();
+			
+			startX = startX + 6;
+			endX = endX - 6;
+			endY = endY + 4;
+			int startY = endY - BOTTOM_ELEMENT_HEIGHT - TOP_ELEMENT_HEIGHT - 12 * (1 + advancementProgressAccessor.getRequirements().length);
+			
+			// corners
+			this.drawTexture(matrices, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top left
+			this.drawTexture(matrices, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top right
+			this.drawTexture(matrices, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom left
+			this.drawTexture(matrices, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom right
+			
+			// left + right sides
+			int maxTopHeightInOneDrawCall = 100;
+			int middleHeight = endY - startY - TOP_ELEMENT_HEIGHT - BOTTOM_ELEMENT_HEIGHT;
+			int currentY = startY + TOP_ELEMENT_HEIGHT;
+			while (middleHeight > 0) {
+				int currentDrawHeight = Math.min(middleHeight, maxTopHeightInOneDrawCall);
+				
+				this.drawTexture(matrices, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
+				this.drawTexture(matrices, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
+				
+				middleHeight -= currentDrawHeight;
+				currentY += currentDrawHeight;
+			}
+			
+			// top + bottom
+			int maxTopWidthInOneDrawCall = 220;
+			int middleWidth = endX - startX - ELEMENT_WIDTH - ELEMENT_WIDTH;
+			int currentX = startX + ELEMENT_WIDTH;
+			while (middleWidth > 0) {
+				int currentDrawWidth = Math.min(middleWidth, maxTopWidthInOneDrawCall);
+				
+				this.drawTexture(matrices, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT);
+				this.drawTexture(matrices, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT);
+				
+				middleWidth -= currentDrawWidth;
+				currentX += currentDrawWidth;
+			}
+			
+			// center
+			int centerStartX = startX + 6;
+			int centerEndX = endX - 6;
+			int centerStartY = startY + 6;
+			int centerEndY = endY - 6;
+			
+			int drawStartY = centerStartY;
+			int drawHeight = centerEndY - centerStartY;
+			while(drawHeight > 0) {
+				int drawStartX = centerStartX;
+				int currentHeight = Math.min(drawHeight, 10);
+				int drawWidth = centerEndX - centerStartX;
+				while(drawWidth > 0) {
+					int currentWidth = Math.min(200, drawWidth);
+					this.drawTexture(matrices, drawStartX, drawStartY, 4, 4, currentWidth, currentHeight);
+					drawWidth -= currentWidth;
+					drawStartX += currentWidth;
+				}
+				drawHeight -= currentHeight;
+				drawStartY += currentHeight;
+			}
 		}
 	}
 	
