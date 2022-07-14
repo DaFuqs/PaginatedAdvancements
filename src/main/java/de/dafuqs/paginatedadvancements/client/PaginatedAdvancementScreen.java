@@ -3,6 +3,7 @@ package de.dafuqs.paginatedadvancements.client;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
+import me.shedaniel.clothconfig2.gui.entries.KeyCodeEntry;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.client.MinecraftClient;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.screen.advancement.AdvancementsScreen;
 import net.minecraft.client.network.ClientAdvancementManager;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.c2s.play.AdvancementTabC2SPacket;
 import net.minecraft.text.Text;
@@ -23,10 +25,9 @@ import java.util.Map;
 
 public class PaginatedAdvancementScreen extends AdvancementsScreen implements ClientAdvancementManager.Listener {
 	
-	private static final Identifier PAGINATION_TEXTURE = new Identifier("paginatedadvancements", "textures/gui/buttons.png");
-	
-	private static final Identifier WINDOW_TEXTURE = new Identifier("textures/gui/advancements/window.png");
-	private static final Identifier TABS_TEXTURE = new Identifier("textures/gui/advancements/tabs.png");
+	public static final Identifier PAGINATION_TEXTURE = new Identifier("paginatedadvancements", "textures/gui/buttons.png");
+	public static final Identifier WINDOW_TEXTURE = new Identifier("textures/gui/advancements/window.png");
+	public static final Identifier TABS_TEXTURE = new Identifier("textures/gui/advancements/tabs.png");
 	
 	private static final Text SAD_LABEL_TEXT = Text.translatable("advancements.sad_label");
 	private static final Text EMPTY_TEXT = Text.translatable("advancements.empty");
@@ -476,7 +477,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			this.client.setScreen(null);
 			this.client.mouse.lockCursor();
 			return true;
-		} else if (keyCode == 67 && modifiers == 2) { // ctrl + c
+		} else if (this.selectedTab != null && keyCode == InputUtil.GLFW_KEY_C && modifiers == 2) { // ctrl + c
 			this.selectedTab.copyHoveredAdvancementID();
 			return true;
 		} else {
@@ -565,6 +566,10 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 		this.drawWidgetTooltip(matrices, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
 		this.drawPinButtonAndHeader(matrices, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
+		
+		if(MinecraftClient.getInstance().options.advancedItemTooltips && this.selectedTab != null) {
+			this.selectedTab.drawDebugFrame(matrices, startX, endXWindow, endY);
+		}
 	}
 	
 	private void drawAdvancementTree(MatrixStack matrices, int startX, int startY, int endX, int endY) {
