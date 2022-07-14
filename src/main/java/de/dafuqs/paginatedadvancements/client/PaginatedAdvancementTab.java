@@ -17,10 +17,8 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -280,12 +278,12 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		
 		String[][] requirements = progressAccessor.getRequirements();
 		
-		Text idText = new LiteralText("ID: " + widgetAccessor.getAdvancementID().toString() + " ").append(new TranslatableText("text.paginated_advancements.copy_to_clipboard"));
+		Text idText = Text.literal("ID: " + widgetAccessor.getAdvancementID().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
 		this.client.textRenderer.drawWithShadow(matrices, idText, startX, startY, 0xFFFFFF);
 		
 		for(String[] requirementGroup : requirements) {
 			startY += 10;
-			MutableText text = new TranslatableText("text.paginated_advancements.group").formatted(Formatting.DARK_RED);
+			MutableText text = Text.translatable("text.paginated_advancements.group").formatted(Formatting.DARK_RED);
 			boolean anyDone = false;
 			for(String requirementString : requirementGroup) {
 				Formatting formatting = Formatting.DARK_RED;
@@ -296,7 +294,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 						break;
 					}
 				}
-				text.append(new LiteralText(requirementString + " ").formatted(formatting));
+				text.append(Text.literal(requirementString + " ").formatted(formatting));
 			}
 			
 			if(anyDone) {
@@ -405,7 +403,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		if(this.hoveredWidget != null) {
 			AdvancementWidgetAccessor awa = (AdvancementWidgetAccessor) this.hoveredWidget;
 			MinecraftClient.getInstance().keyboard.setClipboard(awa.getAdvancementID().toString());
-			MinecraftClient.getInstance().inGameHud.setOverlayMessage(new TranslatableText("text.paginated_advancements.copied_to_clipboard"), false);
+			MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.translatable("text.paginated_advancements.copied_to_clipboard"), false);
 		}
 	}
 	
