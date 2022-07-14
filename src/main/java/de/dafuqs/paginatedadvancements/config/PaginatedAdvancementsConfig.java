@@ -28,6 +28,9 @@ public class PaginatedAdvancementsConfig implements ConfigData {
 	@Comment("Spacing between pinned tabs")
 	public int SpacingBetweenPinnedTabs = 2;
 	
+	@Comment("Always Show Debug Info (default: only when advanced tooltips enabled)")
+	public boolean AlwaysShowDebugInfo = false;
+	
 	@Override
 	public void validatePostLoad() {
 

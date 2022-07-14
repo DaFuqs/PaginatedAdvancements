@@ -3,7 +3,6 @@ package de.dafuqs.paginatedadvancements.client;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
-import me.shedaniel.clothconfig2.gui.entries.KeyCodeEntry;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.client.MinecraftClient;
@@ -509,10 +508,17 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if (this.selectedTab != null) {
 			MatrixStack matrixStack = RenderSystem.getModelViewStack();
 			matrixStack.push();
-			matrixStack.translate((startX + 9), (startY + 18), 400.0D);
 			RenderSystem.applyModelViewMatrix();
 			RenderSystem.enableDepthTest();
+			
+			matrixStack.translate((startX + 9), (startY + 18), 400.0D);
 			this.selectedTab.drawWidgetTooltip(matrices, mouseX - startX - 9, mouseY - startY - 18, startX, startY, endXWindow, endY);
+			
+			matrices.translate(0, 0, 400.0D);
+			if(PaginatedAdvancementsClient.CONFIG.AlwaysShowDebugInfo || this.client.options.advancedItemTooltips) {
+				this.selectedTab.drawDebugInfo(matrices, startX, endXWindow, endY);
+			}
+			
 			RenderSystem.disableDepthTest();
 			matrixStack.pop();
 			RenderSystem.applyModelViewMatrix();
@@ -567,10 +573,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 		this.drawWidgetTooltip(matrices, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
 		this.drawPinButtonAndHeader(matrices, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
-		
-		if(MinecraftClient.getInstance().options.advancedItemTooltips && this.selectedTab != null) {
-			this.selectedTab.drawDebugFrame(matrices, startX, endXWindow, endY);
-		}
 	}
 	
 	private void drawAdvancementTree(MatrixStack matrices, int startX, int startY, int endX, int endY) {
