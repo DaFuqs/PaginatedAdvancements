@@ -15,7 +15,6 @@ import net.minecraft.client.gui.screen.advancement.AdvancementWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
-import net.minecraft.client.util.Clipboard;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
@@ -139,7 +138,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		int l = j % 16;
 		
 		int textureCountX = (advancementTreeWindowWidth) / 16 + 1;
-		int textureCountY = (advancementTreeWindowHeight) / 16 + 1;
+		int textureCountY = (advancementTreeWindowHeight) / 16 + 2;
 		for(int m = -1; m < textureCountX; ++m) {
 			for(int n = -1; n < textureCountY; ++n) {
 				drawTexture(matrices, k + 16 * m, l + 16 * n, 0.0F, 0.0F, 16, 16, 16, 16);
@@ -158,28 +157,27 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		matrices.pop();
 	}
 	
-	public void drawWidgetTooltip(MatrixStack matrices, int mouseX, int mouseY, int startX, int startY, int endX, int endY) {
+	public void drawWidgetTooltip(MatrixStack matrices, int mouseX, int mouseY, int startX, int startY, int endXWindow, int endY) {
 		matrices.push();
+		RenderSystem.applyModelViewMatrix();
+		RenderSystem.enableDepthTest();
 		matrices.translate(0.0D, 0.0D, -200.0D);
 		
 		// tinting the background slightly darker
 		// (this is the vanilla default, but able to be disabled via config)
 		if(PaginatedAdvancementsClient.CONFIG.FadeOutBackgroundOnAdvancementHover) {
-			fill(matrices, 0, 0, endX - startX - 18, endY - startY - 26, MathHelper.floor(this.alpha * 255.0F) << 24);
+			fill(matrices, 0, 0, endXWindow - startX - 18, endY - startY - 26, MathHelper.floor(this.alpha * 255.0F) << 24);
 		}
 		
 		boolean hoversWidget = false;
 		int i = MathHelper.floor(this.originX);
 		int j = MathHelper.floor(this.originY);
-		if (mouseX > 0 && mouseX < endX - startX - 10 && mouseY > 0 && mouseY < endY - startY) {
+		if (mouseX > 0 && mouseX < endXWindow - startX - 10 && mouseY > 0 && mouseY < endY - startY) {
 			for (AdvancementWidget advancementWidget : this.widgets.values()) {
 				if (advancementWidget.shouldRender(i, j, mouseX, mouseY)) {
 					hoversWidget = true;
 					advancementWidget.drawTooltip(matrices, i, j, this.alpha, startX, startY);
 					
-					if(MinecraftClient.getInstance().options.advancedItemTooltips) {
-						renderDebugCriteria(matrices, advancementWidget, i, j, this.alpha, startX, startY);
-					}
 					this.hoveredWidget = advancementWidget;
 					
 					break;
@@ -196,25 +194,104 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 	}
 	
-	private void renderDebugCriteria(MatrixStack stack, AdvancementWidget widget, int originX, int originY, float alpha, int x, int y) {
-		AdvancementWidgetAccessor advancementWidgetAccessor = ((AdvancementWidgetAccessor) widget);
-		AdvancementProgress progress = advancementWidgetAccessor.getProgress();
+	public void drawDebugInfo(MatrixStack matrices, int startX, int endX, int endY) {
+		if(this.hoveredWidget != null) {
+			AdvancementWidgetAccessor advancementWidgetAccessor = (AdvancementWidgetAccessor) this.hoveredWidget;
+			AdvancementProgressAccessor advancementProgressAccessor = (AdvancementProgressAccessor) advancementWidgetAccessor.getProgress();
+			
+			startX = startX + 5 - 41;
+			endX = endX - 5 - 41;
+			endY = endY + 5 - 65;
+			int startY = endY - Math.max(28, 10 + 10 * (1 + advancementProgressAccessor.getRequirements().length));
+			
+			drawDebugFrame(matrices, startX, startY, endX, endY, advancementWidgetAccessor, advancementProgressAccessor);
+			drawDebugText(matrices, startX + 5, startY + 5, endX, endY, advancementWidgetAccessor, advancementProgressAccessor);
+		}
+	}
+	
+	public void drawDebugFrame(MatrixStack matrices, int startX, int startY, int endX, int endY, AdvancementWidgetAccessor widgetAccessor, AdvancementProgressAccessor progressAccessor) {
+		matrices.push();
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.enableBlend();
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderTexture(0, PaginatedAdvancementScreen.WINDOW_TEXTURE);
+		
+		// corners
+		this.drawTexture(matrices, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top left
+		this.drawTexture(matrices, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top right
+		this.drawTexture(matrices, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom left
+		this.drawTexture(matrices, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom right
+		
+		// left + right sides
+		int maxTopHeightInOneDrawCall = 100;
+		int middleHeight = endY - startY - TOP_ELEMENT_HEIGHT - BOTTOM_ELEMENT_HEIGHT;
+		int currentY = startY + TOP_ELEMENT_HEIGHT;
+		while (middleHeight > 0) {
+			int currentDrawHeight = Math.min(middleHeight, maxTopHeightInOneDrawCall);
+			
+			this.drawTexture(matrices, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
+			this.drawTexture(matrices, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
+			
+			middleHeight -= currentDrawHeight;
+			currentY += currentDrawHeight;
+		}
+		
+		// top + bottom
+		int maxTopWidthInOneDrawCall = 220;
+		int middleWidth = endX - startX - ELEMENT_WIDTH - ELEMENT_WIDTH;
+		int currentX = startX + ELEMENT_WIDTH;
+		while (middleWidth > 0) {
+			int currentDrawWidth = Math.min(middleWidth, maxTopWidthInOneDrawCall);
+			
+			this.drawTexture(matrices, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT);
+			this.drawTexture(matrices, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT);
+			
+			middleWidth -= currentDrawWidth;
+			currentX += currentDrawWidth;
+		}
+		
+		// center
+		int centerStartX = startX + 6;
+		int centerEndX = endX - 6;
+		int centerStartY = startY + 6;
+		int centerEndY = endY - 6;
+		
+		int drawStartY = centerStartY;
+		int drawHeight = centerEndY - centerStartY;
+		while(drawHeight > 0) {
+			int drawStartX = centerStartX;
+			int currentHeight = Math.min(drawHeight, 10);
+			int drawWidth = centerEndX - centerStartX;
+			while(drawWidth > 0) {
+				int currentWidth = Math.min(200, drawWidth);
+				this.drawTexture(matrices, drawStartX, drawStartY, 4, 4, currentWidth, currentHeight);
+				drawWidth -= currentWidth;
+				drawStartX += currentWidth;
+			}
+			drawHeight -= currentHeight;
+			drawStartY += currentHeight;
+		}
+		matrices.pop();
+	}
+	
+	private void drawDebugText(MatrixStack matrices, int startX, int startY, int endX, int endY, AdvancementWidgetAccessor widgetAccessor, AdvancementProgressAccessor progressAccessor) {
+		AdvancementProgress progress = widgetAccessor.getProgress();
 		Iterable<String> obtainedCriteria = progress.getObtainedCriteria();
 		
-		AdvancementProgressAccessor advancementProgressAccessor = (AdvancementProgressAccessor) progress;
-		String[][] requirements = advancementProgressAccessor.getRequirements();
+		String[][] requirements = progressAccessor.getRequirements();
 		
-		int startY = originY + 10;
-		MinecraftClient.getInstance().textRenderer.draw(stack, "ID: " + advancementWidgetAccessor.getAdvancementID().toString(), originX, originY, 0xFFFFFF);
+		Text idText = new LiteralText("ID: " + widgetAccessor.getAdvancementID().toString() + " ").append(new TranslatableText("text.paginated_advancements.copy_to_clipboard"));
+		this.client.textRenderer.drawWithShadow(matrices, idText, startX, startY, 0xFFFFFF);
 		
 		for(String[] requirementGroup : requirements) {
-			MutableText text = new LiteralText("Group: ").formatted(Formatting.RED);
+			startY += 10;
+			MutableText text = new TranslatableText("text.paginated_advancements.group").formatted(Formatting.DARK_RED);
 			boolean anyDone = false;
 			for(String requirementString : requirementGroup) {
-				Formatting formatting = Formatting.RED;
+				Formatting formatting = Formatting.DARK_RED;
 				for(String s : obtainedCriteria) {
 					if (s.equals(requirementString)) {
-						formatting = Formatting.GREEN;
+						formatting = Formatting.DARK_GREEN;
 						anyDone = true;
 						break;
 					}
@@ -223,84 +300,10 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			}
 			
 			if(anyDone) {
-				text.formatted(Formatting.GREEN);
+				text.formatted(Formatting.DARK_GREEN);
 			}
 			
-			MinecraftClient.getInstance().textRenderer.draw(stack, text, originX, startY, 0x00ff00);
-			startY += 10;
-		}
-	}
-	
-	public void drawDebugFrame(MatrixStack matrices, int startX, int endX, int endY) {
-		if(this.hoveredWidget != null) {
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			RenderSystem.enableBlend();
-			RenderSystem.setShader(GameRenderer::getPositionTexShader);
-			RenderSystem.setShaderTexture(0, PaginatedAdvancementScreen.WINDOW_TEXTURE);
-			
-			AdvancementWidgetAccessor advancementWidgetAccessor = (AdvancementWidgetAccessor) this.hoveredWidget;
-			AdvancementProgressAccessor advancementProgressAccessor = (AdvancementProgressAccessor) advancementWidgetAccessor.getProgress();
-			
-			startX = startX + 6;
-			endX = endX - 6;
-			endY = endY + 4;
-			int startY = endY - BOTTOM_ELEMENT_HEIGHT - TOP_ELEMENT_HEIGHT - 12 * (1 + advancementProgressAccessor.getRequirements().length);
-			
-			// corners
-			this.drawTexture(matrices, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top left
-			this.drawTexture(matrices, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top right
-			this.drawTexture(matrices, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom left
-			this.drawTexture(matrices, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom right
-			
-			// left + right sides
-			int maxTopHeightInOneDrawCall = 100;
-			int middleHeight = endY - startY - TOP_ELEMENT_HEIGHT - BOTTOM_ELEMENT_HEIGHT;
-			int currentY = startY + TOP_ELEMENT_HEIGHT;
-			while (middleHeight > 0) {
-				int currentDrawHeight = Math.min(middleHeight, maxTopHeightInOneDrawCall);
-				
-				this.drawTexture(matrices, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
-				this.drawTexture(matrices, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
-				
-				middleHeight -= currentDrawHeight;
-				currentY += currentDrawHeight;
-			}
-			
-			// top + bottom
-			int maxTopWidthInOneDrawCall = 220;
-			int middleWidth = endX - startX - ELEMENT_WIDTH - ELEMENT_WIDTH;
-			int currentX = startX + ELEMENT_WIDTH;
-			while (middleWidth > 0) {
-				int currentDrawWidth = Math.min(middleWidth, maxTopWidthInOneDrawCall);
-				
-				this.drawTexture(matrices, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT);
-				this.drawTexture(matrices, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT);
-				
-				middleWidth -= currentDrawWidth;
-				currentX += currentDrawWidth;
-			}
-			
-			// center
-			int centerStartX = startX + 6;
-			int centerEndX = endX - 6;
-			int centerStartY = startY + 6;
-			int centerEndY = endY - 6;
-			
-			int drawStartY = centerStartY;
-			int drawHeight = centerEndY - centerStartY;
-			while(drawHeight > 0) {
-				int drawStartX = centerStartX;
-				int currentHeight = Math.min(drawHeight, 10);
-				int drawWidth = centerEndX - centerStartX;
-				while(drawWidth > 0) {
-					int currentWidth = Math.min(200, drawWidth);
-					this.drawTexture(matrices, drawStartX, drawStartY, 4, 4, currentWidth, currentHeight);
-					drawWidth -= currentWidth;
-					drawStartX += currentWidth;
-				}
-				drawHeight -= currentHeight;
-				drawStartY += currentHeight;
-			}
+			this.client.textRenderer.draw(matrices, text, startX, startY, 0x00ff00);
 		}
 	}
 	
