@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.advancement.AdvancementTab;
 import net.minecraft.client.gui.screen.advancement.AdvancementWidget;
 import net.minecraft.client.gui.screen.advancement.AdvancementsScreen;
