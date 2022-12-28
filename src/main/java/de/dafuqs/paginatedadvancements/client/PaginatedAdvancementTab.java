@@ -127,7 +127,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		fill(matrices, advancementTreeWindowWidth, advancementTreeWindowHeight, 0, 0, -16777216);
 		RenderSystem.depthFunc(515);
 		Identifier identifier = this.display.getBackground();
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, Objects.requireNonNullElse(identifier, TextureManager.MISSING_IDENTIFIER));
 		
 		int i = MathHelper.floor(this.originX);
@@ -211,7 +211,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		matrices.push();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.enableBlend();
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, PaginatedAdvancementScreen.WINDOW_TEXTURE);
 		
 		// corners

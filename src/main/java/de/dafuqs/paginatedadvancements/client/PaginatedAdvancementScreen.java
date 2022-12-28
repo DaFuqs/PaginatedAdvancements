@@ -115,7 +115,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	public void drawWindow(MatrixStack matrices, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.enableBlend();
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, WINDOW_TEXTURE);
 		
 		drawFrame(matrices, minWidth, minHeight, maxWidth, maxHeight);
@@ -126,7 +126,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if(this.selectedTab != null) {
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.enableBlend();
-			RenderSystem.setShader(GameRenderer::getPositionTexShader);
+			RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 			RenderSystem.setShaderTexture(0, PAGINATION_TEXTURE);
 			
 			if(isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
@@ -242,7 +242,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	public void drawPaginationButtons(MatrixStack matrices, int mouseX, int mouseY, int startX, int endX) {
 		matrices.push();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, PAGINATION_TEXTURE);
 		
 		if(isClickOnBackTab(mouseX, mouseY, startX, endX)) {
