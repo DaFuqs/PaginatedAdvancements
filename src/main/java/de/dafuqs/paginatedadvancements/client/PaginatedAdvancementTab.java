@@ -1,31 +1,23 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import com.google.common.collect.Maps;
-import com.mojang.blaze3d.systems.RenderSystem;
-import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
-import de.dafuqs.paginatedadvancements.accessors.AdvancementProgressAccessor;
-import de.dafuqs.paginatedadvancements.accessors.AdvancementWidgetAccessor;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementDisplay;
-import net.minecraft.advancement.AdvancementProgress;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.advancement.AdvancementTab;
-import net.minecraft.client.gui.screen.advancement.AdvancementTabType;
-import net.minecraft.client.gui.screen.advancement.AdvancementWidget;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.Nullable;
+import com.google.common.collect.*;
+import com.mojang.blaze3d.systems.*;
+import de.dafuqs.paginatedadvancements.*;
+import de.dafuqs.paginatedadvancements.accessors.*;
+import net.minecraft.advancement.*;
+import net.minecraft.client.*;
+import net.minecraft.client.gui.screen.advancement.*;
+import net.minecraft.client.render.*;
+import net.minecraft.client.render.item.*;
+import net.minecraft.client.texture.*;
+import net.minecraft.client.util.math.*;
+import net.minecraft.item.*;
+import net.minecraft.text.*;
+import net.minecraft.util.*;
+import net.minecraft.util.math.*;
+import org.jetbrains.annotations.*;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static de.dafuqs.paginatedadvancements.client.PaginatedAdvancementScreen.*;
 
@@ -215,10 +207,10 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		RenderSystem.setShaderTexture(0, PaginatedAdvancementScreen.WINDOW_TEXTURE);
 		
 		// corners
-		this.drawTexture(matrices, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top left
-		this.drawTexture(matrices, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top right
-		this.drawTexture(matrices, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom left
-		this.drawTexture(matrices, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom right
+		drawTexture(matrices, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top left
+		drawTexture(matrices, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top right
+		drawTexture(matrices, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom left
+		drawTexture(matrices, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT); // bottom right
 		
 		// left + right sides
 		int maxTopHeightInOneDrawCall = 100;
@@ -227,8 +219,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		while (middleHeight > 0) {
 			int currentDrawHeight = Math.min(middleHeight, maxTopHeightInOneDrawCall);
 			
-			this.drawTexture(matrices, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
-			this.drawTexture(matrices, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
+			drawTexture(matrices, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
+			drawTexture(matrices, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight);
 			
 			middleHeight -= currentDrawHeight;
 			currentY += currentDrawHeight;
@@ -241,8 +233,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		while (middleWidth > 0) {
 			int currentDrawWidth = Math.min(middleWidth, maxTopWidthInOneDrawCall);
 			
-			this.drawTexture(matrices, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT);
-			this.drawTexture(matrices, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT);
+			drawTexture(matrices, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT);
+			drawTexture(matrices, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT);
 			
 			middleWidth -= currentDrawWidth;
 			currentX += currentDrawWidth;
@@ -262,7 +254,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			int drawWidth = centerEndX - centerStartX;
 			while(drawWidth > 0) {
 				int currentWidth = Math.min(200, drawWidth);
-				this.drawTexture(matrices, drawStartX, drawStartY, 4, 4, currentWidth, currentHeight);
+				drawTexture(matrices, drawStartX, drawStartY, 4, 4, currentWidth, currentHeight);
 				drawWidth -= currentWidth;
 				drawStartX += currentWidth;
 			}

@@ -1,13 +1,13 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import de.dafuqs.paginatedadvancements.*;
+import net.minecraft.client.gui.*;
+import net.minecraft.client.render.item.*;
+import net.minecraft.client.util.math.*;
+import net.minecraft.item.*;
+import org.jetbrains.annotations.*;
 
-public class PinnedAdvancementTabType {
+public class PinnedAdvancementTabType extends DrawableHelper {
     
     public static final int TOP_SPACING = 24; // accounting for the "pin" ribbon
     public static final int WIDTH = 32;
@@ -20,7 +20,7 @@ public class PinnedAdvancementTabType {
     public static void drawBackground(MatrixStack matrices, DrawableHelper tab, int x, int y, boolean selected, int index) {
         int i = index > 0 ? WIDTH + 96 : 96;
         int j = selected ? 64 + HEIGHT : 64;
-        tab.drawTexture(matrices, x + getTabX(), y + getTabY(index), i, j, WIDTH, HEIGHT);
+        drawTexture(matrices, x + getTabX(), y + getTabY(index), i, j, WIDTH, HEIGHT);
     }
 
     public static void drawIcon(int x, int y, int index, @NotNull ItemRenderer itemRenderer, ItemStack icon) {
