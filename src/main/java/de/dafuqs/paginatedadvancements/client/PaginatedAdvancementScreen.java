@@ -15,7 +15,6 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.c2s.play.AdvancementTabC2SPacket;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,9 +27,9 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	public static final Identifier WINDOW_TEXTURE = new Identifier("textures/gui/advancements/window.png");
 	public static final Identifier TABS_TEXTURE = new Identifier("textures/gui/advancements/tabs.png");
 	
-	private static final Text SAD_LABEL_TEXT = new TranslatableText("advancements.sad_label");
-	private static final Text EMPTY_TEXT = new TranslatableText("advancements.empty");
-	private static final Text ADVANCEMENTS_TEXT = new TranslatableText("gui.advancements");
+	private static final Text SAD_LABEL_TEXT = Text.translatable("advancements.sad_label");
+	private static final Text EMPTY_TEXT = Text.translatable("advancements.empty");
+	private static final Text ADVANCEMENTS_TEXT = Text.translatable("gui.advancements");
 	
 	private final ClientAdvancementManager advancementHandler;
 	private final Map<Advancement, PaginatedAdvancementTab> tabs = Maps.newLinkedHashMap();
@@ -116,7 +115,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	public void drawWindow(MatrixStack matrices, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.enableBlend();
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, WINDOW_TEXTURE);
 		
 		drawFrame(matrices, minWidth, minHeight, maxWidth, maxHeight);
@@ -127,7 +126,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if(this.selectedTab != null) {
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.enableBlend();
-			RenderSystem.setShader(GameRenderer::getPositionTexShader);
+			RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 			RenderSystem.setShaderTexture(0, PAGINATION_TEXTURE);
 			
 			if(isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
@@ -243,7 +242,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	public void drawPaginationButtons(MatrixStack matrices, int mouseX, int mouseY, int startX, int endX) {
 		matrices.push();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, PAGINATION_TEXTURE);
 		
 		if(isClickOnBackTab(mouseX, mouseY, startX, endX)) {
