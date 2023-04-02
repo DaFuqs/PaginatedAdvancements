@@ -23,10 +23,10 @@ public class PinnedAdvancementTabType {
         tab.drawTexture(matrices, x + getTabX(), y + getTabY(index), i, j, WIDTH, HEIGHT);
     }
 
-    public static void drawIcon(int x, int y, int index, @NotNull ItemRenderer itemRenderer, ItemStack icon) {
+    public static void drawIcon(MatrixStack matrices, int x, int y, int index, @NotNull ItemRenderer itemRenderer, ItemStack icon) {
         int i = x + getTabX() + 6;
         int j = y + getTabY(index) + 5;
-        itemRenderer.renderInGui(icon, i, j);
+        itemRenderer.renderInGui(matrices, icon, i, j);
     }
 
     public static int getTabX() {
