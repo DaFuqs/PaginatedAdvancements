@@ -1,0 +1,10 @@
+[
+  {
+    "advancement": "minecraft:story/root",
+    "frame": "minecraft:challenge"
+  },
+  {
+    "advancement": "minecraft:nether/root",
+    "frame": "paginatedadvancements:progress"
+  }
+]

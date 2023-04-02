@@ -54,7 +54,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		this.display = display;
 		this.icon = display.getIcon();
 		this.title = display.getTitle();
-		this.rootWidget = new AdvancementWidget(this, client, root, display);
+		this.rootWidget = new PaginatedAdvancementWidget(this, client, root, display);
 		this.addWidget(this.rootWidget, root);
 	}
 	
@@ -348,7 +348,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	
 	public void addAdvancement(Advancement advancement) {
 		if (advancement.getDisplay() != null) {
-			AdvancementWidget advancementWidget = new AdvancementWidget(this, this.client, advancement, advancement.getDisplay());
+			AdvancementWidget advancementWidget = new PaginatedAdvancementWidget(this, this.client, advancement, advancement.getDisplay());
 			this.addWidget(advancementWidget, advancement);
 		}
 	}
