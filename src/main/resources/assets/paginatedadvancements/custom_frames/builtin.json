@@ -1,0 +1,10 @@
+[
+  {
+    "texture_sheet": "minecraft:story/root",
+    "frame": "goal"
+  },
+  {
+    "advancement": "minecraft:nether/root",
+    "frame": "progress"
+  }
+]
