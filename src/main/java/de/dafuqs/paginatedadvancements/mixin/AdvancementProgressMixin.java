@@ -1,18 +1,18 @@
 package de.dafuqs.paginatedadvancements.mixin;
 
-import de.dafuqs.paginatedadvancements.accessors.AdvancementProgressAccessor;
-import net.minecraft.advancement.AdvancementProgress;
-import net.minecraft.advancement.criterion.CriterionProgress;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import de.dafuqs.paginatedadvancements.accessors.*;
+import net.minecraft.advancement.*;
+import net.minecraft.advancement.criterion.*;
+import org.spongepowered.asm.mixin.*;
 
-import java.util.Map;
+import java.util.*;
 
 @Mixin(AdvancementProgress.class)
 public abstract class AdvancementProgressMixin implements AdvancementProgressAccessor {
     
-    @Shadow @Final private Map<String, CriterionProgress> criteriaProgresses;
+    @Shadow
+    @Final
+    Map<String, CriterionProgress> criteriaProgresses;
     
     @Shadow public abstract String toString();
     

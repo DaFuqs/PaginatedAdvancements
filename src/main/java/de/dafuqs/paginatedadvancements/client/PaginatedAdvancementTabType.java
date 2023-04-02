@@ -1,13 +1,13 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import de.dafuqs.paginatedadvancements.*;
+import net.minecraft.client.gui.*;
+import net.minecraft.client.render.item.*;
+import net.minecraft.client.util.math.*;
+import net.minecraft.item.*;
+import org.jetbrains.annotations.*;
 
-public class PaginatedAdvancementTabType {
+public class PaginatedAdvancementTabType extends DrawableHelper {
     
     public static final int WIDTH = 28;
     public static final int HEIGHT = 32;
@@ -15,11 +15,11 @@ public class PaginatedAdvancementTabType {
     public static int getWidthWithSpacing() {
         return WIDTH + PaginatedAdvancementsClient.CONFIG.SpacingBetweenHorizontalTabs; // includes the empty space between tabs
     }
-
+    
     public static void drawBackground(MatrixStack matrices, DrawableHelper tab, int x, int y, boolean selected, int index) {
         int i = index > 0 ? WIDTH : 0;
         int j = selected ? HEIGHT : 0;
-        tab.drawTexture(matrices, x + getTabX(index), y + getTabY(), i, j, WIDTH, HEIGHT);
+        drawTexture(matrices, x + getTabX(index), y + getTabY(), i, j, WIDTH, HEIGHT);
     }
 
     public static void drawIcon(MatrixStack matrices, int x, int y, int index, @NotNull ItemRenderer itemRenderer, ItemStack icon) {
