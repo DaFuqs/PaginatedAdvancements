@@ -1,14 +1,12 @@
 package de.dafuqs.paginatedadvancements;
 
-import de.dafuqs.paginatedadvancements.config.PaginatedAdvancementsConfig;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.ConfigHolder;
-import me.shedaniel.autoconfig.ConfigManager;
-import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
-import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.util.Identifier;
+import de.dafuqs.paginatedadvancements.config.*;
+import me.shedaniel.autoconfig.*;
+import me.shedaniel.autoconfig.serializer.*;
+import net.fabricmc.api.*;
+import net.minecraft.util.*;
 
-import java.util.List;
+import java.util.*;
 
 public class PaginatedAdvancementsClient implements ClientModInitializer {
 	
@@ -20,11 +18,6 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 		ConfigHolder<PaginatedAdvancementsConfig> configHolder = AutoConfig.register(PaginatedAdvancementsConfig.class, JanksonConfigSerializer::new);
 		CONFIG_MANAGER = ((ConfigManager<PaginatedAdvancementsConfig>) configHolder);
 		CONFIG = AutoConfig.getConfigHolder(PaginatedAdvancementsConfig.class).getConfig();
-	}
-	
-	private static void updateConfigFile() {
-		//CONFIG.initialSpawnPointActive = initialSpawnActive;
-		//CONFIG.save();
 	}
 	
 	public static void saveSelectedTab(Identifier tabIdentifier) {
