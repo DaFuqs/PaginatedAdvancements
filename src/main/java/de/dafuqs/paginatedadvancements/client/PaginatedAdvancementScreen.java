@@ -206,10 +206,10 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			if(paginated) {
 				if(advancementTab.getPaginatedDisplayedPage(maxAdvancementTabsToRender) == this.currentPage) {
 					int displayedPosition = advancementTab.getPaginatedDisplayedPosition(maxAdvancementTabsToRender, this.currentPage);
-					advancementTab.drawIcon(startX, startY, this.itemRenderer, displayedPosition);
+					advancementTab.drawIcon(matrices, startX, startY, this.itemRenderer, displayedPosition);
 				}
 			} else {
-				advancementTab.drawIcon(startX, startY, this.itemRenderer, index);
+				advancementTab.drawIcon(matrices, startX, startY, this.itemRenderer, index);
 				index++;
 			}
 		}
@@ -232,7 +232,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		tabIterator = this.pinnedTabs.values().iterator();
 		while(tabIterator.hasNext()) {
 			advancementTab = tabIterator.next();
-			advancementTab.drawPinnedIcon(endX, startY, this.itemRenderer, maxPinnedTabs);
+			advancementTab.drawPinnedIcon(matrices, endX, startY, this.itemRenderer, maxPinnedTabs);
 		}
 		RenderSystem.disableBlend();
 	}
@@ -580,8 +580,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			
 			int textCenterX = startX + ((endX-startX) / 2);
 			int textY = startY + ((endY-startY) / 2);
-			drawCenteredText(matrices, this.textRenderer, EMPTY_TEXT, textCenterX, textY, -1);
-			drawCenteredText(matrices, this.textRenderer, SAD_LABEL_TEXT, textCenterX, textY + 16, -1);
+			drawCenteredTextWithShadow(matrices, this.textRenderer, EMPTY_TEXT, textCenterX, textY, -1);
+			drawCenteredTextWithShadow(matrices, this.textRenderer, SAD_LABEL_TEXT, textCenterX, textY + 16, -1);
 		} else {
 			MatrixStack matrixStack = RenderSystem.getModelViewStack();
 			matrixStack.push();

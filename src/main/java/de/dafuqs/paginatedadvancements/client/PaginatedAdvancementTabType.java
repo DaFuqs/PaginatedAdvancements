@@ -22,10 +22,10 @@ public class PaginatedAdvancementTabType {
         tab.drawTexture(matrices, x + getTabX(index), y + getTabY(), i, j, WIDTH, HEIGHT);
     }
 
-    public static void drawIcon(int x, int y, int index, @NotNull ItemRenderer itemRenderer, ItemStack icon) {
+    public static void drawIcon(MatrixStack matrices, int x, int y, int index, @NotNull ItemRenderer itemRenderer, ItemStack icon) {
         int i = x + getTabX(index) + 6;
         int j = y + getTabY() + 9;
-        itemRenderer.renderInGui(icon, i, j);
+        itemRenderer.renderInGui(matrices, icon, i, j);
     }
 
     public static int getTabX(int index) {

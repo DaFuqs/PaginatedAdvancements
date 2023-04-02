@@ -90,8 +90,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		PaginatedAdvancementTabType.drawBackground(matrices, this, x, y, selected, atIndex);
 	}
 	
-	public void drawIcon(int x, int y, ItemRenderer itemRenderer, int atIndex) {
-		PaginatedAdvancementTabType.drawIcon(x, y, atIndex, itemRenderer, this.icon);
+	public void drawIcon(MatrixStack matrices, int x, int y, ItemRenderer itemRenderer, int atIndex) {
+		PaginatedAdvancementTabType.drawIcon(matrices, x, y, atIndex, itemRenderer, this.icon);
 	}
 	
 	public void drawPinnedBackground(MatrixStack matrices, int x, int y, boolean selected, int maxPinnedIndex) {
@@ -100,9 +100,9 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 	}
 	
-	public void drawPinnedIcon(int x, int y, ItemRenderer itemRenderer, int maxPinnedIndex) {
+	public void drawPinnedIcon(MatrixStack matrices, int x, int y, ItemRenderer itemRenderer, int maxPinnedIndex) {
 		if(this.pinnedIndex <= maxPinnedIndex) {
-			PinnedAdvancementTabType.drawIcon(x, y, this.pinnedIndex, itemRenderer, this.icon);
+			PinnedAdvancementTabType.drawIcon(matrices, x, y, this.pinnedIndex, itemRenderer, this.icon);
 		}
 	}
 	
