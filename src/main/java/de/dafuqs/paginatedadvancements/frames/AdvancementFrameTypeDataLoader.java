@@ -22,7 +22,6 @@ public class AdvancementFrameTypeDataLoader extends JsonDataLoader implements Id
 		super(new Gson(), ID);
 	}
 	
-	
 	@Override
 	protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
 		prepared.forEach((identifier, jsonElement) -> {
@@ -34,7 +33,9 @@ public class AdvancementFrameTypeDataLoader extends JsonDataLoader implements Id
 				Identifier name = new Identifier(identifier.getNamespace(), jsonObject.get("name").getAsString());
 				int u = jsonObject.get("x").getAsInt();
 				int v = jsonObject.get("y").getAsInt();
-				String formattingString = jsonObject.get("formatting").getAsString();
+				int itemOffsetX = JsonHelper.getInt(jsonObject, "item_offset_x", 0);
+				int itemOffsetY = JsonHelper.getInt(jsonObject, "item_offset_y", 0);
+				String formattingString = JsonHelper.getString(jsonObject, "formatting", "green");
 				Formatting formatting = Formatting.byName(formattingString);
 				
 				if (formatting == null) {
@@ -43,10 +44,9 @@ public class AdvancementFrameTypeDataLoader extends JsonDataLoader implements Id
 					formatting = Formatting.GREEN;
 				}
 				
-				PaginatedAdvancementFrame frame = new PaginatedAdvancementFrame(name, textureSheet, u, v, formatting);
+				PaginatedAdvancementFrame frame = new PaginatedAdvancementFrame(name, textureSheet, u, v, itemOffsetX, itemOffsetY, formatting);
 				FRAMES.put(name, frame);
 			}
-			
 		});
 	}
 	
