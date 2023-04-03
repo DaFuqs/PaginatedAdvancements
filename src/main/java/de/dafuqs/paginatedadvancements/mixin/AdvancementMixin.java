@@ -17,8 +17,8 @@ public abstract class AdvancementMixin {
     private Formatting paginatedAdvancements$customFormat(Formatting formatting, Identifier id) {
         FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(id);
         if (frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper) {
-            return frameWrapper.getTitleFormat();
-        }
+			return frameWrapper.getTitleFormat();
+		}
         return formatting;
     }
     
