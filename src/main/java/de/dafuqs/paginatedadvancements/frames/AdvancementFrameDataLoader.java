@@ -44,7 +44,7 @@ public class AdvancementFrameDataLoader extends JsonDataLoader implements Identi
 		return PaginatedAdvancementsClient.locate(ID);
 	}
 	
-	public static FrameWrapper get(Identifier id) {
+	public static @Nullable FrameWrapper get(Identifier id) {
 		return ADVANCEMENT_FRAMES.getOrDefault(id, null);
 	}
 	

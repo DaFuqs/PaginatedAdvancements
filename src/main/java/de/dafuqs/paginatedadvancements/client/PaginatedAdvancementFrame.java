@@ -3,27 +3,30 @@ package de.dafuqs.paginatedadvancements.client;
 import net.minecraft.text.*;
 import net.minecraft.util.*;
 
-public enum PaginatedAdvancementFrame {
+public class PaginatedAdvancementFrame {
 	
-	NOTE("note", 0, 0, Formatting.UNDERLINE),
-	PROGRESS("progress", 0, 78, Formatting.BLUE);
-	
-	private final String id;
+	private final Identifier id;
+	private final Identifier textureSheet;
 	private final int textureV;
 	private final int textureU;
 	private final Formatting titleFormat;
 	private final Text toastText;
 	
-	PaginatedAdvancementFrame(String id, int texU, int texV, Formatting titleFormat) {
+	public PaginatedAdvancementFrame(Identifier id, Identifier textureSheet, int texU, int texV, Formatting titleFormat) {
 		this.id = id;
+		this.textureSheet = textureSheet;
 		this.textureU = texU;
 		this.textureV = texV;
 		this.titleFormat = titleFormat;
 		this.toastText = Text.translatable("advancements.toast." + id);
 	}
 	
-	public String getId() {
+	public Identifier getId() {
 		return this.id;
+	}
+	
+	public Identifier getTextureSheet() {
+		return this.textureSheet;
 	}
 	
 	public int getTextureU() {
@@ -41,6 +44,5 @@ public enum PaginatedAdvancementFrame {
 	public Text getToastText() {
 		return this.toastText;
 	}
-	
 	
 }

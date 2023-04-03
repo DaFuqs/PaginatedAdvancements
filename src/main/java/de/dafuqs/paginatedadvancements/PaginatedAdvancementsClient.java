@@ -32,6 +32,7 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 		CONFIG_MANAGER = ((ConfigManager<PaginatedAdvancementsConfig>) configHolder);
 		CONFIG = AutoConfig.getConfigHolder(PaginatedAdvancementsConfig.class).getConfig();
 		
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameTypeDataLoader.INSTANCE);
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameDataLoader.INSTANCE);
 	}
 	
