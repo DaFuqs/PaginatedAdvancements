@@ -8,9 +8,17 @@ import org.jetbrains.annotations.*;
 public abstract class FrameWrapper {
 	
 	public abstract Identifier getId();
+	
 	public abstract int getTextureU();
+	
 	public abstract int getTextureV();
+	
+	public abstract int getItemOffsetX();
+	
+	public abstract int getItemOffsetY();
+	
 	public abstract Formatting getTitleFormat();
+	
 	public abstract Identifier getTextureSheet();
 	
 	public static class VanillaFrameWrapper extends FrameWrapper {
@@ -33,6 +41,16 @@ public abstract class FrameWrapper {
 		@Override
 		public int getTextureV() {
 			return 128;
+		}
+		
+		@Override
+		public int getItemOffsetX() {
+			return 0;
+		}
+		
+		@Override
+		public int getItemOffsetY() {
+			return 0;
 		}
 		
 		@Override
@@ -66,6 +84,16 @@ public abstract class FrameWrapper {
 		@Override
 		public int getTextureV() {
 			return frame.getTextureV();
+		}
+		
+		@Override
+		public int getItemOffsetX() {
+			return frame.getItemOffsetX();
+		}
+		
+		@Override
+		public int getItemOffsetY() {
+			return frame.getItemOffsetY();
 		}
 		
 		@Override

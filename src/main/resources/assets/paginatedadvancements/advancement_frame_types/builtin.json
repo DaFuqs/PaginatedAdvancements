@@ -5,6 +5,8 @@
       "name": "arrow",
       "x": 0,
       "y": 0,
+      "item_offset_x": -4,
+      "item_offset_y": 0,
       "formatting": "yellow"
     },
     {
@@ -59,12 +61,14 @@
       "name": "sharp",
       "x": 0,
       "y": 52,
-      "formatting": "light_gray"
+      "formatting": "gray"
     },
     {
       "name": "speech_bubble",
       "x": 26,
       "y": 52,
+      "item_offset_x": 0,
+      "item_offset_y": -1,
       "formatting": "white"
     },
     {

@@ -58,11 +58,13 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			if (frameWrapper == null) {
 				RenderSystem.setShaderTexture(0, VANILLA_WIDGETS_TEXTURE);
 				drawTexture(matrices, x + accessor.getX() + 3, y + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
+				MinecraftClient.getInstance().getItemRenderer().renderInGui(matrices, accessor.getDisplay().getIcon(), x + accessor.getX() + 8, y + accessor.getY() + 5);
 			} else {
 				RenderSystem.setShaderTexture(0, frameWrapper.getTextureSheet());
 				drawTexture(matrices, x + accessor.getX() + 3, y + accessor.getY(), frameWrapper.getTextureU(), frameWrapper.getTextureV() + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
+				MinecraftClient.getInstance().getItemRenderer().renderInGui(matrices, accessor.getDisplay().getIcon(), x + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), y + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
+				
 			}
-			MinecraftClient.getInstance().getItemRenderer().renderInGui(matrices, accessor.getDisplay().getIcon(), x + accessor.getX() + 8, y + accessor.getY() + 5);
 		}
 		
 		for (AdvancementWidget advancementWidget : accessor.getChildren()) {
@@ -180,7 +182,11 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			}
 		}
 		
-		MinecraftClient.getInstance().getItemRenderer().renderInGui(matrices, accessor.getDisplay().getIcon(), originX + accessor.getX() + 8, originY + accessor.getY() + 5);
+		if (frameWrapper == null) {
+			MinecraftClient.getInstance().getItemRenderer().renderInGui(matrices, accessor.getDisplay().getIcon(), originX + accessor.getX() + 8, originY + accessor.getY() + 5);
+		} else {
+			MinecraftClient.getInstance().getItemRenderer().renderInGui(matrices, accessor.getDisplay().getIcon(), originX + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), originY + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
+		}
 	}
 	
 }
