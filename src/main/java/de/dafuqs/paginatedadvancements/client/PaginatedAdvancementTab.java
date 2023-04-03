@@ -3,7 +3,7 @@ package de.dafuqs.paginatedadvancements.client;
 import com.google.common.collect.*;
 import com.mojang.blaze3d.systems.*;
 import de.dafuqs.paginatedadvancements.*;
-import de.dafuqs.paginatedadvancements.accessors.*;
+import de.dafuqs.paginatedadvancements.mixin.*;
 import net.minecraft.advancement.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.screen.advancement.*;
@@ -270,7 +270,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		
 		String[][] requirements = progressAccessor.getRequirements();
 		
-		Text idText = Text.literal("ID: " + widgetAccessor.getAdvancementID().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
+		Text idText = Text.literal("ID: " + widgetAccessor.getAdvancement().getId().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
 		this.client.textRenderer.drawWithShadow(matrices, idText, startX, startY, 0xFFFFFF);
 		
 		for(String[] requirementGroup : requirements) {
@@ -394,7 +394,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public void copyHoveredAdvancementID() {
 		if(this.hoveredWidget != null) {
 			AdvancementWidgetAccessor awa = (AdvancementWidgetAccessor) this.hoveredWidget;
-			MinecraftClient.getInstance().keyboard.setClipboard(awa.getAdvancementID().toString());
+			MinecraftClient.getInstance().keyboard.setClipboard(awa.getAdvancement().getId().toString());
 			MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.translatable("text.paginated_advancements.copied_to_clipboard"), false);
 		}
 	}

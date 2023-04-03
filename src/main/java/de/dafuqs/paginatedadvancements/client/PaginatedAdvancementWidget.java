@@ -20,9 +20,25 @@ import java.util.*;
 public class PaginatedAdvancementWidget extends AdvancementWidget {
 	
 	private static final Identifier VANILLA_WIDGETS_TEXTURE = new Identifier("textures/gui/advancements/widgets.png");
+	protected List<OrderedText> description;
+	protected @Nullable FrameWrapper frameWrapper;
 	
 	public PaginatedAdvancementWidget(AdvancementTab tab, MinecraftClient client, Advancement advancement, AdvancementDisplay display) {
 		super(tab, client, advancement, display);
+		frameWrapper = AdvancementFrameDataLoader.get(((AdvancementWidgetAccessor) this).getAdvancement().getId());
+		
+		FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancement.getId());
+		if (frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper) {
+			int requirementCount = advancement.getRequirementCount();
+			int k = requirementCount > 1 ? client.textRenderer.getWidth("  ") + client.textRenderer.getWidth("0") * String.valueOf(requirementCount).length() * 2 + client.textRenderer.getWidth("/") : 0;
+			OrderedText title = Language.getInstance().reorder(client.textRenderer.trimToWidth(display.getTitle(), 163));
+			int l = 29 + client.textRenderer.getWidth(title) + k;
+			this.description = Language.getInstance().reorder(((AdvancementWidgetAccessor) this).invokeWrapDescription(Texts.setStyleIfAbsent(display.getDescription().copy(), Style.EMPTY.withColor(frameWrapper.getTitleFormat())), l));
+			OrderedText orderedText;
+			for (Iterator<OrderedText> var9 = this.description.iterator(); var9.hasNext(); l = Math.max(l, client.textRenderer.getWidth(orderedText))) {
+				orderedText = var9.next();
+			}
+		}
 	}
 	
 	@Override
@@ -44,7 +60,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 				drawTexture(matrices, x + accessor.getX() + 3, y + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
 			} else {
 				RenderSystem.setShaderTexture(0, frameWrapper.getTextureSheet());
-				drawTexture(matrices, x + accessor.getX() + 3, y + accessor.getY(), frameWrapper.getTextureV(), frameWrapper.getTextureU() + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
+				drawTexture(matrices, x + accessor.getX() + 3, y + accessor.getY(), frameWrapper.getTextureU(), frameWrapper.getTextureV() + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
 			}
 			MinecraftClient.getInstance().getItemRenderer().renderInGui(matrices, accessor.getDisplay().getIcon(), x + accessor.getX() + 8, y + accessor.getY() + 5);
 		}
@@ -59,11 +75,13 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
 		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 		
+		List<OrderedText> description = this.description == null ? accessor.getDescription() : this.description;
+		
 		boolean bl = x + originX + accessor.getX() + accessor.getWidth() + 26 >= accessor.getTab().getScreen().width;
 		String string = accessor.getProgress() == null ? null : accessor.getProgress().getProgressBarFraction();
 		int i = string == null ? 0 : textRenderer.getWidth(string);
 		int var10000 = 113 - originY - accessor.getY() - 26;
-		int var10002 = accessor.getDescription().size();
+		int var10002 = description.size();
 		
 		boolean bl2 = var10000 <= 6 + var10002 * 9;
 		float f = accessor.getProgress() == null ? 0.0F : accessor.getProgress().getProgressBarPercentage();
@@ -104,8 +122,8 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			m = originX + accessor.getX();
 		}
 		
-		int n = 32 + accessor.getDescription().size() * 9;
-		if (!accessor.getDescription().isEmpty()) {
+		int n = 32 + description.size() * 9;
+		if (!description.isEmpty()) {
 			if (bl2) {
 				drawNineSlicedTexture(matrices, m, l + 26 - n, accessor.getWidth(), n, 10, 200, 26, 0, 52);
 			} else {
@@ -116,12 +134,12 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		drawTexture(matrices, m, l, 0, advancementObtainedStatus.getSpriteIndex() * 26, j, 26);
 		drawTexture(matrices, m + j, l, 200 - k, advancementObtainedStatus2.getSpriteIndex() * 26, k, 26);
 		
-		@Nullable FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(accessor.getAdvancement().getId());
-		if (frameWrapper == null) {
+		
+		if (this.frameWrapper == null) {
 			drawTexture(matrices, originX + accessor.getX() + 3, originY + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus3.getSpriteIndex() * 26, 26, 26);
 		} else {
-			RenderSystem.setShaderTexture(0, frameWrapper.getTextureSheet());
-			drawTexture(matrices, originX + accessor.getX() + 3, originY + accessor.getY(), frameWrapper.getTextureV(), frameWrapper.getTextureU() + advancementObtainedStatus3.getSpriteIndex() * 26, 26, 26);
+			RenderSystem.setShaderTexture(0, this.frameWrapper.getTextureSheet());
+			drawTexture(matrices, originX + accessor.getX() + 3, originY + accessor.getY(), this.frameWrapper.getTextureU(), this.frameWrapper.getTextureV() + advancementObtainedStatus3.getSpriteIndex() * 26, 26, 26);
 			RenderSystem.setShaderTexture(0, VANILLA_WIDGETS_TEXTURE);
 		}
 		
@@ -143,18 +161,18 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		TextRenderer var21;
 		OrderedText var22;
 		if (bl2) {
-			for (o = 0; o < accessor.getDescription().size(); ++o) {
+			for (o = 0; o < description.size(); ++o) {
 				var21 = textRenderer;
-				var22 = accessor.getDescription().get(o);
+				var22 = description.get(o);
 				var10003 = (float) (m + 5);
 				var10004 = l + 26 - n + 7;
 				Objects.requireNonNull(textRenderer);
 				var21.draw(matrices, var22, var10003, (float) (var10004 + o * 9), -5592406);
 			}
 		} else {
-			for (o = 0; o < accessor.getDescription().size(); ++o) {
+			for (o = 0; o < description.size(); ++o) {
 				var21 = textRenderer;
-				var22 = accessor.getDescription().get(o);
+				var22 = description.get(o);
 				var10003 = (float) (m + 5);
 				var10004 = originY + accessor.getY() + 9 + 17;
 				Objects.requireNonNull(textRenderer);

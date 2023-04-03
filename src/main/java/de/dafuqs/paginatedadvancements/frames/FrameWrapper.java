@@ -1,24 +1,17 @@
 package de.dafuqs.paginatedadvancements.frames;
 
-import de.dafuqs.paginatedadvancements.*;
 import de.dafuqs.paginatedadvancements.client.*;
 import net.minecraft.advancement.*;
-import net.minecraft.text.*;
 import net.minecraft.util.*;
 import org.jetbrains.annotations.*;
 
 public abstract class FrameWrapper {
 	
-	public abstract String getId();
+	public abstract Identifier getId();
 	
 	public abstract int getTextureU();
-	
 	public abstract int getTextureV();
-	
 	public abstract Formatting getTitleFormat();
-	
-	public abstract Text getToastText();
-	
 	public abstract Identifier getTextureSheet();
 	
 	public static class VanillaFrameWrapper extends FrameWrapper {
@@ -29,18 +22,18 @@ public abstract class FrameWrapper {
 		}
 		
 		@Override
-		public String getId() {
-			return frame.getId();
+		public Identifier getId() {
+			return new Identifier(frame.getId());
 		}
 		
 		@Override
 		public int getTextureU() {
-			return 128;
+			return frame.getTextureV();
 		}
 		
 		@Override
 		public int getTextureV() {
-			return frame.getTextureV();
+			return 128;
 		}
 		
 		@Override
@@ -49,25 +42,20 @@ public abstract class FrameWrapper {
 		}
 		
 		@Override
-		public Text getToastText() {
-			return frame.getToastText();
-		}
-		
-		@Override
 		public Identifier getTextureSheet() {
 			return new Identifier("textures/gui/advancements/widgets.png");
 		}
 	}
 	
-	public static class ExtendedFrameWrapper extends FrameWrapper {
+	public static class PaginatedFrameWrapper extends FrameWrapper {
 		public final PaginatedAdvancementFrame frame;
 		
-		private ExtendedFrameWrapper(PaginatedAdvancementFrame frame) {
+		private PaginatedFrameWrapper(PaginatedAdvancementFrame frame) {
 			this.frame = frame;
 		}
 		
 		@Override
-		public String getId() {
+		public Identifier getId() {
 			return frame.getId();
 		}
 		
@@ -87,13 +75,8 @@ public abstract class FrameWrapper {
 		}
 		
 		@Override
-		public Text getToastText() {
-			return frame.getToastText();
-		}
-		
-		@Override
 		public Identifier getTextureSheet() {
-			return PaginatedAdvancementsClient.locate("textures/gui/frames.png");
+			return frame.getTextureSheet();
 		}
 	}
 	
@@ -105,14 +88,10 @@ public abstract class FrameWrapper {
 					return new VanillaFrameWrapper(vanillaFrame);
 				}
 			}
-		} else if (frame.getNamespace().equals(PaginatedAdvancementsClient.MOD_ID)) {
-			for (PaginatedAdvancementFrame customFrame : PaginatedAdvancementFrame.values()) {
-				if (customFrame.getId().equals(path)) {
-					return new ExtendedFrameWrapper(customFrame);
-				}
-			}
 		}
-		return null;
+		
+		@Nullable PaginatedAdvancementFrame paginatedFrame = AdvancementFrameTypeDataLoader.get(frame);
+		return paginatedFrame == null ? null : new PaginatedFrameWrapper(paginatedFrame);
 	}
 	
 }
