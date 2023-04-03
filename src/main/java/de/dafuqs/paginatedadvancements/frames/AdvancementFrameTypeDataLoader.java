@@ -32,9 +32,16 @@ public class AdvancementFrameTypeDataLoader extends JsonDataLoader implements Id
 			for (JsonElement frameEntry : object.get("frames").getAsJsonArray()) {
 				JsonObject jsonObject = frameEntry.getAsJsonObject();
 				Identifier name = new Identifier(identifier.getNamespace(), jsonObject.get("name").getAsString());
-				int u = jsonObject.get("u").getAsInt();
-				int v = jsonObject.get("v").getAsInt();
-				Formatting formatting = Formatting.byName(jsonObject.get("formatting").getAsString());
+				int u = jsonObject.get("x").getAsInt();
+				int v = jsonObject.get("y").getAsInt();
+				String formattingString = jsonObject.get("formatting").getAsString();
+				Formatting formatting = Formatting.byName(formattingString);
+				
+				if (formatting == null) {
+					// green is the vanilla default for most AdvancementFrames
+					PaginatedAdvancementsClient.LOGGER.error("Formatting for frame '" + name + "' is invalid: '" + formattingString + "'. Will use default 'green'");
+					formatting = Formatting.GREEN;
+				}
 				
 				PaginatedAdvancementFrame frame = new PaginatedAdvancementFrame(name, textureSheet, u, v, formatting);
 				FRAMES.put(name, frame);

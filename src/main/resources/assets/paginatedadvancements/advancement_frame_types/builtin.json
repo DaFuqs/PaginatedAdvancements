@@ -2,16 +2,82 @@
   "texture_sheet": "textures/gui/frames.png",
   "frames": [
     {
-      "name": "progress",
-      "u": 78,
-      "v": 0,
-      "formatting": "red"
+      "name": "arrow",
+      "x": 0,
+      "y": 0,
+      "formatting": "yellow"
     },
     {
-      "name": "note",
-      "u": 0,
-      "v": 26,
+      "name": "squircle",
+      "x": 26,
+      "y": 0,
+      "formatting": "gray"
+    },
+    {
+      "name": "star",
+      "x": 52,
+      "y": 0,
+      "formatting": "gold"
+    },
+    {
+      "name": "butterfly",
+      "x": 78,
+      "y": 0,
+      "formatting": "light_purple"
+    },
+    {
+      "name": "crested",
+      "x": 104,
+      "y": 0,
+      "formatting": "aqua"
+    },
+    {
+      "name": "corners",
+      "x": 130,
+      "y": 0,
       "formatting": "blue"
+    },
+    {
+      "name": "circle",
+      "x": 156,
+      "y": 0,
+      "formatting": "dark_gray"
+    },
+    {
+      "name": "excessive",
+      "x": 182,
+      "y": 0,
+      "formatting": "black"
+    },
+    {
+      "name": "none",
+      "x": 208,
+      "y": 0,
+      "formatting": "green"
+    },
+    {
+      "name": "sharp",
+      "x": 0,
+      "y": 52,
+      "formatting": "light_gray"
+    },
+    {
+      "name": "speech_bubble",
+      "x": 26,
+      "y": 52,
+      "formatting": "white"
+    },
+    {
+      "name": "edged",
+      "x": 78,
+      "y": 52,
+      "formatting": "dark_green"
+    },
+    {
+      "name": "heart",
+      "x": 52,
+      "y": 52,
+      "formatting": "light_purple"
     }
   ]
 }
