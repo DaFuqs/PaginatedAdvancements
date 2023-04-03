@@ -19,7 +19,7 @@ public class PaginatedAdvancementTabType extends DrawableHelper {
     public static void drawBackground(MatrixStack matrices, DrawableHelper tab, int x, int y, boolean selected, int index) {
         int i = index > 0 ? WIDTH : 0;
         int j = selected ? HEIGHT : 0;
-        drawTexture(matrices, x + getTabX(index), y + getTabY(), i, j, WIDTH, HEIGHT);
+        tab.drawTexture(matrices, x + getTabX(index), y + getTabY(), i, j, WIDTH, HEIGHT);
     }
 
     public static void drawIcon(int x, int y, int index, @NotNull ItemRenderer itemRenderer, ItemStack icon) {
