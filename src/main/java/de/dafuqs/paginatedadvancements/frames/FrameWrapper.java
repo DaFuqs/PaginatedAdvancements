@@ -8,7 +8,6 @@ import org.jetbrains.annotations.*;
 public abstract class FrameWrapper {
 	
 	public abstract Identifier getId();
-	
 	public abstract int getTextureU();
 	public abstract int getTextureV();
 	public abstract Formatting getTitleFormat();
