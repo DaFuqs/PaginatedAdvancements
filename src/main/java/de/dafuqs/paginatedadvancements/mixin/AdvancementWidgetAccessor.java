@@ -41,4 +41,7 @@ public interface AdvancementWidgetAccessor {
 	@Accessor(value = "title")
 	OrderedText getTitle();
 	
+	@Invoker(value = "wrapDescription")
+	List<StringVisitable> invokeWrapDescription(Text text, int width);
+	
 }

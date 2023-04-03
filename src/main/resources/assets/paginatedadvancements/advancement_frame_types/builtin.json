@@ -1,0 +1,17 @@
+{
+  "texture_sheet": "textures/gui/frames.png",
+  "frames": [
+    {
+      "name": "progress",
+      "u": 78,
+      "v": 0,
+      "formatting": "red"
+    },
+    {
+      "name": "note",
+      "u": 0,
+      "v": 26,
+      "formatting": "blue"
+    }
+  ]
+}
