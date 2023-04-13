@@ -41,49 +41,49 @@
     },
     {
       "name": "squircle",
-      "x": 26,
+      "x": 0,
       "y": 52,
       "formatting": "gray"
     },
     {
       "name": "star",
-      "x": 52,
+      "x": 26,
       "y": 52,
       "formatting": "gold"
     },
     {
       "name": "butterfly",
-      "x": 78,
+      "x": 52,
       "y": 52,
       "formatting": "light_purple"
     },
     {
       "name": "crested",
-      "x": 104,
+      "x": 78,
       "y": 52,
       "formatting": "aqua"
     },
     {
       "name": "corners",
-      "x": 130,
+      "x": 104,
       "y": 52,
       "formatting": "blue"
     },
     {
       "name": "circle",
-      "x": 156,
+      "x": 130,
       "y": 52,
       "formatting": "dark_gray"
     },
     {
       "name": "excessive",
-      "x": 182,
+      "x": 156,
       "y": 52,
       "formatting": "black"
     },
     {
       "name": "none",
-      "x": 208,
+      "x": 182,
       "y": 52,
       "formatting": "green"
     },
