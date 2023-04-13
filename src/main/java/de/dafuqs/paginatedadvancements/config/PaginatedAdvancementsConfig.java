@@ -1,11 +1,11 @@
 package de.dafuqs.paginatedadvancements.config;
 
-import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+import me.shedaniel.autoconfig.*;
+import me.shedaniel.autoconfig.annotation.*;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.*;
+import net.minecraft.client.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Config(name = "PaginatedAdvancements")
 public class PaginatedAdvancementsConfig implements ConfigData {
@@ -28,12 +28,32 @@ public class PaginatedAdvancementsConfig implements ConfigData {
 	@Comment("Spacing between pinned tabs")
 	public int SpacingBetweenPinnedTabs = 2;
 	
-	@Comment("Always Show Debug Info (default: only when advanced tooltips enabled)")
-	public boolean AlwaysShowDebugInfo = false;
+	@Comment("Show Debug Info on advancement hover (possible values: 'always', 'never', 'debug_tooltips_enabled')")
+	public DebugInfoSetting ShowDebugInfo = DebugInfoSetting.DEBUG_TOOLTIPS_ENABLED;
+	
+	public enum DebugInfoSetting {
+		ALWAYS,
+		DEBUG_TOOLTIPS_ENABLED,
+		NEVER
+	}
 	
 	@Override
 	public void validatePostLoad() {
-
+	
+	}
+	
+	public boolean shouldShowAdvancementDebug(MinecraftClient client) {
+		switch (ShowDebugInfo) {
+			case ALWAYS -> {
+				return true;
+			}
+			case DEBUG_TOOLTIPS_ENABLED -> {
+				return client.options.advancedItemTooltips;
+			}
+			default -> {
+				return false;
+			}
+		}
 	}
 	
 }

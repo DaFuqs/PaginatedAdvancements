@@ -63,7 +63,6 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 				RenderSystem.setShaderTexture(0, frameWrapper.getTextureSheet());
 				drawTexture(matrices, x + accessor.getX() + 3, y + accessor.getY(), frameWrapper.getTextureU(), frameWrapper.getTextureV() + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
 				MinecraftClient.getInstance().getItemRenderer().renderInGui(matrices, accessor.getDisplay().getIcon(), x + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), y + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
-				
 			}
 		}
 		
@@ -79,7 +78,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		
 		List<OrderedText> description = this.description == null ? accessor.getDescription() : this.description;
 		
-		boolean bl = x + originX + accessor.getX() + accessor.getWidth() + 26 >= accessor.getTab().getScreen().width;
+		boolean shouldRenderToTheLeft = x + originX + accessor.getX() + accessor.getWidth() + 26 >= accessor.getTab().getScreen().width;
 		String string = accessor.getProgress() == null ? null : accessor.getProgress().getProgressBarFraction();
 		int i = string == null ? 0 : textRenderer.getWidth(string);
 		int var10000 = 113 - originY - accessor.getY() - 26;
@@ -117,24 +116,24 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		
 		RenderSystem.enableBlend();
 		int l = originY + accessor.getY();
-		int m;
-		if (bl) {
-			m = originX + accessor.getX() - accessor.getX() + 26 + 6;
+		int startX;
+		if (shouldRenderToTheLeft) {
+			startX = originX + accessor.getX() - accessor.getWidth() + 26 + 6;
 		} else {
-			m = originX + accessor.getX();
+			startX = originX + accessor.getX();
 		}
 		
 		int n = 32 + description.size() * 9;
 		if (!description.isEmpty()) {
 			if (bl2) {
-				drawNineSlicedTexture(matrices, m, l + 26 - n, accessor.getWidth(), n, 10, 200, 26, 0, 52);
+				drawNineSlicedTexture(matrices, startX, l + 26 - n, accessor.getWidth(), n, 10, 200, 26, 0, 52);
 			} else {
-				drawNineSlicedTexture(matrices, m, l, accessor.getWidth(), n, 10, 200, 26, 0, 52);
+				drawNineSlicedTexture(matrices, startX, l, accessor.getWidth(), n, 10, 200, 26, 0, 52);
 			}
 		}
 		
-		drawTexture(matrices, m, l, 0, advancementObtainedStatus.getSpriteIndex() * 26, j, 26);
-		drawTexture(matrices, m + j, l, 200 - k, advancementObtainedStatus2.getSpriteIndex() * 26, k, 26);
+		drawTexture(matrices, startX, l, 0, advancementObtainedStatus.getSpriteIndex() * 26, j, 26);
+		drawTexture(matrices, startX + j, l, 200 - k, advancementObtainedStatus2.getSpriteIndex() * 26, k, 26);
 		
 		
 		if (this.frameWrapper == null) {
@@ -145,8 +144,8 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			RenderSystem.setShaderTexture(0, VANILLA_WIDGETS_TEXTURE);
 		}
 		
-		if (bl) {
-			textRenderer.drawWithShadow(matrices, accessor.getTitle(), (float) (m + 5), (float) (originY + accessor.getY() + 9), -1);
+		if (shouldRenderToTheLeft) {
+			textRenderer.drawWithShadow(matrices, accessor.getTitle(), (float) (startX + 5), (float) (originY + accessor.getY() + 9), -1);
 			if (string != null) {
 				textRenderer.drawWithShadow(matrices, string, (float) (originX + accessor.getX() - i), (float) (originY + accessor.getY() + 9), -1);
 			}
@@ -166,7 +165,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			for (o = 0; o < description.size(); ++o) {
 				var21 = textRenderer;
 				var22 = description.get(o);
-				var10003 = (float) (m + 5);
+				var10003 = (float) (startX + 5);
 				var10004 = l + 26 - n + 7;
 				Objects.requireNonNull(textRenderer);
 				var21.draw(matrices, var22, var10003, (float) (var10004 + o * 9), -5592406);
@@ -175,7 +174,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			for (o = 0; o < description.size(); ++o) {
 				var21 = textRenderer;
 				var22 = description.get(o);
-				var10003 = (float) (m + 5);
+				var10003 = (float) (startX + 5);
 				var10004 = originY + accessor.getY() + 9 + 17;
 				Objects.requireNonNull(textRenderer);
 				var21.draw(matrices, var22, var10003, (float) (var10004 + o * 9), -5592406);
