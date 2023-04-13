@@ -508,7 +508,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			this.selectedTab.drawWidgetTooltip(matrices, mouseX - startX - 9, mouseY - startY - 18, startX, startY, endXWindow, endY);
 			
 			matrices.translate(0, 0, 400.0D);
-			if(PaginatedAdvancementsClient.CONFIG.AlwaysShowDebugInfo || this.client.options.advancedItemTooltips) {
+			if (PaginatedAdvancementsClient.CONFIG.shouldShowAdvancementDebug(this.client)) {
 				this.selectedTab.drawDebugInfo(matrices, startX, endXWindow, endY);
 			}
 			
