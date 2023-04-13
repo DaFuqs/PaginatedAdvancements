@@ -5,6 +5,7 @@
   "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "The identifier of the last opened tab",
   "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "Spacing between horizontal tabs",
   "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "Spacing between pinned tabs",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "Show Debug Info on advancement hover (possible values: 'always', 'never', 'debug_tooltips_enabled')",
 
   "text.paginated_advancements.copied_to_clipboard": "Copied Advancement ID to clipboard",
   "text.paginated_advancements.group": "Group: ",
