@@ -103,13 +103,13 @@
     },
     {
       "name": "edged",
-      "x": 78,
+      "x": 52,
       "y": 104,
       "formatting": "dark_green"
     },
     {
       "name": "heart",
-      "x": 52,
+      "x": 78,
       "y": 104,
       "formatting": "light_purple"
     }
