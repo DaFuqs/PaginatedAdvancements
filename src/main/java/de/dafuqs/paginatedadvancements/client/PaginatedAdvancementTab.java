@@ -103,8 +103,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		
 		if (!this.initialized) {
 			// the center of the advancement tree render at the start
-			this.originX = (double) ((((advancementTreeWindowWidth) / 2)) - (this.maxPanX + this.minPanX) / 2);
-			this.originY = (double) ((((advancementTreeWindowHeight) / 2)) - (this.maxPanY + this.minPanY) / 2);
+			this.originX = (double) ((((advancementTreeWindowWidth) / 2)) - (this.maxPanX + this.minPanX) / 2) - 22;
+			this.originY = (double) ((((advancementTreeWindowHeight) / 2)) - (this.maxPanY + this.minPanY) / 2) - 32;
 			this.initialized = true;
 		}
 		
@@ -130,12 +130,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		this.rootWidget.renderLines(context, i, j, false);
 		this.rootWidget.renderWidgets(context, i, j);
 		
-		
 		context.getMatrices().pop();
 		context.disableScissor();
-		
-		context.drawHorizontalLine(startX, endX, startY, 0xFF0000);
-		context.drawHorizontalLine(startX, endX, endY, 0x00FF00);
 	}
 	
 	public void drawWidgetTooltip(DrawContext context, int mouseX, int mouseY, int startX, int startY, int endXWindow, int endY) {
