@@ -7,8 +7,8 @@ import net.fabricmc.api.*;
 import net.minecraft.advancement.*;
 import net.minecraft.client.*;
 import net.minecraft.client.font.*;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.advancement.*;
-import net.minecraft.client.util.math.*;
 import net.minecraft.text.*;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
@@ -22,9 +22,11 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 	private static final Identifier VANILLA_WIDGETS_TEXTURE = new Identifier("textures/gui/advancements/widgets.png");
 	protected List<OrderedText> description;
 	protected @Nullable FrameWrapper frameWrapper;
+	private final MinecraftClient client;
 	
 	public PaginatedAdvancementWidget(AdvancementTab tab, MinecraftClient client, Advancement advancement, AdvancementDisplay display) {
 		super(tab, client, advancement, display);
+		this.client = client;
 		frameWrapper = AdvancementFrameDataLoader.get(((AdvancementWidgetAccessor) this).getAdvancement().getId());
 		
 		FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancement.getId());
@@ -42,7 +44,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 	}
 	
 	@Override
-	public void renderWidgets(MatrixStack matrices, int x, int y) {
+	public void renderWidgets(DrawContext context, int x, int y) {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
 		
 		if (!accessor.getDisplay().isHidden() || accessor.getProgress() != null && accessor.getProgress().isDone()) {
@@ -56,25 +58,23 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			
 			@Nullable FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(accessor.getAdvancement().getId());
 			if (frameWrapper == null) {
-				RenderSystem.setShaderTexture(0, VANILLA_WIDGETS_TEXTURE);
-				drawTexture(matrices, x + accessor.getX() + 3, y + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
-				MinecraftClient.getInstance().getItemRenderer().renderInGui(accessor.getDisplay().getIcon(), x + accessor.getX() + 8, y + accessor.getY() + 5);
+				context.drawTexture(VANILLA_WIDGETS_TEXTURE, x + accessor.getX() + 3, y + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
+				context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), x + accessor.getX() + 8, y + accessor.getY() + 5);
 			} else {
-				RenderSystem.setShaderTexture(0, frameWrapper.getTextureSheet());
-				drawTexture(matrices, x + accessor.getX() + 3, y + accessor.getY(), frameWrapper.getTextureU(), frameWrapper.getTextureV() + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
-				MinecraftClient.getInstance().getItemRenderer().renderInGui(accessor.getDisplay().getIcon(), x + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), y + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
+				context.drawTexture(frameWrapper.getTextureSheet(), x + accessor.getX() + 3, y + accessor.getY(), frameWrapper.getTextureU(), frameWrapper.getTextureV() + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
+				context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), x + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), y + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
 			}
 		}
 		
 		for (AdvancementWidget advancementWidget : accessor.getChildren()) {
-			advancementWidget.renderWidgets(matrices, x, y);
+			advancementWidget.renderWidgets(context, x, y);
 		}
 	}
 	
 	@Override
-	public void drawTooltip(MatrixStack matrices, int originX, int originY, float alpha, int x, int y) {
+	public void drawTooltip(DrawContext context, int originX, int originY, float alpha, int x, int y) {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
-		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+		TextRenderer textRenderer = client.textRenderer;
 		
 		List<OrderedText> description = this.description == null ? accessor.getDescription() : this.description;
 		
@@ -126,65 +126,53 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		int n = 32 + description.size() * 9;
 		if (!description.isEmpty()) {
 			if (bl2) {
-				this.renderDescriptionBackground(matrices, startX, l + 26 - n, accessor.getWidth(), n, 10, 200, 26, 0, 52);
+				context.drawNineSlicedTexture(VANILLA_WIDGETS_TEXTURE, startX, l + 26 - n, accessor.getWidth(), n, 10, 200, 26, 0, 52);
 			} else {
-				this.renderDescriptionBackground(matrices, startX, l, accessor.getWidth(), n, 10, 200, 26, 0, 52);
+				context.drawNineSlicedTexture(VANILLA_WIDGETS_TEXTURE, startX, l, accessor.getWidth(), n, 10, 200, 26, 0, 52);
 			}
 		}
 		
-		drawTexture(matrices, startX, l, 0, advancementObtainedStatus.getSpriteIndex() * 26, j, 26);
-		drawTexture(matrices, startX + j, l, 200 - k, advancementObtainedStatus2.getSpriteIndex() * 26, k, 26);
-		
+		context.drawTexture(VANILLA_WIDGETS_TEXTURE, startX, l, 0, advancementObtainedStatus.getSpriteIndex() * 26, j, 26);
+		context.drawTexture(VANILLA_WIDGETS_TEXTURE, startX + j, l, 200 - k, advancementObtainedStatus2.getSpriteIndex() * 26, k, 26);
 		
 		if (this.frameWrapper == null) {
-			drawTexture(matrices, originX + accessor.getX() + 3, originY + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus3.getSpriteIndex() * 26, 26, 26);
+			context.drawTexture(VANILLA_WIDGETS_TEXTURE, originX + accessor.getX() + 3, originY + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus3.getSpriteIndex() * 26, 26, 26);
 		} else {
 			RenderSystem.setShaderTexture(0, this.frameWrapper.getTextureSheet());
-			drawTexture(matrices, originX + accessor.getX() + 3, originY + accessor.getY(), this.frameWrapper.getTextureU(), this.frameWrapper.getTextureV() + advancementObtainedStatus3.getSpriteIndex() * 26, 26, 26);
+			context.drawTexture(VANILLA_WIDGETS_TEXTURE, originX + accessor.getX() + 3, originY + accessor.getY(), this.frameWrapper.getTextureU(), this.frameWrapper.getTextureV() + advancementObtainedStatus3.getSpriteIndex() * 26, 26, 26);
 			RenderSystem.setShaderTexture(0, VANILLA_WIDGETS_TEXTURE);
 		}
 		
 		if (shouldRenderToTheLeft) {
-			textRenderer.drawWithShadow(matrices, accessor.getTitle(), (float) (startX + 5), (float) (originY + accessor.getY() + 9), -1);
+			context.drawTextWithShadow(textRenderer, accessor.getTitle(), startX + 5, originY + accessor.getY() + 9, -1);
 			if (string != null) {
-				textRenderer.drawWithShadow(matrices, string, (float) (originX + accessor.getX() - i), (float) (originY + accessor.getY() + 9), -1);
+				context.drawTextWithShadow(textRenderer, string, originX + accessor.getX() - i, originY + accessor.getY() + 9, -1);
 			}
 		} else {
-			textRenderer.drawWithShadow(matrices, accessor.getTitle(), (float) (originX + accessor.getX() + 32), (float) (originY + accessor.getY() + 9), -1);
+			context.drawTextWithShadow(textRenderer, accessor.getTitle(), originX + accessor.getX() + 32, originY + accessor.getY() + 9, -1);
 			if (string != null) {
-				textRenderer.drawWithShadow(matrices, string, (float) (originX + accessor.getX() + accessor.getWidth() - i - 5), (float) (originY + accessor.getY() + 9), -1);
+				context.drawTextWithShadow(textRenderer, string, originX + accessor.getX() + accessor.getWidth() - i - 5, originY + accessor.getY() + 9, -1);
 			}
 		}
 		
-		float var10003;
 		int o;
-		int var10004;
-		TextRenderer var21;
-		OrderedText var22;
+		OrderedText orderedDescription;
 		if (bl2) {
 			for (o = 0; o < description.size(); ++o) {
-				var21 = textRenderer;
-				var22 = description.get(o);
-				var10003 = (float) (startX + 5);
-				var10004 = l + 26 - n + 7;
-				Objects.requireNonNull(textRenderer);
-				var21.draw(matrices, var22, var10003, (float) (var10004 + o * 9), -5592406);
+				orderedDescription = description.get(o);
+				context.drawText(textRenderer, orderedDescription, startX + 5, l + 26 - n + 7 + o * 9, -5592406, false);
 			}
 		} else {
 			for (o = 0; o < description.size(); ++o) {
-				var21 = textRenderer;
-				var22 = description.get(o);
-				var10003 = (float) (startX + 5);
-				var10004 = originY + accessor.getY() + 9 + 17;
-				Objects.requireNonNull(textRenderer);
-				var21.draw(matrices, var22, var10003, (float) (var10004 + o * 9), -5592406);
+				orderedDescription = description.get(o);
+				context.drawText(textRenderer, orderedDescription, startX + 5, originY + accessor.getY() + 9 + 17 + o * 9, -5592406, false);
 			}
 		}
 		
 		if (frameWrapper == null) {
-			MinecraftClient.getInstance().getItemRenderer().renderInGui(accessor.getDisplay().getIcon(), originX + accessor.getX() + 8, originY + accessor.getY() + 5);
+			context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), originX + accessor.getX() + 8, originY + accessor.getY() + 5);
 		} else {
-			MinecraftClient.getInstance().getItemRenderer().renderInGui(accessor.getDisplay().getIcon(), originX + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), originY + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
+			context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), originX + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), originY + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
 		}
 	}
 	
