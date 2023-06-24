@@ -30,7 +30,8 @@
   "depends": {
     "minecraft": ">=1.20.0",
     "fabricloader": "*",
-    "fabric": "*"
+    "fabric": "*",
+    "cloth-config": ">=11.0.98"
   },
   "breaks": {
     "advancements-enlarger": "*",
