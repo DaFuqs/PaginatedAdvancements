@@ -21,8 +21,10 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 	
 	private static final Identifier VANILLA_WIDGETS_TEXTURE = new Identifier("textures/gui/advancements/widgets.png");
 	protected List<OrderedText> description;
+
 	protected @Nullable FrameWrapper frameWrapper;
 	private final MinecraftClient client;
+	private int debugScrollAmount;
 	
 	public PaginatedAdvancementWidget(AdvancementTab tab, MinecraftClient client, Advancement advancement, AdvancementDisplay display) {
 		super(tab, client, advancement, display);
@@ -41,8 +43,10 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 				orderedText = var9.next();
 			}
 		}
+
+		setDebugScrollAmount(0);
 	}
-	
+
 	@Override
 	public void renderWidgets(DrawContext context, int x, int y) {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
@@ -175,5 +179,11 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), originX + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), originY + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
 		}
 	}
-	
+
+	public int getDebugScrollAmount() {
+		return debugScrollAmount;
+	}
+	public void setDebugScrollAmount(int debugScrollAmount) {
+		this.debugScrollAmount = debugScrollAmount;
+	}
 }
