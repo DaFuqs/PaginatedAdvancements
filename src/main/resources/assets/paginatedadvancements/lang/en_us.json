@@ -10,5 +10,6 @@
 
   "text.paginated_advancements.copied_to_clipboard": "Copied Advancement ID to clipboard",
   "text.paginated_advancements.group": "Group: ",
-  "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C to copy)"
+  "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C to copy)",
+  "text.paginated_advancements.expand_debug": "[Shift]"
 }

@@ -464,7 +464,15 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			return super.keyPressed(keyCode, scanCode, modifiers);
 		}
 	}
-	
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+		if (this.selectedTab != null)
+			return this.selectedTab.scrollDebug(-(int)amount);
+		else
+			return false;
+	}
+
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
 		if (button != 0) {
 			this.movingTab = false;
@@ -492,7 +500,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			
 			context.getMatrices().translate(0, 0, 400.0D);
 			if (PaginatedAdvancementsClient.CONFIG.shouldShowAdvancementDebug(this.client)) {
-				this.selectedTab.drawDebugInfo(context, startX, endXWindow, endY);
+				this.selectedTab.drawDebugInfo(context, startX, startY, endXWindow, endY);
 			}
 			
 			RenderSystem.disableDepthTest();
