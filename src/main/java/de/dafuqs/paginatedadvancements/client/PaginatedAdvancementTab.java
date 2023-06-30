@@ -54,7 +54,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		this.rootWidget = new PaginatedAdvancementWidget(this, client, root, display);
 		this.addWidget(this.rootWidget, root);
 	}
-
+	
 	public AdvancementTabType getType() {
 		return AdvancementTabType.ABOVE;
 	}
@@ -173,33 +173,49 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		if (this.hoveredWidget != null) {
 			AdvancementWidgetAccessor advancementWidgetAccessor = (AdvancementWidgetAccessor) this.hoveredWidget;
 			AdvancementProgressAccessor advancementProgressAccessor = (AdvancementProgressAccessor) advancementWidgetAccessor.getProgress();
-
+			
 			startX = startX + 5 - 41;
 			endX = endX - 5 - 41;
 			endY = endY + 5 - 65;
 			startY = ((startY - 5 - 65) / 10) * 10 - 2;
-
-			List<MutableText> requirements = getRequirements(startX, endX-10, advancementWidgetAccessor, advancementProgressAccessor);
-
-			if (!hasShiftDown())
-				startY = endY - 30;
-			else
-				startY = Math.max(startY, endY - Math.max(28, 10 + 10 * (1 + requirements.size())));
-
-			drawDebugFrame(context, startX, startY, endX, endY, advancementWidgetAccessor, advancementProgressAccessor);
-			drawDebugText(context, startX + 5, startY + 5, endX - 5, endY, advancementWidgetAccessor, requirements);
+			
+			List<MutableText> requirements = getRequirements(startX, endX - 10, advancementWidgetAccessor, advancementProgressAccessor);
+			
+			boolean overflow = false;
+			int displayedLines;
+			if (!hasShiftDown()) {
+				overflow = requirements.size() > PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries;
+				displayedLines = Math.min(requirements.size(), PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries); // TODO
+			} else {
+				displayedLines = requirements.size();
+			}
+			
+			startY = Math.max(startY, endY - Math.max(28, 20 + 10 * displayedLines));
+			
+			drawDebugFrame(context, startX, startY, endX, endY);
+			
+			// the title
+			Text idText = Text.literal("ID: " + advancementWidgetAccessor.getAdvancement().getId().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
+			context.drawText(this.client.textRenderer, idText, startX + 5, startY + 5, 0xFFFFFF, true);
+			
+			// the requirements
+			if (overflow) {
+				drawRequirementsWithOverflow(context, startX + 5, startY + 15, endX - 5, endY, requirements, displayedLines);
+			} else {
+				drawRequirements(context, startX + 5, startY + 15, endX - 5, endY, requirements);
+			}
 		}
 	}
-
+	
 	private List<MutableText> getRequirements(int startX, int endX, AdvancementWidgetAccessor widgetAccessor, AdvancementProgressAccessor progressAccessor) {
 		AdvancementProgress progress = widgetAccessor.getProgress();
 		Iterable<String> obtainedCriteria = progress.getObtainedCriteria();
-
+		
 		String[][] requirements = progressAccessor.getRequirements();
-
+		
 		List<MutableText> requirementsDone = new ArrayList<>();
 		List<MutableText> requirementsLeft = new ArrayList<>();
-
+		
 		for (String[] requirementGroup : requirements) {
 			List<MutableText> lines = new ArrayList<>();
 			lines.add(Text.translatable("text.paginated_advancements.group").formatted(Formatting.DARK_RED));
@@ -213,18 +229,19 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 						break;
 					}
 				}
-				int newWidth = client.textRenderer.getWidth(lines.get(lines.size()-1)) + client.textRenderer.getWidth(requirementString);
-				if (newWidth > endX-startX) {
+				int newWidth = client.textRenderer.getWidth(lines.get(lines.size() - 1)) + client.textRenderer.getWidth(requirementString);
+				if (newWidth > endX - startX) {
 					String indent = "";
-					while (client.textRenderer.getWidth(indent) < client.textRenderer.getWidth(Text.translatable("text.paginated_advancements.group")))
+					while (client.textRenderer.getWidth(indent) < client.textRenderer.getWidth(Text.translatable("text.paginated_advancements.group"))) {
 						indent += " ";
+					}
 					lines.add(Text.literal(indent).formatted(Formatting.DARK_RED));
 				}
-				lines.get(lines.size()-1).append(Text.literal(requirementString + " ").formatted(formatting));
+				lines.get(lines.size() - 1).append(Text.literal(requirementString + " ").formatted(formatting));
 			}
-
+			
 			if (anyDone) {
-				for (MutableText line: lines) {
+				for (MutableText line : lines) {
 					line.formatted(Formatting.DARK_GREEN);
 					requirementsDone.add(line);
 				}
@@ -232,15 +249,15 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 				requirementsLeft.addAll(lines);
 			}
 		}
-
+		
 		List<MutableText> combined = new ArrayList<>();
 		combined.addAll(requirementsLeft);
 		combined.addAll(requirementsDone);
-
+		
 		return combined;
 	}
 	
-	public void drawDebugFrame(DrawContext context, int startX, int startY, int endX, int endY, AdvancementWidgetAccessor widgetAccessor, AdvancementProgressAccessor progressAccessor) {
+	protected void drawDebugFrame(DrawContext context, int startX, int startY, int endX, int endY) {
 		context.getMatrices().push();
 		
 		// corners
@@ -300,52 +317,54 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 		context.getMatrices().pop();
 	}
-
-	private void drawDebugText(DrawContext context, int startX, int startY, int endX, int endY, AdvancementWidgetAccessor widgetAccessor, List<MutableText> requirements) {
-		Text idText = Text.literal("ID: " + widgetAccessor.getAdvancement().getId().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
-		context.drawText(this.client.textRenderer, idText, startX, startY, 0xFFFFFF, true);
-		startY += 10;
-
-		if (!hasShiftDown()) {
-			context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.expand_debug"), startX, startY, 0x999999, false);
-			return;
+	
+	protected void drawRequirementsWithOverflow(DrawContext context, int startX, int startY, int endX, int endY, List<MutableText> requirements, int lines) {
+		for (int i = 0; i < lines; i++) {
+			if (i == lines - 1) {
+				context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.expand_debug"), startX, startY, 0x999999, false);
+			} else {
+				context.drawText(this.client.textRenderer, requirements.get(i), startX, startY, 0x00ff00, false);
+			}
+			startY += 10;
 		}
-
+	}
+	
+	protected void drawRequirements(DrawContext context, int startX, int startY, int endX, int endY, List<MutableText> requirements) {
 		int scrollAmount = 0;
 		assert this.hoveredWidget != null;
 		if (this.hoveredWidget.getClass() == PaginatedAdvancementWidget.class) {
 			scrollAmount = ((PaginatedAdvancementWidget) this.hoveredWidget).getDebugScrollAmount();
 			// clamp scroll amount
 			int maxLines = (endY - startY) / 10;
-			scrollAmount = Math.max(0, Math.min(requirements.size()-maxLines, scrollAmount));
+			scrollAmount = Math.max(0, Math.min(requirements.size() - maxLines, scrollAmount));
 			((PaginatedAdvancementWidget) this.hoveredWidget).setDebugScrollAmount(scrollAmount);
 		}
-
+		
 		if (scrollAmount > 0) {
-			context.drawText(this.client.textRenderer, "[...]", startX, startY, 0x999999, false);
+			context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0x999999, false);
 			scrollAmount += 1;
 			startY += 10;
 		}
 		for (int i = scrollAmount; i < requirements.size(); i++) {
-			if (startY+10 >= endY) break;
-			else if (startY+20 >= endY && i+1 != requirements.size()) {
-				context.drawText(this.client.textRenderer, "[...]", startX, startY, 0x999999, false);
+			if (startY + 10 >= endY) break;
+			else if (startY + 20 >= endY && i + 1 != requirements.size()) {
+				context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0x999999, false);
 				break;
 			}
 			context.drawText(this.client.textRenderer, requirements.get(i), startX, startY, 0x00ff00, false);
 			startY += 10;
 		}
 	}
-
+	
 	public boolean scrollDebug(int diff) {
 		if (this.hoveredWidget != null && this.hoveredWidget.getClass() == PaginatedAdvancementWidget.class) {
-			int value = ((PaginatedAdvancementWidget)hoveredWidget).getDebugScrollAmount();
-			((PaginatedAdvancementWidget)hoveredWidget).setDebugScrollAmount(value + diff);
+			int value = ((PaginatedAdvancementWidget) hoveredWidget).getDebugScrollAmount();
+			((PaginatedAdvancementWidget) hoveredWidget).setDebugScrollAmount(value + diff);
 			return true;
 		}
 		return false;
 	}
-
+	
 	public int getPaginatedDisplayedPage(int maxDisplayedTabs) {
 		return this.index / maxDisplayedTabs;
 	}
@@ -439,7 +458,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public int getPinIndex() {
 		return this.pinnedIndex;
 	}
-
+	
 	public void copyHoveredAdvancementID() {
 		if (this.hoveredWidget != null) {
 			AdvancementWidgetAccessor awa = (AdvancementWidgetAccessor) this.hoveredWidget;

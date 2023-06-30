@@ -28,6 +28,9 @@ public class PaginatedAdvancementsConfig implements ConfigData {
 	@Comment("Spacing between pinned tabs")
 	public int SpacingBetweenPinnedTabs = 2;
 	
+	@Comment("Max displayed advancement criterion entries when not pressing shift")
+	public int MaxCriterionEntries = 2;
+	
 	@Comment("Show Debug Info on advancement hover (possible values: 'always', 'never', 'debug_tooltips_enabled')")
 	public DebugInfoSetting ShowDebugInfo = DebugInfoSetting.DEBUG_TOOLTIPS_ENABLED;
 	
