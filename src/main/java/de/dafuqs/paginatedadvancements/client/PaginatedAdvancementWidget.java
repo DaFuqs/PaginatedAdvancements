@@ -26,14 +26,14 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 	private final MinecraftClient client;
 	private int debugScrollAmount;
 	
-	public PaginatedAdvancementWidget(AdvancementTab tab, MinecraftClient client, Advancement advancement, AdvancementDisplay display) {
+	public PaginatedAdvancementWidget(AdvancementTab tab, MinecraftClient client, PlacedAdvancement advancement, AdvancementDisplay display) {
 		super(tab, client, advancement, display);
 		this.client = client;
-		frameWrapper = AdvancementFrameDataLoader.get(((AdvancementWidgetAccessor) this).getAdvancement().getId());
+		frameWrapper = AdvancementFrameDataLoader.get(((AdvancementWidgetAccessor) this).getAdvancement().getAdvancementEntry().id());
 		
-		FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancement.getId());
+		FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancement.getAdvancementEntry().id());
 		if (frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper) {
-			int requirementCount = advancement.getRequirementCount();
+			int requirementCount = advancement.getAdvancement().requirements().getLength();
 			int k = requirementCount > 1 ? client.textRenderer.getWidth("  ") + client.textRenderer.getWidth("0") * String.valueOf(requirementCount).length() * 2 + client.textRenderer.getWidth("/") : 0;
 			OrderedText title = Language.getInstance().reorder(client.textRenderer.trimToWidth(display.getTitle(), 163));
 			int l = 29 + client.textRenderer.getWidth(title) + k;
@@ -60,7 +60,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 				advancementObtainedStatus = AdvancementObtainedStatus.UNOBTAINED;
 			}
 			
-			@Nullable FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(accessor.getAdvancement().getId());
+			@Nullable FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(accessor.getAdvancement().getAdvancementEntry().id());
 			if (frameWrapper == null) {
 				context.drawTexture(VANILLA_WIDGETS_TEXTURE, x + accessor.getX() + 3, y + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
 				context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), x + accessor.getX() + 8, y + accessor.getY() + 5);
@@ -83,7 +83,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		List<OrderedText> description = this.description == null ? accessor.getDescription() : this.description;
 		
 		boolean shouldRenderToTheLeft = x + originX + accessor.getX() + accessor.getWidth() + 26 >= accessor.getTab().getScreen().width;
-		String string = accessor.getProgress() == null ? null : accessor.getProgress().getProgressBarFraction();
+		String string = accessor.getProgress() == null ? null : accessor.getProgress().getProgressBarFraction().getString();
 		int i = string == null ? 0 : textRenderer.getWidth(string);
 		int var10000 = 113 - originY - accessor.getY() - 26;
 		int var10002 = description.size();

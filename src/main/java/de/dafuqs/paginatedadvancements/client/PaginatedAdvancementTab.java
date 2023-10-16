@@ -24,12 +24,12 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	private final PaginatedAdvancementScreen screen;
 	private final int index;
 	private int pinnedIndex;
-	private final Advancement root;
+	private final PlacedAdvancement root;
 	private final AdvancementDisplay display;
 	private final ItemStack icon;
 	private final Text title;
 	private final AdvancementWidget rootWidget;
-	private final Map<Advancement, AdvancementWidget> widgets = Maps.newLinkedHashMap();
+	private final Map<PlacedAdvancement, AdvancementWidget> widgets = Maps.newLinkedHashMap();
 	private double originX;
 	private double originY;
 	private int minPanX = 2147483647;
@@ -41,7 +41,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	
 	private @Nullable AdvancementWidget hoveredWidget;
 	
-	public PaginatedAdvancementTab(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, Advancement root, AdvancementDisplay display) {
+	public PaginatedAdvancementTab(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, PlacedAdvancement root, AdvancementDisplay display) {
 		super(client, screen, AdvancementTabType.ABOVE, index, root, display);
 		this.client = client;
 		this.screen = screen;
@@ -63,7 +63,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		return this.index;
 	}
 	
-	public Advancement getRoot() {
+	public PlacedAdvancement getRoot() {
 		return this.root;
 	}
 	
@@ -398,9 +398,9 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	}
 	
 	@Nullable
-	public static PaginatedAdvancementTab create(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, Advancement root) {
-		if (root.getDisplay() != null) {
-			return new PaginatedAdvancementTab(client, screen, index, pinnedIndex, root, root.getDisplay());
+	public static PaginatedAdvancementTab create(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, PlacedAdvancement root) {
+		if (root.getAdvancement().display().isPresent()) {
+			return new PaginatedAdvancementTab(client, screen, index, pinnedIndex, root, root.getAdvancement().display().get());
 		}
 		return null;
 	}
@@ -414,14 +414,14 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 	}
 	
-	public void addAdvancement(Advancement advancement) {
-		if (advancement.getDisplay() != null) {
-			AdvancementWidget advancementWidget = new PaginatedAdvancementWidget(this, this.client, advancement, advancement.getDisplay());
+	public void addAdvancement(PlacedAdvancement advancement) {
+		if (advancement.getAdvancement().display().isPresent()) {
+			AdvancementWidget advancementWidget = new PaginatedAdvancementWidget(this, this.client, advancement, advancement.getAdvancement().display().get());
 			this.addWidget(advancementWidget, advancement);
 		}
 	}
 	
-	private void addWidget(AdvancementWidget widget, Advancement advancement) {
+	private void addWidget(AdvancementWidget widget, PlacedAdvancement advancement) {
 		this.widgets.put(advancement, widget);
 		for (AdvancementWidget advancementWidget : this.widgets.values()) {
 			advancementWidget.addToTree();
