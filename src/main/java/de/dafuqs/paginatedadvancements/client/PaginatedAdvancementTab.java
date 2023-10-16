@@ -195,7 +195,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			drawDebugFrame(context, startX, startY, endX, endY);
 			
 			// the title
-			Text idText = Text.literal("ID: " + advancementWidgetAccessor.getAdvancement().getId().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
+			Text idText = Text.literal("ID: " + advancementWidgetAccessor.getAdvancement().getAdvancementEntry().id().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
 			context.drawText(this.client.textRenderer, idText, startX + 5, startY + 5, 0xFFFFFF, true);
 			
 			// the requirements
@@ -211,7 +211,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		AdvancementProgress progress = widgetAccessor.getProgress();
 		Iterable<String> obtainedCriteria = progress.getObtainedCriteria();
 		
-		String[][] requirements = progressAccessor.getRequirements();
+		String[][] requirements = progressAccessor.getRequirements().requirements();
 		
 		List<MutableText> requirementsDone = new ArrayList<>();
 		List<MutableText> requirementsLeft = new ArrayList<>();
@@ -462,7 +462,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public void copyHoveredAdvancementID() {
 		if (this.hoveredWidget != null) {
 			AdvancementWidgetAccessor awa = (AdvancementWidgetAccessor) this.hoveredWidget;
-			MinecraftClient.getInstance().keyboard.setClipboard(awa.getAdvancement().getId().toString());
+			MinecraftClient.getInstance().keyboard.setClipboard(awa.getAdvancement().getAdvancementEntry().id().toString());
 			MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.translatable("text.paginated_advancements.copied_to_clipboard"), false);
 		}
 	}

@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.*;
 public interface AdvancementProgressAccessor {
 	
 	@Accessor(value = "requirements")
-	String[][] getRequirements();
+	AdvancementRequirements getRequirements();
 	
 }

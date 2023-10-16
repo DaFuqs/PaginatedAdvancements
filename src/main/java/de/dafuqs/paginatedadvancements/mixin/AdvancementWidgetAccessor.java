@@ -18,7 +18,7 @@ public interface AdvancementWidgetAccessor {
 	int getY();
 	
 	@Accessor(value = "advancement")
-	Advancement getAdvancement();
+	PlacedAdvancement getAdvancement();
 	
 	@Accessor(value = "display")
 	AdvancementDisplay getDisplay();
