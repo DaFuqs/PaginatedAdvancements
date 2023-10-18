@@ -26,13 +26,13 @@ public class AdvancementFrameTypeDataLoader extends JsonDataLoader implements Id
 	protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
 		prepared.forEach((identifier, jsonElement) -> {
 			JsonObject object = jsonElement.getAsJsonObject();
-			Identifier textureSheet = new Identifier(identifier.getNamespace(), object.get("texture_sheet").getAsString());
 			
 			for (JsonElement frameEntry : object.get("frames").getAsJsonArray()) {
 				JsonObject jsonObject = frameEntry.getAsJsonObject();
-				Identifier name = new Identifier(identifier.getNamespace(), jsonObject.get("name").getAsString());
-				int u = jsonObject.get("x").getAsInt();
-				int v = jsonObject.get("y").getAsInt();
+				
+				
+				String name = jsonObject.get("name").getAsString();
+				Identifier id = new Identifier(identifier.getNamespace(), name);
 				int itemOffsetX = JsonHelper.getInt(jsonObject, "item_offset_x", 0);
 				int itemOffsetY = JsonHelper.getInt(jsonObject, "item_offset_y", 0);
 				String formattingString = JsonHelper.getString(jsonObject, "formatting", "green");
@@ -40,12 +40,15 @@ public class AdvancementFrameTypeDataLoader extends JsonDataLoader implements Id
 				
 				if (formatting == null) {
 					// green is the vanilla default for most AdvancementFrames
-					PaginatedAdvancementsClient.LOGGER.error("Formatting for frame '" + name + "' is invalid: '" + formattingString + "'. Will use default 'green'");
+					PaginatedAdvancementsClient.LOGGER.error("Formatting for frame '" + id + "' is invalid: '" + formattingString + "'. Will use default 'green'");
 					formatting = Formatting.GREEN;
 				}
 				
-				PaginatedAdvancementFrame frame = new PaginatedAdvancementFrame(name, textureSheet, u, v, itemOffsetX, itemOffsetY, formatting);
-				FRAMES.put(name, frame);
+				Identifier textureObtained = new Identifier(identifier.getNamespace(), "advancements/" + name + "_obtained");
+				Identifier textureUnobtained = new Identifier(identifier.getNamespace(), "advancements/" + name + "_unobtained");
+				
+				PaginatedAdvancementFrame frame = new PaginatedAdvancementFrame(id, textureObtained, textureUnobtained, itemOffsetX, itemOffsetY, formatting);
+				FRAMES.put(id, frame);
 			}
 		});
 	}

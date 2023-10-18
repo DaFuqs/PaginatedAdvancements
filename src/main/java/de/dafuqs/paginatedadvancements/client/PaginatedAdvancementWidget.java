@@ -19,7 +19,7 @@ import java.util.*;
 @Environment(EnvType.CLIENT)
 public class PaginatedAdvancementWidget extends AdvancementWidget {
 	
-	private static final Identifier VANILLA_WIDGETS_TEXTURE = new Identifier("textures/gui/advancements/widgets.png");
+	private static final Identifier TITLE_BOX_TEXTURE = new Identifier("advancements/title_box");
 	protected List<OrderedText> description;
 
 	protected @Nullable FrameWrapper frameWrapper;
@@ -29,7 +29,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 	public PaginatedAdvancementWidget(AdvancementTab tab, MinecraftClient client, PlacedAdvancement advancement, AdvancementDisplay display) {
 		super(tab, client, advancement, display);
 		this.client = client;
-		frameWrapper = AdvancementFrameDataLoader.get(((AdvancementWidgetAccessor) this).getAdvancement().getAdvancementEntry().id());
+		this.frameWrapper = AdvancementFrameDataLoader.get(((AdvancementWidgetAccessor) this).getAdvancement().getAdvancementEntry().id());
 		
 		FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancement.getAdvancementEntry().id());
 		if (frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper) {
@@ -61,12 +61,12 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			}
 			
 			@Nullable FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(accessor.getAdvancement().getAdvancementEntry().id());
-			if (frameWrapper == null) {
-				context.drawTexture(VANILLA_WIDGETS_TEXTURE, x + accessor.getX() + 3, y + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
-				context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), x + accessor.getX() + 8, y + accessor.getY() + 5);
-			} else {
-				context.drawTexture(frameWrapper.getTextureSheet(), x + accessor.getX() + 3, y + accessor.getY(), frameWrapper.getTextureU(), frameWrapper.getTextureV() + advancementObtainedStatus.getSpriteIndex() * 26, 26, 26);
+			if (frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper paginatedFrameWrapper) {
+				context.drawGuiTexture(paginatedFrameWrapper.getTexture(advancementObtainedStatus), x + accessor.getX() + 3, y + accessor.getY(), 26, 26);
 				context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), x + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), y + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
+			} else {
+				context.drawGuiTexture(advancementObtainedStatus.getFrameTexture(accessor.getDisplay().getFrame()), x + accessor.getX() + 3, y + accessor.getY(), 26, 26);
+				context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), x + accessor.getX() + 8, y + accessor.getY() + 5);
 			}
 		}
 		
@@ -116,8 +116,6 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		}
 		
 		int k = accessor.getWidth() - j;
-		RenderSystem.setShaderTexture(0, VANILLA_WIDGETS_TEXTURE);
-		
 		RenderSystem.enableBlend();
 		int l = originY + accessor.getY();
 		int startX;
@@ -130,21 +128,19 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		int n = 32 + description.size() * 9;
 		if (!description.isEmpty()) {
 			if (bl2) {
-				context.drawNineSlicedTexture(VANILLA_WIDGETS_TEXTURE, startX, l + 26 - n, accessor.getWidth(), n, 10, 200, 26, 0, 52);
+				context.drawGuiTexture(TITLE_BOX_TEXTURE, startX, l + 26 - n, accessor.getWidth(), n);
 			} else {
-				context.drawNineSlicedTexture(VANILLA_WIDGETS_TEXTURE, startX, l, accessor.getWidth(), n, 10, 200, 26, 0, 52);
+				context.drawGuiTexture(TITLE_BOX_TEXTURE, startX, l, accessor.getWidth(), n);
 			}
 		}
 		
-		context.drawTexture(VANILLA_WIDGETS_TEXTURE, startX, l, 0, advancementObtainedStatus.getSpriteIndex() * 26, j, 26);
-		context.drawTexture(VANILLA_WIDGETS_TEXTURE, startX + j, l, 200 - k, advancementObtainedStatus2.getSpriteIndex() * 26, k, 26);
+		context.drawGuiTexture(advancementObtainedStatus.getBoxTexture(), 200, 26, 0, 0, startX, l, j, 26);
+		context.drawGuiTexture(advancementObtainedStatus2.getBoxTexture(), 200, 26, 200 - k, 0, startX + j, l, k, 26);
 		
-		if (this.frameWrapper == null) {
-			context.drawTexture(VANILLA_WIDGETS_TEXTURE, originX + accessor.getX() + 3, originY + accessor.getY(), accessor.getDisplay().getFrame().getTextureV(), 128 + advancementObtainedStatus3.getSpriteIndex() * 26, 26, 26);
+		if (this.frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper paginatedFrameWrapper) {
+			context.drawGuiTexture(paginatedFrameWrapper.getTexture(advancementObtainedStatus3), originX + accessor.getX() + 3, originY + accessor.getY(), 26, 26);
 		} else {
-			RenderSystem.setShaderTexture(0, this.frameWrapper.getTextureSheet());
-			context.drawTexture(VANILLA_WIDGETS_TEXTURE, originX + accessor.getX() + 3, originY + accessor.getY(), this.frameWrapper.getTextureU(), this.frameWrapper.getTextureV() + advancementObtainedStatus3.getSpriteIndex() * 26, 26, 26);
-			RenderSystem.setShaderTexture(0, VANILLA_WIDGETS_TEXTURE);
+			context.drawGuiTexture(advancementObtainedStatus3.getFrameTexture(accessor.getDisplay().getFrame()), originX + accessor.getX() + 3, originY + accessor.getY(), 26, 26);
 		}
 		
 		if (shouldRenderToTheLeft) {

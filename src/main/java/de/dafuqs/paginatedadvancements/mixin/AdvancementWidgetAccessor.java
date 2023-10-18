@@ -3,6 +3,7 @@ package de.dafuqs.paginatedadvancements.mixin;
 import net.minecraft.advancement.*;
 import net.minecraft.client.gui.screen.advancement.*;
 import net.minecraft.text.*;
+import org.jetbrains.annotations.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.gen.*;
 
@@ -24,7 +25,7 @@ public interface AdvancementWidgetAccessor {
 	AdvancementDisplay getDisplay();
 	
 	@Accessor(value = "progress")
-	AdvancementProgress getProgress();
+	@Nullable AdvancementProgress getProgress();
 	
 	@Accessor(value = "children")
 	List<AdvancementWidget> getChildren();

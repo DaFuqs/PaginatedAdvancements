@@ -9,13 +9,9 @@ import org.spongepowered.asm.mixin.injection.*;
 @Mixin(Advancement.class)
 public abstract class AdvancementMixin {
 	
-	/**
-	 * Redirect all calls to the vanilla advancement screen to out custom one
-	 * Other screens that extend AdvancementScreen will not be touched
-	 */
-	@ModifyVariable(method = "<init>", at = @At("STORE"))
-	private Formatting paginatedAdvancements$customFormat(Formatting formatting, Identifier id) {
-		FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(id);
+	@ModifyVariable(method = "createNameFromDisplay(Lnet/minecraft/advancement/AdvancementDisplay;)Lnet/minecraft/text/Text;", at = @At("STORE"), ordinal = 0)
+	private static Formatting paginatedAdvancements$customFormat(Formatting formatting, AdvancementDisplay display) {
+		FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(display.getBackground()); // TODO
 		if (frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper) {
 			return frameWrapper.getTitleFormat();
 		}

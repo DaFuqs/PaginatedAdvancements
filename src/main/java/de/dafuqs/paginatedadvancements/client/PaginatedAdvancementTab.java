@@ -172,20 +172,20 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public void drawDebugInfo(DrawContext context, int startX, int startY, int endX, int endY) {
 		if (this.hoveredWidget != null) {
 			AdvancementWidgetAccessor advancementWidgetAccessor = (AdvancementWidgetAccessor) this.hoveredWidget;
-			AdvancementProgressAccessor advancementProgressAccessor = (AdvancementProgressAccessor) advancementWidgetAccessor.getProgress();
+			AdvancementProgress progress = advancementWidgetAccessor.getProgress();
 			
 			startX = startX + 5 - 41;
 			endX = endX - 5 - 41;
 			endY = endY + 5 - 65;
 			startY = ((startY - 5 - 65) / 10) * 10 - 2;
 			
-			List<MutableText> requirements = getRequirements(startX, endX - 10, advancementWidgetAccessor, advancementProgressAccessor);
+			List<MutableText> requirements = getRequirements(startX, endX - 10, advancementWidgetAccessor.getAdvancement().getAdvancement(), progress);
 			
 			boolean overflow = false;
 			int displayedLines;
 			if (!hasShiftDown()) {
 				overflow = requirements.size() > PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries;
-				displayedLines = Math.min(requirements.size(), PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries); // TODO
+				displayedLines = Math.min(requirements.size(), PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries);
 			} else {
 				displayedLines = requirements.size();
 			}
@@ -207,11 +207,9 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 	}
 	
-	private List<MutableText> getRequirements(int startX, int endX, AdvancementWidgetAccessor widgetAccessor, AdvancementProgressAccessor progressAccessor) {
-		AdvancementProgress progress = widgetAccessor.getProgress();
-		Iterable<String> obtainedCriteria = progress.getObtainedCriteria();
-		
-		String[][] requirements = progressAccessor.getRequirements().requirements();
+	private List<MutableText> getRequirements(int startX, int endX, Advancement advancement, AdvancementProgress progress) {
+		Iterable<String> obtainedCriteria = progress == null ? List.of() : progress.getObtainedCriteria();
+		String[][] requirements = advancement.requirements().requirements();
 		
 		List<MutableText> requirementsDone = new ArrayList<>();
 		List<MutableText> requirementsLeft = new ArrayList<>();

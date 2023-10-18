@@ -4,6 +4,7 @@ import de.dafuqs.paginatedadvancements.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.advancement.*;
 import net.minecraft.item.*;
+import net.minecraft.util.*;
 
 public class PinnedAdvancementTabType {
 	
@@ -11,14 +12,26 @@ public class PinnedAdvancementTabType {
 	public static final int WIDTH = 32;
 	public static final int HEIGHT = 28;
 	
+	
+	protected static final Identifier RIGHT_TOP_TEXTURE_SELECTED = new Identifier("advancements/tab_right_top_selected");
+	protected static final Identifier RIGHT_MIDDLE_TEXTURE_SELECTED = new Identifier("advancements/tab_right_middle_selected");
+	protected static final Identifier RIGHT_TOP_TEXTURE = new Identifier("advancements/tab_right_top");
+	protected static final Identifier RIGHT_MIDDLE_TEXTURE = new Identifier("advancements/tab_right_middle");
+	
 	public static int getHeightWithSpacing() {
 		return HEIGHT + PaginatedAdvancementsClient.CONFIG.SpacingBetweenPinnedTabs; // includes the empty space between tabs
 	}
 	
 	public static void drawBackground(DrawContext context, int x, int y, boolean selected, int index) {
-		int i = index > 0 ? WIDTH + 96 : 96;
-		int j = selected ? 64 + HEIGHT : 64;
-		context.drawTexture(AdvancementsScreen.TABS_TEXTURE, x + getTabX(), y + getTabY(index), i, j, WIDTH, HEIGHT);
+		Identifier identifier;
+		if (index == 0) {
+			identifier = selected ? RIGHT_TOP_TEXTURE_SELECTED : RIGHT_TOP_TEXTURE;
+		} else {
+			identifier = selected ? RIGHT_MIDDLE_TEXTURE_SELECTED : RIGHT_MIDDLE_TEXTURE;
+		}
+		context.drawGuiTexture(identifier, x + getTabX(), y + getTabY(index), WIDTH, HEIGHT);
+		
+		AdvancementTabType.RIGHT.drawBackground(context, x + getTabX(), y + getTabY(index), selected, index);
 	}
 	
 	public static void drawIcon(DrawContext context, int x, int y, int index, ItemStack stack) {

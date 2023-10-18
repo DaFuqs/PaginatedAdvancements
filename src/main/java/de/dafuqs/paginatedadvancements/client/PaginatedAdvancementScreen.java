@@ -20,7 +20,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	
 	public static final Identifier PAGINATION_TEXTURE = new Identifier("paginatedadvancements", "textures/gui/buttons.png");
 	public static final Identifier WINDOW_TEXTURE = new Identifier("textures/gui/advancements/window.png");
-	public static final Identifier TABS_TEXTURE = new Identifier("textures/gui/advancements/tabs.png");
 	
 	private static final Text SAD_LABEL_TEXT = Text.translatable("advancements.sad_label");
 	private static final Text EMPTY_TEXT = Text.translatable("advancements.empty");
@@ -171,8 +170,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		Iterator<PaginatedAdvancementTab> tabIterator = this.tabs.values().iterator();
 		int maxAdvancementTabsToRender = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, paginated);
 		
-		RenderSystem.setShaderTexture(0, TABS_TEXTURE);
-		
 		int index = 0;
 		PaginatedAdvancementTab advancementTab;
 		while (tabIterator.hasNext()) {
@@ -210,7 +207,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		int maxPinnedTabs = getMaxPinnedTabsToRender(startY, endY);
 		
 		Iterator<PaginatedAdvancementTab> tabIterator = this.pinnedTabs.values().iterator();
-		RenderSystem.setShaderTexture(0, TABS_TEXTURE);
 		
 		PaginatedAdvancementTab advancementTab;
 		while (tabIterator.hasNext()) {
