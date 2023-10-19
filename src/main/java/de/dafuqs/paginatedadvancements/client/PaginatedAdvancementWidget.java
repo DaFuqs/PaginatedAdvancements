@@ -42,6 +42,8 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			for (Iterator<OrderedText> var9 = this.description.iterator(); var9.hasNext(); l = Math.max(l, client.textRenderer.getWidth(orderedText))) {
 				orderedText = var9.next();
 			}
+		} else {
+			this.description = ((AdvancementWidgetAccessor) this).getDescription();
 		}
 
 		setDebugScrollAmount(0);
@@ -60,7 +62,8 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 				advancementObtainedStatus = AdvancementObtainedStatus.UNOBTAINED;
 			}
 			
-			@Nullable FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(accessor.getAdvancement().getAdvancementEntry().id());
+			Identifier advancementID = accessor.getAdvancement().getAdvancementEntry().id();
+			@Nullable FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancementID);
 			if (frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper paginatedFrameWrapper) {
 				context.drawGuiTexture(paginatedFrameWrapper.getTexture(advancementObtainedStatus), x + accessor.getX() + 3, y + accessor.getY(), 26, 26);
 				context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), x + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), y + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
@@ -80,16 +83,16 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
 		TextRenderer textRenderer = client.textRenderer;
 		
-		List<OrderedText> description = this.description == null ? accessor.getDescription() : this.description;
-		
 		boolean shouldRenderToTheLeft = x + originX + accessor.getX() + accessor.getWidth() + 26 >= accessor.getTab().getScreen().width;
-		String string = accessor.getProgress() == null ? null : accessor.getProgress().getProgressBarFraction().getString();
-		int i = string == null ? 0 : textRenderer.getWidth(string);
+		AdvancementProgress progress = accessor.getProgress();
+		Text progressText = progress == null ? null : progress.getProgressBarFraction();
+		String string = progressText == null ? null : progressText.getString();
+		int i = progressText == null ? 0 : this.client.textRenderer.getWidth(progressText);
 		int var10000 = 113 - originY - accessor.getY() - 26;
 		int var10002 = description.size();
 		
 		boolean bl2 = var10000 <= 6 + var10002 * 9;
-		float f = accessor.getProgress() == null ? 0.0F : accessor.getProgress().getProgressBarPercentage();
+		float f = accessor.getProgress() == null ? 0.0F : progress.getProgressBarPercentage();
 		int j = MathHelper.floor(f * (float) accessor.getWidth());
 		AdvancementObtainedStatus advancementObtainedStatus;
 		AdvancementObtainedStatus advancementObtainedStatus2;
@@ -125,8 +128,8 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			startX = originX + accessor.getX();
 		}
 		
-		int n = 32 + description.size() * 9;
-		if (!description.isEmpty()) {
+		int n = 32 + this.description.size() * 9;
+		if (!this.description.isEmpty()) {
 			if (bl2) {
 				context.drawGuiTexture(TITLE_BOX_TEXTURE, startX, l + 26 - n, accessor.getWidth(), n);
 			} else {

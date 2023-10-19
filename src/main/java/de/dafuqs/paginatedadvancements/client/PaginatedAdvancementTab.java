@@ -29,7 +29,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	private final ItemStack icon;
 	private final Text title;
 	private final AdvancementWidget rootWidget;
-	private final Map<PlacedAdvancement, AdvancementWidget> widgets = Maps.newLinkedHashMap();
+	private final Map<AdvancementEntry, AdvancementWidget> widgets = Maps.newLinkedHashMap();
+	
 	private double originX;
 	private double originY;
 	private int minPanX = 2147483647;
@@ -52,7 +53,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		this.icon = display.getIcon();
 		this.title = display.getTitle();
 		this.rootWidget = new PaginatedAdvancementWidget(this, client, root, display);
-		this.addWidget(this.rootWidget, root);
+		this.addWidget(this.rootWidget, root.getAdvancementEntry());
 	}
 	
 	public AdvancementTabType getType() {
@@ -413,13 +414,14 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	}
 	
 	public void addAdvancement(PlacedAdvancement advancement) {
-		if (advancement.getAdvancement().display().isPresent()) {
-			AdvancementWidget advancementWidget = new PaginatedAdvancementWidget(this, this.client, advancement, advancement.getAdvancement().display().get());
-			this.addWidget(advancementWidget, advancement);
+		Optional<AdvancementDisplay> optional = advancement.getAdvancement().display();
+		if (optional.isPresent()) {
+			AdvancementWidget advancementWidget = new PaginatedAdvancementWidget(this, this.client, advancement, optional.get());
+			this.addWidget(advancementWidget, advancement.getAdvancementEntry());
 		}
 	}
 	
-	private void addWidget(AdvancementWidget widget, PlacedAdvancement advancement) {
+	private void addWidget(AdvancementWidget widget, AdvancementEntry advancement) {
 		this.widgets.put(advancement, widget);
 		for (AdvancementWidget advancementWidget : this.widgets.values()) {
 			advancementWidget.addToTree();
@@ -441,7 +443,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	}
 	
 	@Nullable
-	public AdvancementWidget getWidget(Advancement advancement) {
+	@Override
+	public AdvancementWidget getWidget(AdvancementEntry advancement) {
 		return this.widgets.get(advancement);
 	}
 	

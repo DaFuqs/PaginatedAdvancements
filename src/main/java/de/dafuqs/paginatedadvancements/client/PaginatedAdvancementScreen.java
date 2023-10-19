@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screen.advancement.*;
 import net.minecraft.client.network.*;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.*;
-import net.minecraft.network.packet.c2s.play.*;
 import net.minecraft.text.*;
 import net.minecraft.util.*;
 import org.jetbrains.annotations.*;
@@ -97,11 +96,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	@Override
 	public void removed() {
 		super.removed();
-		this.advancementHandler.setListener(null);
-		ClientPlayNetworkHandler clientPlayNetworkHandler = this.client.getNetworkHandler();
-		if (clientPlayNetworkHandler != null) {
-			clientPlayNetworkHandler.sendPacket(AdvancementTabC2SPacket.close());
-		}
 	}
 	
 	// instead of drawing the full texture here, we cut it into pieces and draw
@@ -321,11 +315,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	
 	@Nullable
 	private PaginatedAdvancementTab getTab(PlacedAdvancement advancement) {
-		while(advancement.getParent() != null) {
-			advancement = advancement.getParent();
-		}
-		
-		return this.tabs.get(advancement);
+		PlacedAdvancement placedAdvancement = advancement.getRoot();
+		return this.tabs.get(placedAdvancement.getAdvancementEntry());
 	}
 	
 	@Override
@@ -333,20 +324,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		this.tabs.clear();
 		this.pinnedTabs.clear();
 		this.selectedTab = null;
-	}
-	
-	@Override
-	public void setProgress(PlacedAdvancement advancement, AdvancementProgress progress) {
-		AdvancementWidget advancementWidget = this.getAdvancementWidget(advancement);
-		if (advancementWidget != null) {
-			advancementWidget.setProgress(progress);
-		}
-	}
-	
-	@Nullable
-	public AdvancementWidget getAdvancementWidget(PlacedAdvancement advancement) {
-		PaginatedAdvancementTab advancementTab = this.getTab(advancement);
-		return advancementTab == null ? null : advancementTab.getWidget(advancement.getAdvancement());
 	}
 	
 	@Override
@@ -413,7 +390,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	private void unpinTab(Identifier pageIdentifier) {
 		int oldPinIndex = selectedTab.getPinIndex();
 		selectedTab.setPinIndex(-1);
-		this.pinnedTabs.remove(selectedTab.getRoot());
+		this.pinnedTabs.remove(selectedTab.getRoot().getAdvancementEntry());
 		PaginatedAdvancementsClient.unpinTab(pageIdentifier);
 		
 		// move all pinned tabs with a pin index > this up by 1 to fill its place
@@ -567,6 +544,12 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		} else {
 			advancementTab.render(context, startX, startY, endX, endY);
 		}
+	}
+	
+	@Nullable
+	public AdvancementWidget getAdvancementWidget(PlacedAdvancement advancement) {
+		AdvancementTab advancementTab = this.getTab(advancement);
+		return advancementTab == null ? null : advancementTab.getWidget(advancement.getAdvancementEntry());
 	}
 	
 }
