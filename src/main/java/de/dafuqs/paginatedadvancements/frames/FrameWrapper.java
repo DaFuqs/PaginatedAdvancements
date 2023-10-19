@@ -9,12 +9,11 @@ import org.jetbrains.annotations.*;
 public abstract class FrameWrapper {
 	
 	public abstract Identifier getId();
-	
 	public abstract int getItemOffsetX();
-	
 	public abstract int getItemOffsetY();
-	
 	public abstract Formatting getTitleFormat();
+	
+	public abstract Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame);
 	
 	public static class VanillaFrameWrapper extends FrameWrapper {
 		public final AdvancementFrame frame;
@@ -43,7 +42,7 @@ public abstract class FrameWrapper {
 			return frame.getTitleFormat();
 		}
 		
-		public Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame frame) {
+		public Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame) {
 			return status.getFrameTexture(frame);
 		}
 		
@@ -76,7 +75,7 @@ public abstract class FrameWrapper {
 			return frame.getTitleFormat();
 		}
 		
-		public Identifier getTexture(AdvancementObtainedStatus status) {
+		public Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame) {
 			if (status == AdvancementObtainedStatus.OBTAINED) {
 				return frame.getTextureObtained();
 			}

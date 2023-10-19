@@ -21,34 +21,34 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 	
 	private static final Identifier TITLE_BOX_TEXTURE = new Identifier("advancements/title_box");
 	protected List<OrderedText> description;
-
+	
 	protected @Nullable FrameWrapper frameWrapper;
 	private final MinecraftClient client;
 	private int debugScrollAmount;
 	
-	public PaginatedAdvancementWidget(AdvancementTab tab, MinecraftClient client, PlacedAdvancement advancement, AdvancementDisplay display) {
-		super(tab, client, advancement, display);
+	public PaginatedAdvancementWidget(AdvancementTab tab, MinecraftClient client, PlacedAdvancement placedAdvancement, AdvancementDisplay display) {
+		super(tab, client, placedAdvancement, display);
 		this.client = client;
-		this.frameWrapper = AdvancementFrameDataLoader.get(((AdvancementWidgetAccessor) this).getAdvancement().getAdvancementEntry().id());
 		
-		FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancement.getAdvancementEntry().id());
-		if (frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper) {
-			int requirementCount = advancement.getAdvancement().requirements().getLength();
-			int k = requirementCount > 1 ? client.textRenderer.getWidth("  ") + client.textRenderer.getWidth("0") * String.valueOf(requirementCount).length() * 2 + client.textRenderer.getWidth("/") : 0;
-			OrderedText title = Language.getInstance().reorder(client.textRenderer.trimToWidth(display.getTitle(), 163));
-			int l = 29 + client.textRenderer.getWidth(title) + k;
-			this.description = Language.getInstance().reorder(((AdvancementWidgetAccessor) this).invokeWrapDescription(Texts.setStyleIfAbsent(display.getDescription().copy(), Style.EMPTY.withColor(frameWrapper.getTitleFormat())), l));
-			OrderedText orderedText;
-			for (Iterator<OrderedText> var9 = this.description.iterator(); var9.hasNext(); l = Math.max(l, client.textRenderer.getWidth(orderedText))) {
-				orderedText = var9.next();
-			}
+		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
+		this.frameWrapper = AdvancementFrameDataLoader.get(accessor.getAdvancement().getAdvancementEntry().id());
+		int requirementCount = placedAdvancement.getAdvancement().requirements().getLength();
+		int k = requirementCount > 1 ? client.textRenderer.getWidth("  ") + client.textRenderer.getWidth("0") * String.valueOf(requirementCount).length() * 2 + client.textRenderer.getWidth("/") : 0;
+		OrderedText title = Language.getInstance().reorder(client.textRenderer.trimToWidth(display.getTitle(), 163));
+		int l = 29 + client.textRenderer.getWidth(title) + k;
+		if (this.frameWrapper != null) {
+			this.description = Language.getInstance().reorder(accessor.invokeWrapDescription(Texts.setStyleIfAbsent(display.getDescription().copy(), Style.EMPTY.withColor(frameWrapper.getTitleFormat())), l));
 		} else {
-			this.description = ((AdvancementWidgetAccessor) this).getDescription();
+			this.description = accessor.getDescription();
 		}
-
+		OrderedText orderedText;
+		for (Iterator<OrderedText> it = this.description.iterator(); it.hasNext(); l = Math.max(l, client.textRenderer.getWidth(orderedText))) {
+			orderedText = it.next();
+		}
+		
 		setDebugScrollAmount(0);
 	}
-
+	
 	@Override
 	public void renderWidgets(DrawContext context, int x, int y) {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
@@ -64,8 +64,8 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			
 			Identifier advancementID = accessor.getAdvancement().getAdvancementEntry().id();
 			@Nullable FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancementID);
-			if (frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper paginatedFrameWrapper) {
-				context.drawGuiTexture(paginatedFrameWrapper.getTexture(advancementObtainedStatus), x + accessor.getX() + 3, y + accessor.getY(), 26, 26);
+			if (frameWrapper != null) {
+				context.drawGuiTexture(frameWrapper.getTexture(advancementObtainedStatus, accessor.getDisplay().getFrame()), x + accessor.getX() + 3, y + accessor.getY(), 26, 26);
 				context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), x + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), y + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
 			} else {
 				context.drawGuiTexture(advancementObtainedStatus.getFrameTexture(accessor.getDisplay().getFrame()), x + accessor.getX() + 3, y + accessor.getY(), 26, 26);
@@ -140,8 +140,8 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		context.drawGuiTexture(advancementObtainedStatus.getBoxTexture(), 200, 26, 0, 0, startX, l, j, 26);
 		context.drawGuiTexture(advancementObtainedStatus2.getBoxTexture(), 200, 26, 200 - k, 0, startX + j, l, k, 26);
 		
-		if (this.frameWrapper instanceof FrameWrapper.PaginatedFrameWrapper paginatedFrameWrapper) {
-			context.drawGuiTexture(paginatedFrameWrapper.getTexture(advancementObtainedStatus3), originX + accessor.getX() + 3, originY + accessor.getY(), 26, 26);
+		if (this.frameWrapper != null) {
+			context.drawGuiTexture(this.frameWrapper.getTexture(advancementObtainedStatus3, accessor.getDisplay().getFrame()), originX + accessor.getX() + 3, originY + accessor.getY(), 26, 26);
 		} else {
 			context.drawGuiTexture(advancementObtainedStatus3.getFrameTexture(accessor.getDisplay().getFrame()), originX + accessor.getX() + 3, originY + accessor.getY(), 26, 26);
 		}
@@ -178,10 +178,11 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			context.drawItemWithoutEntity(accessor.getDisplay().getIcon(), originX + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), originY + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
 		}
 	}
-
+	
 	public int getDebugScrollAmount() {
 		return debugScrollAmount;
 	}
+	
 	public void setDebugScrollAmount(int debugScrollAmount) {
 		this.debugScrollAmount = debugScrollAmount;
 	}
