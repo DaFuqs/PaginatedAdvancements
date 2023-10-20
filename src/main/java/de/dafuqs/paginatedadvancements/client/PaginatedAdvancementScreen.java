@@ -111,7 +111,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 	
 	public void drawPinButtonAndHeader(DrawContext context, int mouseX, int mouseY, int startX, int startY, int endX, int endY, boolean hasPins) {
-		if (this.selectedTab != null) {
+		if (this.selectedTab != null && PaginatedAdvancementsClient.CONFIG.PinningEnabled) {
 			if (isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
 				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRoot().getAdvancementEntry().id())) {
 					context.drawTexture(PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT);
@@ -134,7 +134,11 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 	
 	public boolean isClickOnFavouritesButton(double mouseX, double mouseY, int minHeight, int maxWidth) {
-		return mouseX > maxWidth - FAVOURITES_BUTTON_OFFSET_X && mouseX < maxWidth - FAVOURITES_BUTTON_OFFSET_X + FAVOURITES_BUTTON_WIDTH && mouseY > minHeight + FAVOURITES_BUTTON_OFFSET_Y && mouseY < minHeight + FAVOURITES_BUTTON_OFFSET_Y + FAVOURITES_BUTTON_HEIGHT;
+		return PaginatedAdvancementsClient.CONFIG.PinningEnabled
+				&& mouseX > maxWidth - FAVOURITES_BUTTON_OFFSET_X
+				&& mouseX < maxWidth - FAVOURITES_BUTTON_OFFSET_X + FAVOURITES_BUTTON_WIDTH
+				&& mouseY > minHeight + FAVOURITES_BUTTON_OFFSET_Y
+				&& mouseY < minHeight + FAVOURITES_BUTTON_OFFSET_Y + FAVOURITES_BUTTON_HEIGHT;
 	}
 	
 	public int getMaxPaginatedTabsToRender(int startX, int endXTitle, int endXWindow, boolean paginated) {

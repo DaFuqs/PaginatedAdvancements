@@ -10,6 +10,12 @@ import java.util.*;
 @Config(name = "PaginatedAdvancements")
 public class PaginatedAdvancementsConfig implements ConfigData {
 	
+	@Comment("Enable pinning of advancement tabs")
+	public boolean PinningEnabled = true;
+	
+	@Comment("Show advancement ID in debug tooltip")
+	public boolean ShowAdvancementIDInDebugTooltip = true;
+	
 	@Comment("Fade the background slightly gray when hovering over an advancement")
 	public boolean FadeOutBackgroundOnAdvancementHover = true;
 	

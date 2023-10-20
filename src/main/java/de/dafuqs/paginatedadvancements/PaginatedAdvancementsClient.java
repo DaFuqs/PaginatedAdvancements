@@ -60,11 +60,11 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 	}
 	
 	public static boolean isPinned(Identifier tabIdentifier) {
-		return CONFIG.PinnedTabs.contains(tabIdentifier.toString());
+		return CONFIG.PinningEnabled && CONFIG.PinnedTabs.contains(tabIdentifier.toString());
 	}
 	
 	public static boolean hasPins() {
-		return !CONFIG.PinnedTabs.isEmpty();
+		return CONFIG.PinningEnabled && !CONFIG.PinnedTabs.isEmpty();
 	}
 	
 	public static List<String> getPinnedTabs() {
