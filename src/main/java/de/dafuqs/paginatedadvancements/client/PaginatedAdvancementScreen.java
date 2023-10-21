@@ -445,7 +445,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
 		if (this.selectedTab != null)
-			return this.selectedTab.scrollDebug(-(int)horizontalAmount);
+			return this.selectedTab.scrollDebug(-(int) verticalAmount);
 		else
 			return false;
 	}
@@ -532,8 +532,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if (hasPins) {
 			renderPinnedTabs(context, startX, startY, endXWindow, endY);
 		}
-		this.drawWidgetTooltip(context, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
 		this.drawPinButtonAndHeader(context, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
+		this.drawWidgetTooltip(context, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
 	}
 	
 	private void drawAdvancementTree(DrawContext context, int startX, int startY, int endX, int endY) {

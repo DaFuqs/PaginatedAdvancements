@@ -16,14 +16,20 @@ public class PaginatedAdvancementsConfig implements ConfigData {
 	@Comment("Show advancement ID in debug tooltip")
 	public boolean ShowAdvancementIDInDebugTooltip = true;
 	
+	@Comment("Show Debug Info on advancement hover (possible values: 'always', 'never', 'debug_tooltips_enabled')")
+	public DebugInfoSetting ShowDebugInfo = DebugInfoSetting.DEBUG_TOOLTIPS_ENABLED;
+	
+	@Comment("Max displayed advancement criterion entries when not pressing shift")
+	public int MaxCriterionEntries = 2;
+	
 	@Comment("Fade the background slightly gray when hovering over an advancement")
 	public boolean FadeOutBackgroundOnAdvancementHover = true;
 	
-	@Comment("List of pinned Tabs (root advancement identifier)")
-	public List<String> PinnedTabs = new ArrayList<>();
-	
 	@Comment("Save and restore the last selected tab")
 	public boolean SaveLastSelectedTab = true;
+	
+	@Comment("List of pinned Tabs (root advancement identifier)")
+	public List<String> PinnedTabs = new ArrayList<>();
 	
 	@Comment("The identifier of the last opened tab")
 	public String LastSelectedTab = "";
@@ -33,12 +39,6 @@ public class PaginatedAdvancementsConfig implements ConfigData {
 	
 	@Comment("Spacing between pinned tabs")
 	public int SpacingBetweenPinnedTabs = 2;
-	
-	@Comment("Max displayed advancement criterion entries when not pressing shift")
-	public int MaxCriterionEntries = 2;
-	
-	@Comment("Show Debug Info on advancement hover (possible values: 'always', 'never', 'debug_tooltips_enabled')")
-	public DebugInfoSetting ShowDebugInfo = DebugInfoSetting.DEBUG_TOOLTIPS_ENABLED;
 	
 	public enum DebugInfoSetting {
 		ALWAYS,
