@@ -2,24 +2,18 @@ package de.dafuqs.paginatedadvancements.frames;
 
 import de.dafuqs.paginatedadvancements.client.*;
 import net.minecraft.advancement.*;
+import net.minecraft.client.gui.screen.advancement.*;
 import net.minecraft.util.*;
 import org.jetbrains.annotations.*;
 
 public abstract class FrameWrapper {
 	
 	public abstract Identifier getId();
-	
-	public abstract int getTextureU();
-	
-	public abstract int getTextureV();
-	
 	public abstract int getItemOffsetX();
-	
 	public abstract int getItemOffsetY();
-	
 	public abstract Formatting getTitleFormat();
 	
-	public abstract Identifier getTextureSheet();
+	public abstract Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame);
 	
 	public static class VanillaFrameWrapper extends FrameWrapper {
 		public final AdvancementFrame frame;
@@ -31,16 +25,6 @@ public abstract class FrameWrapper {
 		@Override
 		public Identifier getId() {
 			return new Identifier(frame.getId());
-		}
-		
-		@Override
-		public int getTextureU() {
-			return frame.getTextureV();
-		}
-		
-		@Override
-		public int getTextureV() {
-			return 128;
 		}
 		
 		@Override
@@ -58,10 +42,10 @@ public abstract class FrameWrapper {
 			return frame.getTitleFormat();
 		}
 		
-		@Override
-		public Identifier getTextureSheet() {
-			return new Identifier("textures/gui/advancements/widgets.png");
+		public Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame) {
+			return status.getFrameTexture(frame);
 		}
+		
 	}
 	
 	public static class PaginatedFrameWrapper extends FrameWrapper {
@@ -74,16 +58,6 @@ public abstract class FrameWrapper {
 		@Override
 		public Identifier getId() {
 			return frame.getId();
-		}
-		
-		@Override
-		public int getTextureU() {
-			return frame.getTextureU();
-		}
-		
-		@Override
-		public int getTextureV() {
-			return frame.getTextureV();
 		}
 		
 		@Override
@@ -101,10 +75,13 @@ public abstract class FrameWrapper {
 			return frame.getTitleFormat();
 		}
 		
-		@Override
-		public Identifier getTextureSheet() {
-			return frame.getTextureSheet();
+		public Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame) {
+			if (status == AdvancementObtainedStatus.OBTAINED) {
+				return frame.getTextureObtained();
+			}
+			return frame.getTextureUnobtained();
 		}
+		
 	}
 	
 	public static @Nullable FrameWrapper of(Identifier frame) {

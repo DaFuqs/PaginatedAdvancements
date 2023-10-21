@@ -6,19 +6,17 @@ import net.minecraft.util.*;
 public class PaginatedAdvancementFrame {
 	
 	private final Identifier id;
-	private final Identifier textureSheet;
-	private final int textureV;
-	private final int textureU;
+	private final Identifier textureObtained;
+	private final Identifier textureUnobtained;
 	private final int itemOffsetX;
 	private final int itemOffsetY;
 	private final Formatting titleFormat;
 	private final Text toastText;
 	
-	public PaginatedAdvancementFrame(Identifier id, Identifier textureSheet, int texU, int texV, int itemOffsetX, int itemOffsetY, Formatting titleFormat) {
+	public PaginatedAdvancementFrame(Identifier id, Identifier textureObtained, Identifier textureUnobtained, int itemOffsetX, int itemOffsetY, Formatting titleFormat) {
 		this.id = id;
-		this.textureSheet = textureSheet;
-		this.textureU = texU;
-		this.textureV = texV;
+		this.textureObtained = textureObtained;
+		this.textureUnobtained = textureUnobtained;
 		this.itemOffsetX = itemOffsetX;
 		this.itemOffsetY = itemOffsetY;
 		this.titleFormat = titleFormat;
@@ -29,16 +27,12 @@ public class PaginatedAdvancementFrame {
 		return this.id;
 	}
 	
-	public Identifier getTextureSheet() {
-		return this.textureSheet;
+	public Identifier getTextureObtained() {
+		return this.textureObtained;
 	}
 	
-	public int getTextureU() {
-		return this.textureU;
-	}
-	
-	public int getTextureV() {
-		return this.textureV;
+	public Identifier getTextureUnobtained() {
+		return this.textureUnobtained;
 	}
 	
 	public Formatting getTitleFormat() {

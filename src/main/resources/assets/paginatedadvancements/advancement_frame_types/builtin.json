@@ -1,116 +1,83 @@
 {
-  "texture_sheet": "textures/gui/frames.png",
   "frames": [
     {
       "name": "arrow_right",
-      "x": 0,
-      "y": 0,
+      "formatting": "yellow",
       "item_offset_x": -4,
-      "item_offset_y": 0,
-      "formatting": "yellow"
+      "item_offset_y": 0
     },
     {
       "name": "arrow_up",
-      "x": 26,
-      "y": 0,
+      "formatting": "yellow",
       "item_offset_x": 0,
-      "item_offset_y": 4,
-      "formatting": "yellow"
+      "item_offset_y": 4
     },
     {
       "name": "arrow_down",
-      "x": 52,
-      "y": 0,
+      "formatting": "yellow",
       "item_offset_x": 0,
-      "item_offset_y": -4,
-      "formatting": "yellow"
+      "item_offset_y": -4
     },
     {
       "name": "arrow_left",
-      "x": 78,
-      "y": 0,
+      "formatting": "yellow",
       "item_offset_x": 4,
-      "item_offset_y": 0,
-      "formatting": "yellow"
+      "item_offset_y": 0
     },
     {
       "name": "block",
-      "x": 104,
-      "y": 0,
       "formatting": "yellow"
     },
     {
       "name": "squircle",
-      "x": 0,
-      "y": 52,
       "formatting": "gray"
     },
     {
       "name": "star",
-      "x": 26,
-      "y": 52,
       "formatting": "gold"
     },
     {
       "name": "butterfly",
-      "x": 52,
-      "y": 52,
       "formatting": "light_purple"
     },
     {
       "name": "crested",
-      "x": 78,
-      "y": 52,
       "formatting": "aqua"
     },
     {
       "name": "corners",
-      "x": 104,
-      "y": 52,
       "formatting": "blue"
     },
     {
       "name": "circle",
-      "x": 130,
-      "y": 52,
       "formatting": "dark_gray"
     },
     {
       "name": "excessive",
-      "x": 156,
-      "y": 52,
       "formatting": "black"
     },
     {
       "name": "none",
-      "x": 182,
-      "y": 52,
       "formatting": "green"
     },
     {
       "name": "sharp",
+      "formatting": "gray",
       "x": 0,
-      "y": 104,
-      "formatting": "gray"
+      "y": 104
     },
     {
       "name": "speech_bubble",
-      "x": 26,
-      "y": 104,
+      "formatting": "white",
       "item_offset_x": 0,
-      "item_offset_y": -1,
-      "formatting": "white"
+      "item_offset_y": -1
     },
     {
       "name": "edged",
-      "x": 52,
-      "y": 104,
       "formatting": "dark_green"
     },
     {
       "name": "heart",
-      "x": 78,
-      "y": 104,
       "formatting": "light_purple"
     }
   ]

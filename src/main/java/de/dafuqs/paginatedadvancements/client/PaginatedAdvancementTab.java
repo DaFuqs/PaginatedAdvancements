@@ -24,12 +24,13 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	private final PaginatedAdvancementScreen screen;
 	private final int index;
 	private int pinnedIndex;
-	private final Advancement root;
+	private final PlacedAdvancement root;
 	private final AdvancementDisplay display;
 	private final ItemStack icon;
 	private final Text title;
 	private final AdvancementWidget rootWidget;
-	private final Map<Advancement, AdvancementWidget> widgets = Maps.newLinkedHashMap();
+	private final Map<AdvancementEntry, AdvancementWidget> widgets = Maps.newLinkedHashMap();
+	
 	private double originX;
 	private double originY;
 	private int minPanX = 2147483647;
@@ -41,7 +42,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	
 	private @Nullable AdvancementWidget hoveredWidget;
 	
-	public PaginatedAdvancementTab(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, Advancement root, AdvancementDisplay display) {
+	public PaginatedAdvancementTab(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, PlacedAdvancement root, AdvancementDisplay display) {
 		super(client, screen, AdvancementTabType.ABOVE, index, root, display);
 		this.client = client;
 		this.screen = screen;
@@ -52,7 +53,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		this.icon = display.getIcon();
 		this.title = display.getTitle();
 		this.rootWidget = new PaginatedAdvancementWidget(this, client, root, display);
-		this.addWidget(this.rootWidget, root);
+		this.addWidget(this.rootWidget, root.getAdvancementEntry());
 	}
 	
 	public AdvancementTabType getType() {
@@ -63,7 +64,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		return this.index;
 	}
 	
-	public Advancement getRoot() {
+	public PlacedAdvancement getRoot() {
 		return this.root;
 	}
 	
@@ -172,46 +173,49 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public void drawDebugInfo(DrawContext context, int startX, int startY, int endX, int endY) {
 		if (this.hoveredWidget != null) {
 			AdvancementWidgetAccessor advancementWidgetAccessor = (AdvancementWidgetAccessor) this.hoveredWidget;
-			AdvancementProgressAccessor advancementProgressAccessor = (AdvancementProgressAccessor) advancementWidgetAccessor.getProgress();
+			AdvancementProgress progress = advancementWidgetAccessor.getProgress();
 			
-			startX = startX + 5 - 41;
-			endX = endX - 5 - 41;
-			endY = endY + 5 - 65;
-			startY = ((startY - 5 - 65) / 10) * 10 - 2;
+			startX = startX - 36;
+			endX = endX - 46;
+			endY = endY - 60;
+			startY = startY - 72;
 			
-			List<MutableText> requirements = getRequirements(startX, endX - 10, advancementWidgetAccessor, advancementProgressAccessor);
+			List<MutableText> requirements = getRequirements(startX, endX - 10, advancementWidgetAccessor.getAdvancement().getAdvancement(), progress);
 			
 			boolean overflow = false;
-			int displayedLines;
+			int displayedRequirementLines;
 			if (!hasShiftDown()) {
 				overflow = requirements.size() > PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries;
-				displayedLines = Math.min(requirements.size(), PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries); // TODO
+				displayedRequirementLines = Math.min(requirements.size(), PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries);
 			} else {
-				displayedLines = requirements.size();
+				displayedRequirementLines = requirements.size();
 			}
 			
-			startY = Math.max(startY, endY - Math.max(28, 20 + 10 * displayedLines));
+			startY = Math.max(startY, endY - Math.max(18, 8 + 10 * displayedRequirementLines) - (PaginatedAdvancementsClient.CONFIG.ShowAdvancementIDInDebugTooltip ? 10 : 0));
 			
 			drawDebugFrame(context, startX, startY, endX, endY);
 			
 			// the title
-			Text idText = Text.literal("ID: " + advancementWidgetAccessor.getAdvancement().getId().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
-			context.drawText(this.client.textRenderer, idText, startX + 5, startY + 5, 0xFFFFFF, true);
+			int requirementY = startY + 15;
+			if (PaginatedAdvancementsClient.CONFIG.ShowAdvancementIDInDebugTooltip) {
+				Text idText = Text.literal("ID: " + advancementWidgetAccessor.getAdvancement().getAdvancementEntry().id().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
+				context.drawText(this.client.textRenderer, idText, startX + 5, startY + 5, 0xFFFFFF, true);
+			} else {
+				requirementY = startY + 5;
+			}
 			
 			// the requirements
 			if (overflow) {
-				drawRequirementsWithOverflow(context, startX + 5, startY + 15, endX - 5, endY, requirements, displayedLines);
+				drawRequirementsWithOverflow(context, startX + 5, requirementY, endX - 5, endY, requirements, displayedRequirementLines);
 			} else {
-				drawRequirements(context, startX + 5, startY + 15, endX - 5, endY, requirements);
+				drawRequirements(context, startX + 5, requirementY, endX - 5, endY, requirements);
 			}
 		}
 	}
 	
-	private List<MutableText> getRequirements(int startX, int endX, AdvancementWidgetAccessor widgetAccessor, AdvancementProgressAccessor progressAccessor) {
-		AdvancementProgress progress = widgetAccessor.getProgress();
-		Iterable<String> obtainedCriteria = progress.getObtainedCriteria();
-		
-		String[][] requirements = progressAccessor.getRequirements();
+	private List<MutableText> getRequirements(int startX, int endX, Advancement advancement, AdvancementProgress progress) {
+		Iterable<String> obtainedCriteria = progress == null ? List.of() : progress.getObtainedCriteria();
+		String[][] requirements = advancement.requirements().requirements();
 		
 		List<MutableText> requirementsDone = new ArrayList<>();
 		List<MutableText> requirementsLeft = new ArrayList<>();
@@ -260,6 +264,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	protected void drawDebugFrame(DrawContext context, int startX, int startY, int endX, int endY) {
 		context.getMatrices().push();
 		
+		int TOP_ELEMENT_HEIGHT = 15;
+		
 		// corners
 		context.drawTexture(PaginatedAdvancementScreen.WINDOW_TEXTURE, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top left
 		context.drawTexture(PaginatedAdvancementScreen.WINDOW_TEXTURE, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT); // top right
@@ -297,7 +303,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		// center
 		int centerStartX = startX + 6;
 		int centerEndX = endX - 6;
-		int centerStartY = startY + 6;
+		int centerStartY = startY + 3;
 		int centerEndY = endY - 6;
 		
 		int drawStartY = centerStartY;
@@ -315,6 +321,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			drawHeight -= currentHeight;
 			drawStartY += currentHeight;
 		}
+		
 		context.getMatrices().pop();
 	}
 	
@@ -332,12 +339,12 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	protected void drawRequirements(DrawContext context, int startX, int startY, int endX, int endY, List<MutableText> requirements) {
 		int scrollAmount = 0;
 		assert this.hoveredWidget != null;
-		if (this.hoveredWidget.getClass() == PaginatedAdvancementWidget.class) {
-			scrollAmount = ((PaginatedAdvancementWidget) this.hoveredWidget).getDebugScrollAmount();
+		if (this.hoveredWidget instanceof PaginatedAdvancementWidget paginatedAdvancementWidget) {
+			scrollAmount = paginatedAdvancementWidget.getDebugScrollAmount();
 			// clamp scroll amount
 			int maxLines = (endY - startY) / 10;
 			scrollAmount = Math.max(0, Math.min(requirements.size() - maxLines, scrollAmount));
-			((PaginatedAdvancementWidget) this.hoveredWidget).setDebugScrollAmount(scrollAmount);
+			paginatedAdvancementWidget.setDebugScrollAmount(scrollAmount);
 		}
 		
 		if (scrollAmount > 0) {
@@ -357,9 +364,9 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	}
 	
 	public boolean scrollDebug(int diff) {
-		if (this.hoveredWidget != null && this.hoveredWidget.getClass() == PaginatedAdvancementWidget.class) {
-			int value = ((PaginatedAdvancementWidget) hoveredWidget).getDebugScrollAmount();
-			((PaginatedAdvancementWidget) hoveredWidget).setDebugScrollAmount(value + diff);
+		if (this.hoveredWidget != null && this.hoveredWidget instanceof PaginatedAdvancementWidget paginatedAdvancementWidget) {
+			int value = paginatedAdvancementWidget.getDebugScrollAmount();
+			paginatedAdvancementWidget.setDebugScrollAmount(value + diff);
 			return true;
 		}
 		return false;
@@ -398,9 +405,9 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	}
 	
 	@Nullable
-	public static PaginatedAdvancementTab create(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, Advancement root) {
-		if (root.getDisplay() != null) {
-			return new PaginatedAdvancementTab(client, screen, index, pinnedIndex, root, root.getDisplay());
+	public static PaginatedAdvancementTab create(MinecraftClient client, PaginatedAdvancementScreen screen, int index, int pinnedIndex, PlacedAdvancement root) {
+		if (root.getAdvancement().display().isPresent()) {
+			return new PaginatedAdvancementTab(client, screen, index, pinnedIndex, root, root.getAdvancement().display().get());
 		}
 		return null;
 	}
@@ -414,14 +421,15 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 	}
 	
-	public void addAdvancement(Advancement advancement) {
-		if (advancement.getDisplay() != null) {
-			AdvancementWidget advancementWidget = new PaginatedAdvancementWidget(this, this.client, advancement, advancement.getDisplay());
-			this.addWidget(advancementWidget, advancement);
+	public void addAdvancement(PlacedAdvancement advancement) {
+		Optional<AdvancementDisplay> optional = advancement.getAdvancement().display();
+		if (optional.isPresent()) {
+			AdvancementWidget advancementWidget = new PaginatedAdvancementWidget(this, this.client, advancement, optional.get());
+			this.addWidget(advancementWidget, advancement.getAdvancementEntry());
 		}
 	}
 	
-	private void addWidget(AdvancementWidget widget, Advancement advancement) {
+	private void addWidget(AdvancementWidget widget, AdvancementEntry advancement) {
 		this.widgets.put(advancement, widget);
 		for (AdvancementWidget advancementWidget : this.widgets.values()) {
 			advancementWidget.addToTree();
@@ -443,7 +451,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	}
 	
 	@Nullable
-	public AdvancementWidget getWidget(Advancement advancement) {
+	@Override
+	public AdvancementWidget getWidget(AdvancementEntry advancement) {
 		return this.widgets.get(advancement);
 	}
 	
@@ -462,7 +471,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public void copyHoveredAdvancementID() {
 		if (this.hoveredWidget != null) {
 			AdvancementWidgetAccessor awa = (AdvancementWidgetAccessor) this.hoveredWidget;
-			MinecraftClient.getInstance().keyboard.setClipboard(awa.getAdvancement().getId().toString());
+			MinecraftClient.getInstance().keyboard.setClipboard(awa.getAdvancement().getAdvancementEntry().id().toString());
 			MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.translatable("text.paginated_advancements.copied_to_clipboard"), false);
 		}
 	}
