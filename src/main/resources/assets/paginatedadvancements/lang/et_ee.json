@@ -1,0 +1,19 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "Paginated Advancements seadistus",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "Edasijõudmisel kursoriga hõljudes tumenda tausta",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "Kinnitatud vahekaartide nimekiri (juur-edasijõudmise identifikaator)",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "Salvesta ja taasta viimati valitud vahekaart",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "Viimati valitud vahekaardi identifikaator",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "Tühimik horisontaalsete vahekaartide vahel",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "Tühimik vertikaalsete vahekaartide vahel",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "Kuva edasijõudmisel hõljudes silumisinfot",
+  "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Maksimaalne kuvatav edasijõudmise kriteeriumite arv",
+  "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "Luba edasijõudmise vahekaartide kinnitamine",
+  "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "Kuva silumishüpikul edasijõudmise identifikaatorit",
+
+  "text.paginated_advancements.copied_to_clipboard": "Edasijõudmise ID lõikelauale kopeeritud",
+  "text.paginated_advancements.group": "Grupp: ",
+  "text.paginated_advancements.copy_to_clipboard": "(Kopeerimiseks Ctrl+C)",
+  "text.paginated_advancements.expand_debug": "[Shift] rohkem...",
+  "text.paginated_advancements.scroll_debug": "[Keri] rohkem..."
+}
