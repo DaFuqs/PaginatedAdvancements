@@ -1,0 +1,19 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "Paginated Advancements Config",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "Den Hintergrund ausgrauen, wenn man den Mauszeiger über ein Advancement bewegt",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "Liste der angehefteten Tabs (Root Advancement Identifier)",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "Speichern und Wiederherstellen des zuletzt ausgewählten Tabs",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "Die Kennung der zuletzt ausgewählten Tabs",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "Abstand zwischen horizontalen Tabs",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "Abstand zwischen angehefteten Tabs",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "Debug-Informationen anzeigen",
+  "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Zahl der angezeigten Kriterien",
+  "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "Anheften von Tabs aktivieren",
+  "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "Advancement-ID im Debug-Tooltip anzeigen",
+
+  "text.paginated_advancements.copied_to_clipboard": "Advancement-ID in die Zwischenablage kopiert",
+  "text.paginated_advancements.group": "Gruppe: ",
+  "text.paginated_advancements.copy_to_clipboard": "(Stry+C zum kopieren)",
+  "text.paginated_advancements.expand_debug": "[Shift] mehr...",
+  "text.paginated_advancements.scroll_debug": "[Scrollen] mehr..."
+}
