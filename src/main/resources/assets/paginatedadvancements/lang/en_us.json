@@ -1,5 +1,5 @@
 {
-  "text.autoconfig.PaginatedAdvancements.title": "Paginated Advancements config",
+  "text.autoconfig.PaginatedAdvancements.title": "Paginated Advancements Config",
   "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "Fade the background slightly gray when hovering over an advancement",
   "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "List of pinned Tabs (root advancement identifier)",
   "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "Save and restore the last selected tab",
