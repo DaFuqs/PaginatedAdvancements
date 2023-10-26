@@ -1,0 +1,19 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "Cấu hình Paginated Advancements",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "Làm mờ nền thành hơi xám khi di chuột qua thành tựu",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "Danh sách các Tab được ghim (định danh thành tựu gốc)",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "Lưu và khôi phục tab đã chọn cuối cùng",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "Định danh của tab được chọn cuối cùng",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "Khoảng cách giữa các tab ngang",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "Khoảng cách giữa các tab được ghim",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "Hiển thị thông tin gỡ lỗi khi di chuột vào thành tựu",
+  "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Các mục tiêu chí thành tựu được hiển thị tối đa",
+  "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "Cho phép ghim các tab thành tựu",
+  "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "Hiển thị ID tiến bộ trong chú giải công cụ gỡ lỗi",
+
+  "text.paginated_advancements.copied_to_clipboard": "Đã sao chép ID thành tựu vào bảng nhớ tạm",
+  "text.paginated_advancements.group": "Nhóm: ",
+  "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C để sao chép)",
+  "text.paginated_advancements.expand_debug": "[Shift] thêm...",
+  "text.paginated_advancements.scroll_debug": "[Cuộn] thêm..."
+}
