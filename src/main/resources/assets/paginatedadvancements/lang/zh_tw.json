@@ -1,0 +1,14 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "分頁進度 - Paginated Advancements 設定",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "游標懸停在進度上時將背景稍微變暗",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "已釘選標籤清單（根進度識別符）",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "儲存和恢復上次選取的頁籤",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "上次開啟的頁籤識別符",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "橫向標籤之間的間距",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "已釘選標籤之間的間距",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "滑鼠懸停在進度上時顯示除錯資訊",
+
+  "text.paginated_advancements.copied_to_clipboard": "已複製成就 ID 到剪貼簿",
+  "text.paginated_advancements.group": "群組：",
+  "text.paginated_advancements.copy_to_clipboard": "（按下 Ctrl+C 以複製）"
+}
