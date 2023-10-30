@@ -11,7 +11,7 @@
   "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "啟用進度分頁固定",
   "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "在除錯物品提示中顯示進度 ID",
   
-  "text.paginated_advancements.copied_to_clipboard": "已複製將成就 ID 到剪貼簿",
+  "text.paginated_advancements.copied_to_clipboard": "已複製將進度 ID 到剪貼簿",
   "text.paginated_advancements.group": "群組：",
   "text.paginated_advancements.copy_to_clipboard": "（按下 Ctrl+C 以複製）",
   "text.paginated_advancements.expand_debug": "[Shift] 更多...",
