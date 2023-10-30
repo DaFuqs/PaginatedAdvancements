@@ -6,7 +6,7 @@
   "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "上次選取的頁籤識別符",
   "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "橫向標籤之間的間距",
   "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "已釘選標籤之間的間距",
-  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "滑鼠懸停在進度上時顯示除錯資訊",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "游標懸停在進度上時顯示除錯資訊",
   "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "進度條目顯示上限",
   "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "啟用進度分頁固定",
   "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "在除錯物品提示中顯示進度 ID",
