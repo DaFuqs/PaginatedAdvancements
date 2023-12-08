@@ -1,0 +1,19 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "分页式进度屏幕(Paginated Advancements)配置",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "将鼠标悬停在进度上时使背景稍微变暗",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "已固定选项卡列表（根进度标识符）",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "保存并恢复上次选择的选项卡",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "最后选择的选项卡标识符",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "选项卡之间的水平间距",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "被固定的选项卡之间的间距",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "悬停在进度上时显示调试信息",
+  "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "最大显示的进度条目",
+  "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "启用固定进度选项卡",
+  "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "在调试工具提示中显示进度ID",
+
+  "text.paginated_advancements.copied_to_clipboard": "已将进度ID复制到剪贴板",
+  "text.paginated_advancements.group": "群组：",
+  "text.paginated_advancements.copy_to_clipboard": "(按下Ctrl+C以复制)",
+  "text.paginated_advancements.expand_debug": "[Shift] 更多…",
+  "text.paginated_advancements.scroll_debug": "[滚动] 更多…"
+}

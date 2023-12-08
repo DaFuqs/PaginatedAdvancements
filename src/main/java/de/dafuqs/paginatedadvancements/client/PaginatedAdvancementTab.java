@@ -112,8 +112,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		context.enableScissor(startX, startY, advancementTreeWindowWidth, advancementTreeWindowHeight);
 		context.getMatrices().push();
 		context.getMatrices().translate(startX, startY, 0.0F);
-		Identifier identifier = Objects.requireNonNullElse(this.display.getBackground(), TextureManager.MISSING_IDENTIFIER);
-		
+		Identifier identifier = this.display.getBackground().orElse(TextureManager.MISSING_IDENTIFIER);
+
 		int i = MathHelper.floor(this.originX);
 		int j = MathHelper.floor(this.originY);
 		int k = i % 16;
@@ -215,12 +215,12 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	
 	private List<MutableText> getRequirements(int startX, int endX, Advancement advancement, AdvancementProgress progress) {
 		Iterable<String> obtainedCriteria = progress == null ? List.of() : progress.getObtainedCriteria();
-		String[][] requirements = advancement.requirements().requirements();
+		List<List<String>> requirements = advancement.requirements().requirements();
 		
 		List<MutableText> requirementsDone = new ArrayList<>();
 		List<MutableText> requirementsLeft = new ArrayList<>();
 		
-		for (String[] requirementGroup : requirements) {
+		for (List<String> requirementGroup : requirements) {
 			List<MutableText> lines = new ArrayList<>();
 			lines.add(Text.translatable("text.paginated_advancements.group").formatted(Formatting.DARK_RED));
 			boolean anyDone = false;
