@@ -112,8 +112,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		context.enableScissor(startX, startY, advancementTreeWindowWidth, advancementTreeWindowHeight);
 		context.getMatrices().push();
 		context.getMatrices().translate(startX, startY, 0.0F);
-		Identifier identifier = Objects.requireNonNullElse(this.display.getBackground(), TextureManager.MISSING_IDENTIFIER);
-		
+		Identifier identifier = this.display.getBackground().orElse(TextureManager.MISSING_IDENTIFIER);
+
 		int i = MathHelper.floor(this.originX);
 		int j = MathHelper.floor(this.originY);
 		int k = i % 16;
