@@ -24,7 +24,7 @@ public abstract class FrameWrapper {
 		
 		@Override
 		public Identifier getId() {
-			return new Identifier(frame.getId());
+			return new Identifier(frame.asString());
 		}
 		
 		@Override
@@ -88,7 +88,7 @@ public abstract class FrameWrapper {
 		String path = frame.getPath();
 		if (frame.getNamespace().equals("minecraft")) {
 			for (AdvancementFrame vanillaFrame : AdvancementFrame.values()) {
-				if (vanillaFrame.getId().equals(path)) {
+				if (vanillaFrame.asString().equals(path)) {
 					return new VanillaFrameWrapper(vanillaFrame);
 				}
 			}
