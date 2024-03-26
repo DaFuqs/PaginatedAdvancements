@@ -1,0 +1,17 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "Configuración de Avances Paginados",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "Desvanecer ligeramente el fondo al pasar el cursor sobre un avance",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "Lista de pestañas fijadas (identificador del avance raíz)",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "Guardar y restaurar la última pestaña seleccionada",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "El identificador de la última pestaña abierta",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "Espaciado entre las pestañas horizontales",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "Espaciado entre las pestañas fijadas",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "Mostrar información de depuración al pasar el cursor sobre un avance",
+  "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Número máximo de entradas de criterios de avance mostradas",
+
+  "text.paginated_advancements.copied_to_clipboard": "ID de avance copiado al portapapeles",
+  "text.paginated_advancements.group": "Grupo: ",
+  "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C para copiar)",
+  "text.paginated_advancements.expand_debug": "[Shift] más...",
+  "text.paginated_advancements.scroll_debug": "[Desplazamiento] más..."
+}
