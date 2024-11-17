@@ -11,23 +11,29 @@ public class PaginatedAdvancementFrame {
 	public static final Codec<PaginatedAdvancementFrame> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
 			Codecs.rangedInt(-16, 16).optionalFieldOf("item_offset_x", 0).forGetter(PaginatedAdvancementFrame::getItemOffsetX),
 			Codecs.rangedInt(-16, 16).optionalFieldOf("item_offset_y", 0).forGetter(PaginatedAdvancementFrame::getItemOffsetY),
-			Formatting.CODEC.optionalFieldOf("formatting", Formatting.GREEN).forGetter(PaginatedAdvancementFrame::getTitleFormat)
+			Style.Codecs.CODEC.optionalFieldOf("style", Style.EMPTY.withFormatting(Formatting.GREEN)).forGetter(PaginatedAdvancementFrame::getTitleStyle)
 	).apply(instance, PaginatedAdvancementFrame::new));
 	
-	protected final Identifier textureObtained;
-	protected final Identifier textureUnobtained;
 	protected final int itemOffsetX;
 	protected final int itemOffsetY;
-	protected final Formatting titleFormat;
-	protected final Text toastText;
+	protected final Style titleStyle;
+	protected Text toastText;
+	protected Identifier textureObtained;
+	protected Identifier textureUnobtained;
 	
-	public PaginatedAdvancementFrame(int itemOffsetX, int itemOffsetY, Formatting titleFormat) {
+	public PaginatedAdvancementFrame(int itemOffsetX, int itemOffsetY, Style titleStyle) {
 		this.textureObtained = Identifier.of("todo"); // Identifier.of(id.getNamespace(), "advancements/" + id.getPath() + "_obtained");
 		this.textureUnobtained = Identifier.of("todo"); // Identifier.of(id.getNamespace(), "advancements/" + id.getPath() + "_unobtained");
 		this.itemOffsetX = itemOffsetX;
 		this.itemOffsetY = itemOffsetY;
-		this.titleFormat = titleFormat;
+		this.titleStyle = titleStyle;
 		this.toastText = Text.of("todo"); // Text.translatable("advancements.toast." + id);
+	}
+	
+	public void setIdBasedData(Identifier id) {
+		this.toastText = Text.translatable("advancements.toast." + id);
+		this.textureObtained = Identifier.of(id.getNamespace(), "advancements/" + id.getPath() + "_obtained");
+		this.textureUnobtained = Identifier.of(id.getNamespace(), "advancements/" + id.getPath() + "_unobtained");
 	}
 	
 	public Identifier getTextureObtained() {
@@ -38,8 +44,8 @@ public class PaginatedAdvancementFrame {
 		return this.textureUnobtained;
 	}
 	
-	public Formatting getTitleFormat() {
-		return this.titleFormat;
+	public Style getTitleStyle() {
+		return this.titleStyle;
 	}
 	
 	public Text getToastText() {

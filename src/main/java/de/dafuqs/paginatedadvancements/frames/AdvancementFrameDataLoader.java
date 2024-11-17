@@ -11,25 +11,26 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 
-public class AdvancementFrameDataLoader extends JsonDataLoader<AdvancementFrameDataLoader.Entry> implements IdentifiableResourceReloadListener {
+public class AdvancementFrameDataLoader extends JsonDataLoader<List<AdvancementFrameDataLoader.Entry>> implements IdentifiableResourceReloadListener {
 	
 	public static final Identifier ID = PaginatedAdvancementsClient.locate("advancement_frames");
 	public static final AdvancementFrameDataLoader INSTANCE = new AdvancementFrameDataLoader();
 	
-	protected record Entry(Identifier advancementId, Identifier frameId) {
+	public record Entry(Identifier advancementId, Identifier frameId) {
+		
+		public static final Codec<Entry> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
+				Identifier.CODEC.fieldOf("advancement").forGetter(Entry::advancementId),
+				Identifier.CODEC.fieldOf("frame").forGetter(Entry::frameId)
+		).apply(instance, Entry::new));
+		
+		public static final Codec<List<Entry>> LIST_CODEC = CODEC.listOf();
+		
 	}
-	
-	;
-	
-	protected static final Codec<Entry> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
-			Identifier.CODEC.fieldOf("advancement").forGetter(Entry::advancementId),
-			Identifier.CODEC.fieldOf("frame").forGetter(Entry::frameId)
-	).apply(instance, Entry::new));
 	
 	protected static final Map<Identifier, FrameWrapper> CUSTOM_FRAMES = new HashMap<>();
 	
 	public AdvancementFrameDataLoader() {
-		super(CODEC, "advancement_frames");
+		super(Entry.LIST_CODEC, "advancement_frames");
 	}
 	
 	public static @Nullable FrameWrapper get(Identifier id) {
@@ -37,21 +38,23 @@ public class AdvancementFrameDataLoader extends JsonDataLoader<AdvancementFrameD
 	}
 	
 	@Override
-	protected Map<Identifier, AdvancementFrameDataLoader.Entry> prepare(ResourceManager resourceManager, Profiler profiler) {
+	protected Map<Identifier, List<AdvancementFrameDataLoader.Entry>> prepare(ResourceManager resourceManager, Profiler profiler) {
 		return super.prepare(resourceManager, profiler);
 	}
 	
 	@Override
-	protected void apply(Map<Identifier, Entry> prepared, ResourceManager manager, Profiler profiler) {
-		for (Map.Entry<Identifier, Entry> entry : prepared.entrySet()) {
-			Identifier advancement = entry.getValue().advancementId();
-			Identifier frame = entry.getValue().frameId();
-			
-			@Nullable FrameWrapper frameWrapper = FrameWrapper.of(frame);
-			if (frameWrapper == null) {
-				PaginatedAdvancementsClient.LOGGER.error("Advancement Frame '{}' for advancement  '{}' is unknown.", frame, advancement);
-			} else {
-				CUSTOM_FRAMES.put(advancement, frameWrapper);
+	protected void apply(Map<Identifier, List<Entry>> prepared, ResourceManager manager, Profiler profiler) {
+		for (Map.Entry<Identifier, List<Entry>> list : prepared.entrySet()) {
+			for (Entry entry : list.getValue()) {
+				Identifier advancement = entry.advancementId();
+				Identifier frame = entry.frameId();
+				
+				@Nullable FrameWrapper frameWrapper = FrameWrapper.of(frame);
+				if (frameWrapper == null) {
+					PaginatedAdvancementsClient.LOGGER.error("Advancement Frame '{}' for advancement  '{}' is unknown.", frame, advancement);
+				} else {
+					CUSTOM_FRAMES.put(advancement, frameWrapper);
+				}
 			}
 		}
 	}

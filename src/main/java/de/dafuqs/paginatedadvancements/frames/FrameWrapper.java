@@ -3,6 +3,7 @@ package de.dafuqs.paginatedadvancements.frames;
 import de.dafuqs.paginatedadvancements.client.*;
 import net.minecraft.advancement.*;
 import net.minecraft.client.gui.screen.advancement.*;
+import net.minecraft.text.*;
 import net.minecraft.util.*;
 import org.jetbrains.annotations.*;
 
@@ -10,7 +11,8 @@ public abstract class FrameWrapper {
 	
 	public abstract int getItemOffsetX();
 	public abstract int getItemOffsetY();
-	public abstract Formatting getTitleFormat();
+	
+	public abstract Style getTitleStyle();
 	
 	public abstract Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame);
 	
@@ -32,8 +34,8 @@ public abstract class FrameWrapper {
 		}
 		
 		@Override
-		public Formatting getTitleFormat() {
-			return frame.getTitleFormat();
+		public Style getTitleStyle() {
+			return Style.EMPTY.withFormatting(frame.getTitleFormat());
 		}
 		
 		public Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame) {
@@ -60,8 +62,8 @@ public abstract class FrameWrapper {
 		}
 		
 		@Override
-		public Formatting getTitleFormat() {
-			return frame.getTitleFormat();
+		public Style getTitleStyle() {
+			return frame.getTitleStyle();
 		}
 		
 		public Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame) {

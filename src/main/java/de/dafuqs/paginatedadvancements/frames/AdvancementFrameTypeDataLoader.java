@@ -18,7 +18,7 @@ public class AdvancementFrameTypeDataLoader extends JsonDataLoader<PaginatedAdva
 	protected static final Map<Identifier, PaginatedAdvancementFrame> ADVANCEMENT_TO_FRAME = new HashMap<>();
 	
 	public AdvancementFrameTypeDataLoader() {
-		super(PaginatedAdvancementFrame.CODEC, "paginated_frame_types");
+		super(PaginatedAdvancementFrame.CODEC, "advancement_frame_types");
 	}
 	
 	public static @Nullable PaginatedAdvancementFrame getFrameForAdvancement(Identifier id) {
@@ -26,10 +26,16 @@ public class AdvancementFrameTypeDataLoader extends JsonDataLoader<PaginatedAdva
 	}
 	
 	@Override
+	protected Map<Identifier, PaginatedAdvancementFrame> prepare(ResourceManager resourceManager, Profiler profiler) {
+		return super.prepare(resourceManager, profiler);
+	}
+	
+	@Override
 	protected void apply(Map<Identifier, PaginatedAdvancementFrame> prepared, ResourceManager manager, Profiler profiler) {
 		for (Map.Entry<Identifier, PaginatedAdvancementFrame> entry : prepared.entrySet()) {
 			Identifier id = entry.getKey();
 			PaginatedAdvancementFrame frame = entry.getValue();
+			frame.setIdBasedData(id);
 			ADVANCEMENT_TO_FRAME.put(id, frame);
 		}
 	}

@@ -37,7 +37,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		int k = requirementCount > 1 ? client.textRenderer.getWidth("  ") + client.textRenderer.getWidth("0") * String.valueOf(requirementCount).length() * 2 + client.textRenderer.getWidth("/") : 0;
 		int l = 29 + client.textRenderer.getWidth(accessor.getTitle()) + k;
 		if (this.frameWrapper != null) {
-			this.description = Language.getInstance().reorder(accessor.invokeWrapDescription(Texts.setStyleIfAbsent(display.getDescription().copy(), Style.EMPTY.withColor(frameWrapper.getTitleFormat())), l));
+			this.description = Language.getInstance().reorder(accessor.invokeWrapDescription(Texts.setStyleIfAbsent(display.getDescription().copy(), frameWrapper.getTitleStyle()), l));
 		} else {
 			this.description = accessor.getDescription();
 		}
