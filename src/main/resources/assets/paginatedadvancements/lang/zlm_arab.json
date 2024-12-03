@@ -1,0 +1,18 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "کونفيݢوراسي Paginated Advancements",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "ڤودرکن لاتر بلاکڠ منجادي سديکيت کلابو اڤابيلا ملتقکن کورسور داتس کماجوان",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "سناراي تب يڠ دسمت (ڤڠچم کماجوان اکر)",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "سيمڤن دان ڤوليهکن تب يڠ کالي تراخير دڤيليه",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "ڤڠچم تب يڠ کالي تراخير دڤيليه",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "جارق انتارا تب منداتر",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "جارق انتارا تب يڠ دسمت",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "تونجوقکن معلومت ڽهڤڤيجت اڤابيلا ملتقکن کورسور ڤد کماجوان",
+  "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "بيلڠن اينتري مکسيموم کريتيريا کماجوان يڠ دڤاڤرکن",
+  "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "منداياکن ڤڽمتن تب کماجوان",
+  "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "تونجوقکن ID کماجوان ڤد ڤتوا الت ڽهڤڤيجت",
+  "text.paginated_advancements.copied_to_clipboard": "ID کماجوان دسالين کڤاڤن کرتن",
+  "text.paginated_advancements.group": "کومڤولن: ",
+  "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C اونتوق سالين)",
+  "text.paginated_advancements.expand_debug": "[Shift] لبيه لاݢي...",
+  "text.paginated_advancements.scroll_debug": "[تاتل] لبيه لاݢي..."
+}
