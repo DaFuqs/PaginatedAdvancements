@@ -1,0 +1,18 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "Konfigurasi Paginated Advancements",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "Pudarkan latar belakang menjadi sedikit kelabu apabila meletakkan kursor di atas kemajuan",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "Senarai Tab yang disemat (pengecam kemajuan akar)",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "Simpan dan pulihkan tab yang kali terakhir dipilih",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "Pengecam tab yang kali terakhir dipilih",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "Jarak antara tab mendatar",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "Jarak antara tab yang disemat",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "Tunjukkan maklumat apabila meletakkan kursor pada kemajuan",
+  "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Bilangan entri maksimum kriteria kemajuan yang dipaparkan",
+  "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "Mendayakan penyematan tab kemajuan",
+  "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "Tunjukkan ID kemajuan pada petua alat nyahpepijat",
+  "text.paginated_advancements.copied_to_clipboard": "ID Kemajuan disalin ke papan keratan",
+  "text.paginated_advancements.group": "Kumpulan: ",
+  "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C untuk salin)",
+  "text.paginated_advancements.expand_debug": "[Shift] lebih lagi...",
+  "text.paginated_advancements.scroll_debug": "[Tatal] lebih lagi..."
+}
