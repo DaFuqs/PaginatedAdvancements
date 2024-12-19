@@ -12,13 +12,14 @@ import java.util.*;
 
 public class AdvancementFrameTypeDataLoader extends JsonDataLoader<PaginatedAdvancementFrame> implements IdentifiableResourceReloadListener {
 	
-	public static final Identifier ID = PaginatedAdvancementsClient.locate("advancement_frame_types");
+	public static final String LOCATION = "advancement_frame_types";
+	public static final Identifier ID = PaginatedAdvancementsClient.locate(LOCATION);
 	public static final AdvancementFrameTypeDataLoader INSTANCE = new AdvancementFrameTypeDataLoader();
 	
 	protected static final Map<Identifier, PaginatedAdvancementFrame> ADVANCEMENT_TO_FRAME = new HashMap<>();
 	
 	public AdvancementFrameTypeDataLoader() {
-		super(PaginatedAdvancementFrame.CODEC, "advancement_frame_types");
+		super(PaginatedAdvancementFrame.CODEC, ResourceFinder.json(LOCATION));
 	}
 	
 	public static @Nullable PaginatedAdvancementFrame getFrameForAdvancement(Identifier id) {

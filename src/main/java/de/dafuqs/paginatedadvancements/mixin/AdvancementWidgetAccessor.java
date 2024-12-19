@@ -40,7 +40,7 @@ public interface AdvancementWidgetAccessor {
 	AdvancementTab getTab();
 	
 	@Accessor(value = "title")
-	OrderedText getTitle();
+	List<OrderedText> getTitle();
 	
 	@Invoker(value = "wrapDescription")
 	List<StringVisitable> invokeWrapDescription(Text text, int width);

@@ -13,7 +13,8 @@ import java.util.*;
 
 public class AdvancementFrameDataLoader extends JsonDataLoader<List<AdvancementFrameDataLoader.Entry>> implements IdentifiableResourceReloadListener {
 	
-	public static final Identifier ID = PaginatedAdvancementsClient.locate("advancement_frames");
+	public static final String LOCATION = "advancement_frames";
+	public static final Identifier ID = PaginatedAdvancementsClient.locate(LOCATION);
 	public static final AdvancementFrameDataLoader INSTANCE = new AdvancementFrameDataLoader();
 	
 	public record Entry(Identifier advancementId, Identifier frameId) {
@@ -30,7 +31,7 @@ public class AdvancementFrameDataLoader extends JsonDataLoader<List<AdvancementF
 	protected static final Map<Identifier, FrameWrapper> CUSTOM_FRAMES = new HashMap<>();
 	
 	public AdvancementFrameDataLoader() {
-		super(Entry.LIST_CODEC, "advancement_frames");
+		super(Entry.LIST_CODEC, ResourceFinder.json(LOCATION));
 	}
 	
 	public static @Nullable FrameWrapper get(Identifier id) {

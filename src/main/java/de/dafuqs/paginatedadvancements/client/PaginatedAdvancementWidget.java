@@ -33,9 +33,11 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
 		this.frameWrapper = AdvancementFrameDataLoader.get(accessor.getAdvancement().getAdvancementEntry().id());
-		int requirementCount = placedAdvancement.getAdvancement().requirements().getLength();
-		int k = requirementCount > 1 ? client.textRenderer.getWidth("  ") + client.textRenderer.getWidth("0") * String.valueOf(requirementCount).length() * 2 + client.textRenderer.getWidth("/") : 0;
-		int l = 29 + client.textRenderer.getWidth(accessor.getTitle()) + k;
+		
+		int i = Math.max(accessor.getTitle().stream().mapToInt(client.textRenderer::getWidth).max().orElse(0), 80);
+		int j = this.getProgressWidth();
+		int l = 29 + i + j;
+		
 		if (this.frameWrapper != null) {
 			this.description = Language.getInstance().reorder(accessor.invokeWrapDescription(Texts.setStyleIfAbsent(display.getDescription().copy(), frameWrapper.getTitleStyle()), l));
 		} else {
@@ -147,12 +149,12 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		}
 		
 		if (shouldRenderToTheLeft) {
-			context.drawTextWithShadow(textRenderer, accessor.getTitle(), startX + 5, originY + accessor.getY() + 9, -1);
+			this.drawText(context, accessor.getTitle(), startX + 5, originY + accessor.getY() + 9, -1);
 			if (string != null) {
 				context.drawTextWithShadow(textRenderer, string, originX + accessor.getX() - i, originY + accessor.getY() + 9, -1);
 			}
 		} else {
-			context.drawTextWithShadow(textRenderer, accessor.getTitle(), originX + accessor.getX() + 32, originY + accessor.getY() + 9, -1);
+			this.drawText(context, accessor.getTitle(), originX + accessor.getX() + 32, originY + accessor.getY() + 9, -1);
 			if (string != null) {
 				context.drawTextWithShadow(textRenderer, string, originX + accessor.getX() + accessor.getWidth() - i - 5, originY + accessor.getY() + 9, -1);
 			}
