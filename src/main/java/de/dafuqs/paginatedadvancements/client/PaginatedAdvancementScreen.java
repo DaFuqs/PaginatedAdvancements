@@ -1,7 +1,6 @@
 package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.*;
-import com.mojang.blaze3d.systems.*;
 import de.dafuqs.paginatedadvancements.*;
 import net.minecraft.advancement.*;
 import net.minecraft.client.gui.*;
@@ -178,7 +177,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			}
 		}
 		
-		RenderSystem.defaultBlendFunc();
 		index = 0;
 		tabIterator = this.tabs.values().iterator();
 		while(tabIterator.hasNext()) {
@@ -193,7 +191,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 				index++;
 			}
 		}
-		RenderSystem.disableBlend();
 	}
 	
 	private void renderPinnedTabs(DrawContext context, int startX, int startY, int endX, int endY) {
@@ -207,13 +204,11 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			advancementTab.drawPinnedBackground(context, endX, startY, advancementTab == this.selectedTab, maxPinnedTabs);
 		}
 		
-		RenderSystem.defaultBlendFunc();
 		tabIterator = this.pinnedTabs.values().iterator();
 		while(tabIterator.hasNext()) {
 			advancementTab = tabIterator.next();
 			advancementTab.drawPinnedIcon(context, endX, startY, maxPinnedTabs);
 		}
-		RenderSystem.disableBlend();
 	}
 	
 	// instead of drawing the full texture here, we cut it into pieces and draw

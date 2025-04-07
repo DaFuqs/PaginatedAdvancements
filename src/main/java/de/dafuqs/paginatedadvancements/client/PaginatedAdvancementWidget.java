@@ -1,6 +1,5 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import com.mojang.blaze3d.systems.*;
 import de.dafuqs.paginatedadvancements.frames.*;
 import de.dafuqs.paginatedadvancements.mixin.*;
 import net.fabricmc.api.*;
@@ -94,7 +93,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		int var10002 = description.size();
 		
 		boolean bl2 = var10000 <= 6 + var10002 * 9;
-		float f = accessor.getProgress() == null ? 0.0F : progress.getProgressBarPercentage();
+		float f = progress == null ? 0.0F : progress.getProgressBarPercentage();
 		int j = MathHelper.floor(f * (float) accessor.getWidth());
 		AdvancementObtainedStatus advancementObtainedStatus;
 		AdvancementObtainedStatus advancementObtainedStatus2;
@@ -121,7 +120,6 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		}
 		
 		int k = accessor.getWidth() - j;
-		RenderSystem.enableBlend();
 		int l = originY + accessor.getY();
 		int startX;
 		if (shouldRenderToTheLeft) {
