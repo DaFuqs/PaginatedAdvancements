@@ -1,8 +1,8 @@
 package de.dafuqs.paginatedadvancements.client;
 
 import de.dafuqs.paginatedadvancements.*;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.render.*;
 import net.minecraft.item.*;
 import net.minecraft.util.*;
 
@@ -27,7 +27,7 @@ public class PaginatedAdvancementTabType {
 		} else {
 			identifier = selected ? TOP_MIDDLE_TEXTURE_SELECTED : TOP_MIDDLE_TEXTURE;
 		}
-		context.drawGuiTexture(RenderLayer::getGuiTextured, identifier, x + getTabX(index), y + getTabY(), WIDTH, HEIGHT);
+		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x + getTabX(index), y + getTabY(), WIDTH, HEIGHT);
 	}
 	
 	public static void drawIcon(DrawContext context, int x, int y, int index, ItemStack stack) {
