@@ -28,7 +28,7 @@
     "paginatedadvancements.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=${minecraft_version}",
+    "minecraft": ">=1.21.6",
     "fabricloader": "*",
     "fabric-api": "*",
     "cloth-config": "*"
