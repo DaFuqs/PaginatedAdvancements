@@ -5,9 +5,9 @@ import de.dafuqs.paginatedadvancements.*;
 import de.dafuqs.paginatedadvancements.mixin.*;
 import net.minecraft.advancement.*;
 import net.minecraft.client.*;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.advancement.*;
-import net.minecraft.client.render.*;
 import net.minecraft.client.texture.*;
 import net.minecraft.item.*;
 import net.minecraft.text.*;
@@ -111,8 +111,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 		
 		context.enableScissor(startX, startY, advancementTreeWindowWidth, advancementTreeWindowHeight);
-		context.getMatrices().push();
-		context.getMatrices().translate(startX, startY, 0.0F);
+		context.getMatrices().pushMatrix();
+		context.getMatrices().translate(startX, startY);
 		Identifier identifier = this.display.getBackground().map(AssetInfo::texturePath).orElse(TextureManager.MISSING_IDENTIFIER);
 
 		int i = MathHelper.floor(this.originX);
@@ -124,7 +124,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		int textureCountY = (advancementTreeWindowHeight) / 16 + 2;
 		for (int m = -1; m < textureCountX; ++m) {
 			for (int n = -1; n < textureCountY; ++n) {
-				context.drawTexture(RenderLayer::getGuiTextured, identifier, k + 16 * m, l + 16 * n, 0.0F, 0.0F, 16, 16, 16, 16);
+				context.drawTexture(RenderPipelines.GUI_TEXTURED, identifier, k + 16 * m, l + 16 * n, 0.0F, 0.0F, 16, 16, 16, 16);
 			}
 		}
 		
@@ -132,13 +132,13 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		this.rootWidget.renderLines(context, i, j, false);
 		this.rootWidget.renderWidgets(context, i, j);
 		
-		context.getMatrices().pop();
+		context.getMatrices().popMatrix();
 		context.disableScissor();
 	}
 	
 	public void drawWidgetTooltip(DrawContext context, int mouseX, int mouseY, int startX, int startY, int endXWindow, int endY) {
-		context.getMatrices().push();
-		context.getMatrices().translate(0.0F, 0.0F, -200.0F);
+		context.getMatrices().pushMatrix();
+		context.getMatrices().translate(0.0F, 0.0F);
 		
 		// tinting the background slightly darker
 		// (this is the vanilla default, but able to be disabled via config)
@@ -162,7 +162,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			}
 		}
 		
-		context.getMatrices().pop();
+		context.getMatrices().popMatrix();
 		if (hoversWidget) {
 			this.alpha = MathHelper.clamp(this.alpha + 0.02F, 0.0F, 0.3F);
 		} else {
@@ -200,7 +200,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			int requirementY = startY + 15;
 			if (PaginatedAdvancementsClient.CONFIG.ShowAdvancementIDInDebugTooltip) {
 				Text idText = Text.literal("ID: " + advancementWidgetAccessor.getAdvancement().getAdvancementEntry().id().toString() + " ").append(Text.translatable("text.paginated_advancements.copy_to_clipboard"));
-				context.drawText(this.client.textRenderer, idText, startX + 5, startY + 5, 0xFFFFFF, true);
+				context.drawText(this.client.textRenderer, idText, startX + 5, startY + 5, 0xFF_FFFFFF, true);
 			} else {
 				requirementY = startY + 5;
 			}
@@ -263,15 +263,15 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	}
 	
 	protected void drawDebugFrame(DrawContext context, int startX, int startY, int endX, int endY) {
-		context.getMatrices().push();
+		context.getMatrices().pushMatrix();
 		
 		int TOP_ELEMENT_HEIGHT = 15;
 		
 		// corners
-		context.drawTexture(RenderLayer::getGuiTextured, PaginatedAdvancementScreen.WINDOW_TEXTURE, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top left
-		context.drawTexture(RenderLayer::getGuiTextured, PaginatedAdvancementScreen.WINDOW_TEXTURE, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top right
-		context.drawTexture(RenderLayer::getGuiTextured, PaginatedAdvancementScreen.WINDOW_TEXTURE, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom left
-		context.drawTexture(RenderLayer::getGuiTextured, PaginatedAdvancementScreen.WINDOW_TEXTURE, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom right
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, PaginatedAdvancementScreen.WINDOW_TEXTURE, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top left
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, PaginatedAdvancementScreen.WINDOW_TEXTURE, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top right
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, PaginatedAdvancementScreen.WINDOW_TEXTURE, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom left
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, PaginatedAdvancementScreen.WINDOW_TEXTURE, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom right
 		
 		// left + right sides
 		int maxTopHeightInOneDrawCall = 100;
@@ -280,8 +280,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		while (middleHeight > 0) {
 			int currentDrawHeight = Math.min(middleHeight, maxTopHeightInOneDrawCall);
 			
-			context.drawTexture(RenderLayer::getGuiTextured, PaginatedAdvancementScreen.WINDOW_TEXTURE, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
-			context.drawTexture(RenderLayer::getGuiTextured, PaginatedAdvancementScreen.WINDOW_TEXTURE, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, PaginatedAdvancementScreen.WINDOW_TEXTURE, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, PaginatedAdvancementScreen.WINDOW_TEXTURE, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
 			
 			middleHeight -= currentDrawHeight;
 			currentY += currentDrawHeight;
@@ -294,8 +294,8 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		while (middleWidth > 0) {
 			int currentDrawWidth = Math.min(middleWidth, maxTopWidthInOneDrawCall);
 			
-			context.drawTexture(RenderLayer::getGuiTextured, PaginatedAdvancementScreen.WINDOW_TEXTURE, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT, 256, 256);
-			context.drawTexture(RenderLayer::getGuiTextured, PaginatedAdvancementScreen.WINDOW_TEXTURE, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, PaginatedAdvancementScreen.WINDOW_TEXTURE, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, PaginatedAdvancementScreen.WINDOW_TEXTURE, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT, 256, 256);
 			
 			middleWidth -= currentDrawWidth;
 			currentX += currentDrawWidth;
@@ -315,7 +315,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			int drawWidth = centerEndX - centerStartX;
 			while (drawWidth > 0) {
 				int currentWidth = Math.min(200, drawWidth);
-				context.drawTexture(RenderLayer::getGuiTextured, PaginatedAdvancementScreen.WINDOW_TEXTURE, drawStartX, drawStartY, 4, 4, currentWidth, currentHeight, 256, 256);
+				context.drawTexture(RenderPipelines.GUI_TEXTURED, PaginatedAdvancementScreen.WINDOW_TEXTURE, drawStartX, drawStartY, 4, 4, currentWidth, currentHeight, 256, 256);
 				drawWidth -= currentWidth;
 				drawStartX += currentWidth;
 			}
@@ -323,15 +323,15 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			drawStartY += currentHeight;
 		}
 		
-		context.getMatrices().pop();
+		context.getMatrices().popMatrix();
 	}
 	
 	protected void drawRequirementsWithOverflow(DrawContext context, int startX, int startY, int endX, int endY, List<MutableText> requirements, int lines) {
 		for (int i = 0; i < lines; i++) {
 			if (i == lines - 1) {
-				context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.expand_debug"), startX, startY, 0x999999, false);
+				context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.expand_debug"), startX, startY, 0xff999999, false);
 			} else {
-				context.drawText(this.client.textRenderer, requirements.get(i), startX, startY, 0x00ff00, false);
+				context.drawText(this.client.textRenderer, requirements.get(i), startX, startY, 0xff00ff00, false);
 			}
 			startY += 10;
 		}
@@ -349,17 +349,17 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 		
 		if (scrollAmount > 0) {
-			context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0x999999, false);
+			context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0xff_999999, false);
 			scrollAmount += 1;
 			startY += 10;
 		}
 		for (int i = scrollAmount; i < requirements.size(); i++) {
 			if (startY + 10 >= endY) break;
 			else if (startY + 20 >= endY && i + 1 != requirements.size()) {
-				context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0x999999, false);
+				context.drawText(this.client.textRenderer, Text.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0xff_999999, false);
 				break;
 			}
-			context.drawText(this.client.textRenderer, requirements.get(i), startX, startY, 0x00ff00, false);
+			context.drawText(this.client.textRenderer, requirements.get(i), startX, startY, 0xff_00ff00, false);
 			startY += 10;
 		}
 	}

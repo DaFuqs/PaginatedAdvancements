@@ -3,10 +3,10 @@ package de.dafuqs.paginatedadvancements.client;
 import com.google.common.collect.*;
 import de.dafuqs.paginatedadvancements.*;
 import net.minecraft.advancement.*;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.advancement.*;
 import net.minecraft.client.network.*;
-import net.minecraft.client.render.*;
 import net.minecraft.client.util.*;
 import net.minecraft.text.*;
 import net.minecraft.util.*;
@@ -108,21 +108,21 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if (this.selectedTab != null && PaginatedAdvancementsClient.CONFIG.PinningEnabled) {
 			if (isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
 				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRoot().getAdvancementEntry().id())) {
-					context.drawTexture(RenderLayer::getGuiTextured, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+					context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				} else {
-					context.drawTexture(RenderLayer::getGuiTextured, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+					context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				}
 			} else {
 				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRoot().getAdvancementEntry().id())) {
-					context.drawTexture(RenderLayer::getGuiTextured, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+					context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				} else {
-					context.drawTexture(RenderLayer::getGuiTextured, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+					context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				}
 			}
 			
 			if(hasPins) {
 				// draw pinned tab header
-				context.drawTexture(RenderLayer::getGuiTextured, PAGINATION_TEXTURE, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 6, 46, 0, 32, 15, 256, 256);
+				context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 6, 46, 0, 32, 15, 256, 256);
 			}
 		}
 	}
@@ -216,18 +216,18 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	public void drawPaginationButtons(DrawContext context, int mouseX, int mouseY, int startX, int endX) {
 		if (isClickOnBackTab(mouseX, mouseY, startX, endX)) {
 			// hover
-			context.drawTexture(RenderLayer::getGuiTextured, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 23, 23, 23, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 23, 23, 23, 256, 256);
 		} else {
 			// no hover
-			context.drawTexture(RenderLayer::getGuiTextured, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 0, 23, 23, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 0, 23, 23, 256, 256);
 		}
 		
 		if (isClickOnForwardTab(mouseX, mouseY, startX, endX)) {
 			// hover
-			context.drawTexture(RenderLayer::getGuiTextured, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 23, 23, 23, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 23, 23, 23, 256, 256);
 		} else {
 			// no hover
-			context.drawTexture(RenderLayer::getGuiTextured, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 0, 23, 23, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 0, 23, 23, 256, 256);
 		}
 	}
 	
@@ -245,10 +245,10 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	
 	private void drawFrame(DrawContext context, int startX, int startY, int endX, int endY) {
 		// corners
-		context.drawTexture(RenderLayer::getGuiTextured, WINDOW_TEXTURE, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top left
-		context.drawTexture(RenderLayer::getGuiTextured, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top right
-		context.drawTexture(RenderLayer::getGuiTextured, WINDOW_TEXTURE, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom left
-		context.drawTexture(RenderLayer::getGuiTextured, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom right
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top left
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top right
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom left
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom right
 		
 		// left + right sides
 		int maxTopHeightInOneDrawCall = 100;
@@ -257,8 +257,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		while (middleHeight > 0) {
 			int currentDrawHeight = Math.min(middleHeight, maxTopHeightInOneDrawCall);
 			
-			context.drawTexture(RenderLayer::getGuiTextured, WINDOW_TEXTURE, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
-			context.drawTexture(RenderLayer::getGuiTextured, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
 			
 			middleHeight -= currentDrawHeight;
 			currentY += currentDrawHeight;
@@ -271,8 +271,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		while (middleWidth > 0) {
 			int currentDrawWidth = Math.min(middleWidth, maxTopWidthInOneDrawCall);
 			
-			context.drawTexture(RenderLayer::getGuiTextured, WINDOW_TEXTURE, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT, 256, 256);
-			context.drawTexture(RenderLayer::getGuiTextured, WINDOW_TEXTURE, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT, 256, 256);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT, 256, 256);
 			
 			middleWidth -= currentDrawWidth;
 			currentX += currentDrawWidth;
@@ -460,16 +460,16 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	
 	private void drawWidgetTooltip(DrawContext context, int mouseX, int mouseY, int startX, int startY, int endXTitle, int endXWindow, int endY) {
 		if (this.selectedTab != null) {
-			context.getMatrices().push();
-			context.getMatrices().translate((startX + 9), (startY + 18), 400.0D);
+			context.getMatrices().pushMatrix();
+			context.getMatrices().translate((startX + 9), (startY + 18));//, 400.0D);
 			this.selectedTab.drawWidgetTooltip(context, mouseX - startX - 9, mouseY - startY - 18, startX, startY, endXWindow, endY);
 			
-			context.getMatrices().translate(0, 0, 400.0D);
+			context.getMatrices().translate(0, 0);//, 400.0D);
 			if (PaginatedAdvancementsClient.CONFIG.shouldShowAdvancementDebug(this.client)) {
 				this.selectedTab.drawDebugInfo(context, startX, startY, endXWindow, endY);
 			}
 			
-			context.getMatrices().pop();
+			context.getMatrices().popMatrix();
 		}
 		
 		if (this.tabs.size() > 1) {
@@ -503,7 +503,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		
 		clampCurrentPage(startX, endXTitle, endXWindow); // if the screen has been resized
 		
-		this.renderBackground(context, mouseX, mouseY, delta);
 		this.drawAdvancementTree(context, startX, startY, endXWindow, endY);
 		this.drawWindow(context, mouseX, mouseY, startX, startY, endXWindow, endY);
 		

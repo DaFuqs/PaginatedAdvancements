@@ -1,9 +1,9 @@
 package de.dafuqs.paginatedadvancements.client;
 
 import de.dafuqs.paginatedadvancements.*;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.advancement.*;
-import net.minecraft.client.render.*;
 import net.minecraft.item.*;
 import net.minecraft.util.*;
 
@@ -29,7 +29,7 @@ public class PinnedAdvancementTabType {
 		} else {
 			identifier = selected ? RIGHT_MIDDLE_TEXTURE_SELECTED : RIGHT_MIDDLE_TEXTURE;
 		}
-		context.drawGuiTexture(RenderLayer::getGuiTextured, identifier, x + getTabX(), y + getTabY(index), WIDTH, HEIGHT);
+		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x + getTabX(), y + getTabY(index), WIDTH, HEIGHT);
 		
 		AdvancementTabType.RIGHT.drawBackground(context, x + getTabX(), y + getTabY(index), selected, index);
 	}
