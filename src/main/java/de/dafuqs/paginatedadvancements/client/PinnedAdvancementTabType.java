@@ -1,11 +1,11 @@
 package de.dafuqs.paginatedadvancements.client;
 
 import de.dafuqs.paginatedadvancements.*;
-import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screen.advancement.*;
-import net.minecraft.item.*;
-import net.minecraft.util.*;
+import net.minecraft.client.gui.screens.advancements.*;
+import net.minecraft.client.renderer.*;
+import net.minecraft.resources.*;
+import net.minecraft.world.item.*;
 
 public class PinnedAdvancementTabType {
 	
@@ -13,31 +13,31 @@ public class PinnedAdvancementTabType {
 	public static final int WIDTH = 32;
 	public static final int HEIGHT = 28;
 	
-	protected static final Identifier RIGHT_TOP_TEXTURE_SELECTED = Identifier.ofVanilla("advancements/tab_right_top_selected");
-	protected static final Identifier RIGHT_MIDDLE_TEXTURE_SELECTED = Identifier.ofVanilla("advancements/tab_right_middle_selected");
-	protected static final Identifier RIGHT_TOP_TEXTURE = Identifier.ofVanilla("advancements/tab_right_top");
-	protected static final Identifier RIGHT_MIDDLE_TEXTURE = Identifier.ofVanilla("advancements/tab_right_middle");
+	protected static final ResourceLocation RIGHT_TOP_TEXTURE_SELECTED = ResourceLocation.withDefaultNamespace("advancements/tab_right_top_selected");
+	protected static final ResourceLocation RIGHT_MIDDLE_TEXTURE_SELECTED = ResourceLocation.withDefaultNamespace("advancements/tab_right_middle_selected");
+	protected static final ResourceLocation RIGHT_TOP_TEXTURE = ResourceLocation.withDefaultNamespace("advancements/tab_right_top");
+	protected static final ResourceLocation RIGHT_MIDDLE_TEXTURE = ResourceLocation.withDefaultNamespace("advancements/tab_right_middle");
 	
 	public static int getHeightWithSpacing() {
 		return HEIGHT + PaginatedAdvancementsClient.CONFIG.SpacingBetweenPinnedTabs; // includes the empty space between tabs
 	}
 	
-	public static void drawBackground(DrawContext context, int x, int y, boolean selected, int index) {
-		Identifier identifier;
+	public static void drawBackground(GuiGraphics context, int x, int y, boolean selected, int index) {
+		ResourceLocation identifier;
 		if (index == 0) {
 			identifier = selected ? RIGHT_TOP_TEXTURE_SELECTED : RIGHT_TOP_TEXTURE;
 		} else {
 			identifier = selected ? RIGHT_MIDDLE_TEXTURE_SELECTED : RIGHT_MIDDLE_TEXTURE;
 		}
-		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x + getTabX(), y + getTabY(index), WIDTH, HEIGHT);
+		context.blitSprite(RenderPipelines.GUI_TEXTURED, identifier, x + getTabX(), y + getTabY(index), WIDTH, HEIGHT);
 		
-		AdvancementTabType.RIGHT.drawBackground(context, x + getTabX(), y + getTabY(index), selected, index);
+		AdvancementTabType.RIGHT.draw(context, x + getTabX(), y + getTabY(index), selected, index);
 	}
 	
-	public static void drawIcon(DrawContext context, int x, int y, int index, ItemStack stack) {
+	public static void drawIcon(GuiGraphics context, int x, int y, int index, ItemStack stack) {
 		int i = x + getTabX() + 6;
 		int j = y + getTabY(index) + 5;
-		context.drawItemWithoutEntity(stack, i, j);
+		context.renderFakeItem(stack, i, j);
 	}
 	
 	public static int getTabX() {

@@ -2,48 +2,42 @@ package de.dafuqs.paginatedadvancements.frames;
 
 import de.dafuqs.paginatedadvancements.*;
 import de.dafuqs.paginatedadvancements.client.*;
-import net.fabricmc.fabric.api.resource.*;
-import net.minecraft.resource.*;
-import net.minecraft.util.*;
-import net.minecraft.util.profiler.*;
+import net.minecraft.resources.*;
+import net.minecraft.server.packs.resources.*;
+import net.minecraft.util.profiling.*;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
 
-public class AdvancementFrameTypeDataLoader extends JsonDataLoader<PaginatedAdvancementFrame> implements IdentifiableResourceReloadListener {
+public class AdvancementFrameTypeDataLoader extends SimpleJsonResourceReloadListener<PaginatedAdvancementFrame> {
 	
 	public static final String LOCATION = "advancement_frame_types";
-	public static final Identifier ID = PaginatedAdvancementsClient.locate(LOCATION);
+	public static final ResourceLocation ID = PaginatedAdvancementsClient.locate(LOCATION);
 	public static final AdvancementFrameTypeDataLoader INSTANCE = new AdvancementFrameTypeDataLoader();
 	
-	protected static final Map<Identifier, PaginatedAdvancementFrame> ADVANCEMENT_TO_FRAME = new HashMap<>();
+	protected static final Map<ResourceLocation, PaginatedAdvancementFrame> ADVANCEMENT_TO_FRAME = new HashMap<>();
 	
 	public AdvancementFrameTypeDataLoader() {
-		super(PaginatedAdvancementFrame.CODEC, ResourceFinder.json(LOCATION));
+		super(PaginatedAdvancementFrame.CODEC, FileToIdConverter.json(LOCATION));
 	}
 	
-	public static @Nullable PaginatedAdvancementFrame getFrameForAdvancement(Identifier id) {
+	public static @Nullable PaginatedAdvancementFrame getFrameForAdvancement(ResourceLocation id) {
 		return ADVANCEMENT_TO_FRAME.getOrDefault(id, null);
 	}
 	
 	@Override
-	protected Map<Identifier, PaginatedAdvancementFrame> prepare(ResourceManager resourceManager, Profiler profiler) {
+	protected Map<ResourceLocation, PaginatedAdvancementFrame> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
 		return super.prepare(resourceManager, profiler);
 	}
 	
 	@Override
-	protected void apply(Map<Identifier, PaginatedAdvancementFrame> prepared, ResourceManager manager, Profiler profiler) {
-		for (Map.Entry<Identifier, PaginatedAdvancementFrame> entry : prepared.entrySet()) {
-			Identifier id = entry.getKey();
+	protected void apply(Map<ResourceLocation, PaginatedAdvancementFrame> prepared, ResourceManager manager, ProfilerFiller profiler) {
+		for (Map.Entry<ResourceLocation, PaginatedAdvancementFrame> entry : prepared.entrySet()) {
+			ResourceLocation id = entry.getKey();
 			PaginatedAdvancementFrame frame = entry.getValue();
 			frame.setIdBasedData(id);
 			ADVANCEMENT_TO_FRAME.put(id, frame);
 		}
-	}
-	
-	@Override
-	public Identifier getFabricId() {
-		return ID;
 	}
 	
 }

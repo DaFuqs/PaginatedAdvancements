@@ -4,16 +4,17 @@ import de.dafuqs.paginatedadvancements.config.*;
 import de.dafuqs.paginatedadvancements.frames.*;
 import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.serializer.*;
-import net.fabricmc.api.*;
-import net.fabricmc.fabric.api.resource.*;
-import net.minecraft.resource.*;
-import net.minecraft.util.*;
+import net.minecraft.resources.*;
+import net.neoforged.bus.api.*;
+import net.neoforged.fml.*;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.*;
 import org.jetbrains.annotations.*;
 import org.slf4j.*;
 
 import java.util.*;
 
-public class PaginatedAdvancementsClient implements ClientModInitializer {
+public class PaginatedAdvancementsClient {
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger("PaginatedAdvancements");
 	public static final String MOD_ID = "paginatedadvancements";
@@ -22,28 +23,33 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 	public static PaginatedAdvancementsConfig CONFIG;
 	
 	@Contract(value = "_ -> new", pure = true)
-	public static @NotNull Identifier locate(String name) {
-		return Identifier.of(MOD_ID, name);
+	public static @NotNull ResourceLocation locate(String name) {
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
 	}
 	
-	@Override
-	public void onInitializeClient() {
+	public static void onInitializeClient() {
 		ConfigHolder<PaginatedAdvancementsConfig> configHolder = AutoConfig.register(PaginatedAdvancementsConfig.class, JanksonConfigSerializer::new);
 		CONFIG_MANAGER = ((ConfigManager<PaginatedAdvancementsConfig>) configHolder);
 		CONFIG = AutoConfig.getConfigHolder(PaginatedAdvancementsConfig.class).getConfig();
 		
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameTypeDataLoader.INSTANCE);
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameDataLoader.INSTANCE);
+		ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (modContainer, screen) ->
+				AutoConfig.getConfigScreen(PaginatedAdvancementsConfig.class, screen).get());
 	}
 	
-	public static void saveSelectedTab(Identifier tabIdentifier) {
+	@SubscribeEvent
+	public static void registerResources(AddClientReloadListenersEvent event) {
+		event.addListener(AdvancementFrameTypeDataLoader.ID, AdvancementFrameTypeDataLoader.INSTANCE);
+		event.addListener(AdvancementFrameDataLoader.ID, AdvancementFrameDataLoader.INSTANCE);
+	}
+	
+	public static void saveSelectedTab(ResourceLocation tabIdentifier) {
 		if(CONFIG.SaveLastSelectedTab) {
 			CONFIG.LastSelectedTab = tabIdentifier.toString();
 			CONFIG_MANAGER.save();
 		}
 	}
 	
-	public static void pinTab(Identifier tabIdentifier) {
+	public static void pinTab(ResourceLocation tabIdentifier) {
 		String identifierString = tabIdentifier.toString();
 		if(!CONFIG.PinnedTabs.contains(identifierString)) {
 			CONFIG.PinnedTabs.add(identifierString);
@@ -51,7 +57,7 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 		}
 	}
 	
-	public static void unpinTab(Identifier tabIdentifier) {
+	public static void unpinTab(ResourceLocation tabIdentifier) {
 		String identifierString = tabIdentifier.toString();
 		if(CONFIG.PinnedTabs.contains(identifierString)) {
 			CONFIG.PinnedTabs.remove(identifierString);
@@ -59,7 +65,7 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 		}
 	}
 	
-	public static boolean isPinned(Identifier tabIdentifier) {
+	public static boolean isPinned(ResourceLocation tabIdentifier) {
 		return CONFIG.PinningEnabled && CONFIG.PinnedTabs.contains(tabIdentifier.toString());
 	}
 	
@@ -71,7 +77,7 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 		return CONFIG.PinnedTabs;
 	}
 	
-	public static int getPinIndex(Identifier tabIdentifier) {
+	public static int getPinIndex(ResourceLocation tabIdentifier) {
 		return CONFIG.PinnedTabs.indexOf(tabIdentifier.toString());
 	}
 	

@@ -32,7 +32,7 @@ public class PaginatedAdvancementsConfig implements ConfigData {
 	
 	}
 	
-	public boolean shouldShowAdvancementDebug(MinecraftClient client) {
+	public boolean shouldShowAdvancementDebug(Minecraft client) {
 		switch (ShowDebugInfo) {
 			case ALWAYS -> {
 				return true;
