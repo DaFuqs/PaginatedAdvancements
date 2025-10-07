@@ -113,7 +113,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		context.enableScissor(startX, startY, advancementTreeWindowWidth, advancementTreeWindowHeight);
 		context.getMatrices().pushMatrix();
 		context.getMatrices().translate(startX, startY);
-		Identifier identifier = this.display.getBackground().map(AssetInfo::texturePath).orElse(TextureManager.MISSING_IDENTIFIER);
+		Identifier identifier = this.display.getBackground().map(AssetInfo.TextureAsset::texturePath).orElse(TextureManager.MISSING_IDENTIFIER);
 
 		int i = MathHelper.floor(this.originX);
 		int j = MathHelper.floor(this.originY);
@@ -185,7 +185,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			
 			boolean overflow = false;
 			int displayedRequirementLines;
-			if (!hasShiftDown()) {
+			if (!client.isShiftPressed()) {
 				overflow = requirements.size() > PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries;
 				displayedRequirementLines = Math.min(requirements.size(), PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries);
 			} else {
