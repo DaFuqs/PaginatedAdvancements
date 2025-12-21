@@ -115,7 +115,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		context.enableScissor(startX, startY, advancementTreeWindowWidth, advancementTreeWindowHeight);
 		context.pose().pushMatrix();
 		context.pose().translate(startX, startY);
-		ResourceLocation identifier = this.display.getBackground().map(ClientAsset::texturePath).orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
+		ResourceLocation identifier = this.display.getBackground().map(ClientAsset.ResourceTexture::texturePath).orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
 		
 		int i = Mth.floor(this.originX);
 		int j = Mth.floor(this.originY);
@@ -187,7 +187,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			
 			boolean overflow = false;
 			int displayedRequirementLines;
-			if (!hasShiftDown()) {
+			if (!client.hasShiftDown()) {
 				overflow = requirements.size() > PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries;
 				displayedRequirementLines = Math.min(requirements.size(), PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries);
 			} else {

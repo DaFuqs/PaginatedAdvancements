@@ -1,11 +1,11 @@
 package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.*;
-import com.mojang.blaze3d.platform.*;
 import de.dafuqs.paginatedadvancements.*;
 import net.minecraft.advancements.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.advancements.*;
+import net.minecraft.client.input.*;
 import net.minecraft.client.multiplayer.*;
 import net.minecraft.client.renderer.*;
 import net.minecraft.network.chat.*;
@@ -328,8 +328,9 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 	
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (button == 0) {
+	@Override
+	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+		if (click.button() == 0) {
 			int startX = BORDER_PADDING;
 			int endXWindow = !this.pinnedTabs.isEmpty() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH : this.width - BORDER_PADDING;
 			int endXTitle = this.width - BORDER_PADDING;
@@ -338,7 +339,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			
 			boolean isPaginated = isPaginated(startX, endXWindow);
 			
-			if(this.selectedTab != null && isClickOnFavouritesButton(mouseX, mouseY, startY, endXWindow)) {
+			if (this.selectedTab != null && isClickOnFavouritesButton(click.x(), click.y(), startY, endXWindow)) {
 				ResourceLocation pageIdentifier = this.selectedTab.getRootNode().holder().id();
 				if(PaginatedAdvancementsClient.isPinned(pageIdentifier)) {
 					unpinTab(pageIdentifier);
@@ -348,16 +349,16 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			}
 			
 			if(isPaginated) {
-				if (isClickOnBackTab(mouseX, mouseY, startX, endXTitle)) {
+				if (isClickOnBackTab(click.x(), click.y(), startX, endXTitle)) {
 					pageBackward(startX, endXTitle, endXWindow);
-				} else if (isClickOnForwardTab(mouseX, mouseY, startX, endXTitle)) {
+				} else if (isClickOnForwardTab(click.x(), click.y(), startX, endXTitle)) {
 					pageForward(startX, endXTitle, endXWindow);
 				}
 			}
 
 			int maxDisplayedTabs = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, isPaginated);
 			for (PaginatedAdvancementTab paginatedAdvancementTab : this.tabs.values()) {
-				if (paginatedAdvancementTab.isClickOnTab(BORDER_PADDING, BORDER_PADDING + ADDITIONAL_PADDING_TOP, mouseX, mouseY, isPaginated, maxDisplayedTabs, currentPage)) {
+				if (paginatedAdvancementTab.isClickOnTab(BORDER_PADDING, BORDER_PADDING + ADDITIONAL_PADDING_TOP, click.x(), click.y(), isPaginated, maxDisplayedTabs, currentPage)) {
 					this.advancementHandler.setSelectedTab(paginatedAdvancementTab.getRootNode().holder(), true);
 					break;
 				}
@@ -366,13 +367,13 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			if (!this.pinnedTabs.isEmpty()) {
 				int maxPinnedTabs = getMaxPinnedTabsToRender(startY, endY);
 				for (PaginatedAdvancementTab paginatedAdvancementTab : this.pinnedTabs.values()) {
-					if (paginatedAdvancementTab.isClickOnPinnedTab(endXWindow, startY, mouseX, mouseY, maxPinnedTabs)) {
+					if (paginatedAdvancementTab.isClickOnPinnedTab(endXWindow, startY, click.x(), click.y(), maxPinnedTabs)) {
 						this.advancementHandler.setSelectedTab(paginatedAdvancementTab.getRootNode().holder(), true);
 					}
 				}
 			}
 		}
-		return super.mouseClicked(mouseX, mouseY, button);
+		return super.mouseClicked(click, doubled);
 	}
 	
 	private void pinTab(ResourceLocation pageIdentifier) {
@@ -419,16 +420,17 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 	
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (this.minecraft.options.keyAdvancements.matches(keyCode, scanCode)) {
+	@Override
+	public boolean keyPressed(KeyEvent event) {
+		if (this.minecraft.options.keyAdvancements.matches(event)) {
 			this.minecraft.setScreen(null);
 			this.minecraft.mouseHandler.grabMouse();
 			return true;
-		} else if (this.selectedTab != null && keyCode == InputConstants.KEY_C && modifiers == 2) { // ctrl + c
+		} else if (this.selectedTab != null && event.isCopy()) { // ctrl + c
 			this.selectedTab.copyHoveredAdvancementID();
 			return true;
 		} else {
-			return super.keyPressed(keyCode, scanCode, modifiers);
+			return super.keyPressed(event);
 		}
 	}
 
@@ -439,9 +441,10 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		else
 			return false;
 	}
-
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-		if (button != 0) {
+	
+	@Override
+	public boolean mouseDragged(MouseButtonEvent event, double mouseX, double mouseY) {
+		if (event.button() != 0) {
 			this.movingTab = false;
 			return false;
 		} else {
@@ -451,7 +454,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 				int endX = !this.pinnedTabs.isEmpty() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH - 4 : this.width - BORDER_PADDING;
 				int endY = this.height - BORDER_PADDING;
 				
-				this.selectedTab.move(deltaX, deltaY, endX - 60 + 5, endY - 84);
+				this.selectedTab.move(mouseX, mouseY, endX - 60 + 5, endY - 84);
 			}
 			
 			return true;
