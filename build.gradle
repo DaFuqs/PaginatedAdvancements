@@ -1,5 +1,5 @@
 plugins {
-    id 'net.neoforged.moddev' version '2.0.115'
+    id 'net.neoforged.moddev' version '2.0.126'
     id 'maven-publish'
 }
 
@@ -51,7 +51,7 @@ neoForge {
 }
 
 dependencies {
-    api("me.shedaniel.cloth:cloth-config-neoforge:${project.cloth_config_version}")
+
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -68,8 +68,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_license            : mod_license,
             mod_version            : mod_version,
             mod_authors            : mod_authors,
-            mod_description        : mod_description,
-            cloth_config_version   : cloth_config_version
+            mod_description: mod_description
     ]
     inputs.properties replaceProperties
     expand replaceProperties

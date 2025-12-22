@@ -1,6 +1,6 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import de.dafuqs.paginatedadvancements.*;
+import de.dafuqs.paginatedadvancements.config.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.*;
 import net.minecraft.resources.*;
@@ -11,17 +11,17 @@ public class PaginatedAdvancementTabType {
 	public static final int WIDTH = 28;
 	public static final int HEIGHT = 32;
 	
-	protected static final ResourceLocation TOP_LEFT_TEXTURE_SELECTED = ResourceLocation.withDefaultNamespace("advancements/tab_above_left_selected");
-	protected static final ResourceLocation TOP_MIDDLE_TEXTURE_SELECTED = ResourceLocation.withDefaultNamespace("advancements/tab_above_middle_selected");
-	protected static final ResourceLocation TOP_LEFT_TEXTURE = ResourceLocation.withDefaultNamespace("advancements/tab_above_left");
-	protected static final ResourceLocation TOP_MIDDLE_TEXTURE = ResourceLocation.withDefaultNamespace("advancements/tab_above_middle");
+	protected static final Identifier TOP_LEFT_TEXTURE_SELECTED = Identifier.withDefaultNamespace("advancements/tab_above_left_selected");
+	protected static final Identifier TOP_MIDDLE_TEXTURE_SELECTED = Identifier.withDefaultNamespace("advancements/tab_above_middle_selected");
+	protected static final Identifier TOP_LEFT_TEXTURE = Identifier.withDefaultNamespace("advancements/tab_above_left");
+	protected static final Identifier TOP_MIDDLE_TEXTURE = Identifier.withDefaultNamespace("advancements/tab_above_middle");
 	
 	public static int getWidthWithSpacing() {
-		return WIDTH + PaginatedAdvancementsClient.CONFIG.SpacingBetweenHorizontalTabs; // includes the empty space between tabs
+		return WIDTH + PaginatedAdvancementsConfig.CONFIG.SpacingBetweenHorizontalTabs.get(); // includes the empty space between tabs
 	}
 	
 	public static void drawBackground(GuiGraphics context, int x, int y, boolean selected, int index) {
-		ResourceLocation identifier;
+		Identifier identifier;
 		if (index == 0) {
 			identifier = selected ? TOP_LEFT_TEXTURE_SELECTED : TOP_LEFT_TEXTURE;
 		} else {

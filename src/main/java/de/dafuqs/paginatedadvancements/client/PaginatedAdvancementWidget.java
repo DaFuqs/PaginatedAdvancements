@@ -17,7 +17,7 @@ import java.util.*;
 
 public class PaginatedAdvancementWidget extends AdvancementWidget {
 	
-	private static final ResourceLocation TITLE_BOX_TEXTURE = ResourceLocation.withDefaultNamespace("advancements/title_box");
+	private static final Identifier TITLE_BOX_TEXTURE = Identifier.withDefaultNamespace("advancements/title_box");
 	protected List<FormattedCharSequence> description;
 	
 	protected @Nullable FrameWrapper frameWrapper;
@@ -61,7 +61,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 				advancementObtainedStatus = AdvancementWidgetType.UNOBTAINED;
 			}
 			
-			ResourceLocation advancementID = accessor.getAdvancementNode().holder().id();
+			Identifier advancementID = accessor.getAdvancementNode().holder().id();
 			@Nullable FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancementID);
 			if (frameWrapper != null) {
 				context.blitSprite(RenderPipelines.GUI_TEXTURED, frameWrapper.getTexture(advancementObtainedStatus, accessor.getDisplay().getType()), x + accessor.getX() + 3, y + accessor.getY(), 26, 26);

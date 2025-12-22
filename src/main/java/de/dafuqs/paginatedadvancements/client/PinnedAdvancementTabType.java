@@ -1,6 +1,6 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import de.dafuqs.paginatedadvancements.*;
+import de.dafuqs.paginatedadvancements.config.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.advancements.*;
 import net.minecraft.client.renderer.*;
@@ -13,17 +13,17 @@ public class PinnedAdvancementTabType {
 	public static final int WIDTH = 32;
 	public static final int HEIGHT = 28;
 	
-	protected static final ResourceLocation RIGHT_TOP_TEXTURE_SELECTED = ResourceLocation.withDefaultNamespace("advancements/tab_right_top_selected");
-	protected static final ResourceLocation RIGHT_MIDDLE_TEXTURE_SELECTED = ResourceLocation.withDefaultNamespace("advancements/tab_right_middle_selected");
-	protected static final ResourceLocation RIGHT_TOP_TEXTURE = ResourceLocation.withDefaultNamespace("advancements/tab_right_top");
-	protected static final ResourceLocation RIGHT_MIDDLE_TEXTURE = ResourceLocation.withDefaultNamespace("advancements/tab_right_middle");
+	protected static final Identifier RIGHT_TOP_TEXTURE_SELECTED = Identifier.withDefaultNamespace("advancements/tab_right_top_selected");
+	protected static final Identifier RIGHT_MIDDLE_TEXTURE_SELECTED = Identifier.withDefaultNamespace("advancements/tab_right_middle_selected");
+	protected static final Identifier RIGHT_TOP_TEXTURE = Identifier.withDefaultNamespace("advancements/tab_right_top");
+	protected static final Identifier RIGHT_MIDDLE_TEXTURE = Identifier.withDefaultNamespace("advancements/tab_right_middle");
 	
 	public static int getHeightWithSpacing() {
-		return HEIGHT + PaginatedAdvancementsClient.CONFIG.SpacingBetweenPinnedTabs; // includes the empty space between tabs
+		return HEIGHT + PaginatedAdvancementsConfig.CONFIG.SpacingBetweenPinnedTabs.get(); // includes the empty space between tabs
 	}
 	
 	public static void drawBackground(GuiGraphics context, int x, int y, boolean selected, int index) {
-		ResourceLocation identifier;
+		Identifier identifier;
 		if (index == 0) {
 			identifier = selected ? RIGHT_TOP_TEXTURE_SELECTED : RIGHT_TOP_TEXTURE;
 		} else {

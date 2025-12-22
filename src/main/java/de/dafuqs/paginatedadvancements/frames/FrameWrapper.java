@@ -14,7 +14,7 @@ public abstract class FrameWrapper {
 	
 	public abstract Style getTitleStyle();
 	
-	public abstract ResourceLocation getTexture(AdvancementWidgetType status, AdvancementType vanillaFrame);
+	public abstract Identifier getTexture(AdvancementWidgetType status, AdvancementType vanillaFrame);
 	
 	public static class VanillaFrameWrapper extends FrameWrapper {
 		public final AdvancementType frame;
@@ -38,7 +38,7 @@ public abstract class FrameWrapper {
 			return Style.EMPTY.applyFormat(frame.getChatColor());
 		}
 		
-		public ResourceLocation getTexture(AdvancementWidgetType status, AdvancementType vanillaFrame) {
+		public Identifier getTexture(AdvancementWidgetType status, AdvancementType vanillaFrame) {
 			return status.frameSprite(frame);
 		}
 		
@@ -66,7 +66,7 @@ public abstract class FrameWrapper {
 			return frame.getTitleStyle();
 		}
 		
-		public ResourceLocation getTexture(AdvancementWidgetType status, AdvancementType vanillaFrame) {
+		public Identifier getTexture(AdvancementWidgetType status, AdvancementType vanillaFrame) {
 			if (status == AdvancementWidgetType.OBTAINED) {
 				return frame.getTextureObtained();
 			}
@@ -75,7 +75,7 @@ public abstract class FrameWrapper {
 		
 	}
 	
-	public static @Nullable FrameWrapper of(ResourceLocation frame) {
+	public static @Nullable FrameWrapper of(Identifier frame) {
 		String path = frame.getPath();
 		if (frame.getNamespace().equals("minecraft")) {
 			for (AdvancementType vanillaFrame : AdvancementType.values()) {

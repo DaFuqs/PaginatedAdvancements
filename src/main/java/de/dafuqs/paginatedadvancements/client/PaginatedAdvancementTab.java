@@ -1,7 +1,7 @@
 package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.*;
-import de.dafuqs.paginatedadvancements.*;
+import de.dafuqs.paginatedadvancements.config.*;
 import de.dafuqs.paginatedadvancements.mixin.*;
 import net.minecraft.*;
 import net.minecraft.advancements.*;
@@ -115,7 +115,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		context.enableScissor(startX, startY, advancementTreeWindowWidth, advancementTreeWindowHeight);
 		context.pose().pushMatrix();
 		context.pose().translate(startX, startY);
-		ResourceLocation identifier = this.display.getBackground().map(ClientAsset.ResourceTexture::texturePath).orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
+		Identifier identifier = this.display.getBackground().map(ClientAsset.ResourceTexture::texturePath).orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
 		
 		int i = Mth.floor(this.originX);
 		int j = Mth.floor(this.originY);
@@ -144,7 +144,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		
 		// tinting the background slightly darker
 		// (this is the vanilla default, but able to be disabled via config)
-		if (PaginatedAdvancementsClient.CONFIG.FadeOutBackgroundOnAdvancementHover) {
+		if (PaginatedAdvancementsConfig.CONFIG.FadeOutBackgroundOnAdvancementHover.get()) {
 			context.fill(0, 0, endXWindow - startX - 18, endY - startY - 26, Mth.floor(this.alpha * 255.0F) << 24);
 		}
 		
@@ -188,19 +188,19 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			boolean overflow = false;
 			int displayedRequirementLines;
 			if (!client.hasShiftDown()) {
-				overflow = requirements.size() > PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries;
-				displayedRequirementLines = Math.min(requirements.size(), PaginatedAdvancementsClient.CONFIG.MaxCriterionEntries);
+				overflow = requirements.size() > PaginatedAdvancementsConfig.CONFIG.MaxCriterionEntries.get();
+				displayedRequirementLines = Math.min(requirements.size(), PaginatedAdvancementsConfig.CONFIG.MaxCriterionEntries.get());
 			} else {
 				displayedRequirementLines = requirements.size();
 			}
 			
-			startY = Math.max(startY, endY - Math.max(18, 8 + 10 * displayedRequirementLines) - (PaginatedAdvancementsClient.CONFIG.ShowAdvancementIDInDebugTooltip ? 10 : 0));
+			startY = Math.max(startY, endY - Math.max(18, 8 + 10 * displayedRequirementLines) - (PaginatedAdvancementsConfig.CONFIG.ShowAdvancementIDInDebugTooltip.get() ? 10 : 0));
 			
 			drawDebugFrame(context, startX, startY, endX, endY);
 			
 			// the title
 			int requirementY = startY + 15;
-			if (PaginatedAdvancementsClient.CONFIG.ShowAdvancementIDInDebugTooltip) {
+			if (PaginatedAdvancementsConfig.CONFIG.ShowAdvancementIDInDebugTooltip.get()) {
 				Component idText = Component.literal("ID: " + advancementWidgetAccessor.getAdvancementNode().holder().id().toString() + " ").append(Component.translatable("text.paginated_advancements.copy_to_clipboard"));
 				context.drawString(this.client.font, idText, startX + 5, startY + 5, 0xFF_FFFFFF, true);
 			} else {

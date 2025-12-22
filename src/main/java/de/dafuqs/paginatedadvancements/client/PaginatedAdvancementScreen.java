@@ -2,6 +2,7 @@ package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.*;
 import de.dafuqs.paginatedadvancements.*;
+import de.dafuqs.paginatedadvancements.config.*;
 import net.minecraft.advancements.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.advancements.*;
@@ -16,8 +17,8 @@ import java.util.*;
 
 public class PaginatedAdvancementScreen extends AdvancementsScreen implements ClientAdvancements.Listener {
 	
-	public static final ResourceLocation PAGINATION_TEXTURE = PaginatedAdvancementsClient.locate("textures/gui/buttons.png");
-	public static final ResourceLocation WINDOW_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/advancements/window.png");
+	public static final Identifier PAGINATION_TEXTURE = PaginatedAdvancementsClient.locate("textures/gui/buttons.png");
+	public static final Identifier WINDOW_TEXTURE = Identifier.withDefaultNamespace("textures/gui/advancements/window.png");
 	
 	private static final Component SAD_LABEL_TEXT = Component.translatable("advancements.sad_label");
 	private static final Component EMPTY_TEXT = Component.translatable("advancements.empty");
@@ -58,10 +59,10 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		
 		if (this.selectedTab == null && !this.tabs.isEmpty()) {
 			boolean tabSelected = false;
-			if(PaginatedAdvancementsClient.CONFIG.SaveLastSelectedTab && !PaginatedAdvancementsClient.CONFIG.LastSelectedTab.isEmpty()) {
+			if (PaginatedAdvancementsConfig.CONFIG.SaveLastSelectedTab.get() && !PaginatedAdvancementsConfig.CONFIG.LastSelectedTab.get().isEmpty()) {
 				// search for the tab and if that is existent open that instead
 				
-				ResourceLocation savedTabIdentifier = ResourceLocation.tryParse(PaginatedAdvancementsClient.CONFIG.LastSelectedTab);
+				Identifier savedTabIdentifier = Identifier.tryParse(PaginatedAdvancementsConfig.CONFIG.LastSelectedTab.get());
 				for(AdvancementTab advancementTab : this.tabs.values()) {
 					if (advancementTab.getRootNode().holder().id().equals(savedTabIdentifier)) {
 						this.advancementHandler.setSelectedTab(advancementTab.getRootNode().holder(), true);
@@ -79,9 +80,9 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 		
 		// initialize pinned tabs
-		if(!this.tabs.isEmpty() && PaginatedAdvancementsClient.hasPins()) {
-			for(String pinnedTabString : PaginatedAdvancementsClient.getPinnedTabs()) {
-				ResourceLocation pinnedTabIdentifier = ResourceLocation.tryParse(pinnedTabString);
+		if (!this.tabs.isEmpty() && PaginatedAdvancementsConfig.hasPins()) {
+			for (String pinnedTabString : PaginatedAdvancementsConfig.getPinnedTabs()) {
+				Identifier pinnedTabIdentifier = Identifier.tryParse(pinnedTabString);
 				for(PaginatedAdvancementTab advancementTab : this.tabs.values()) {
 					if (advancementTab.getRootNode().holder().id().equals(pinnedTabIdentifier)) {
 						this.pinnedTabs.put(advancementTab.getRootNode().holder(), advancementTab);
@@ -105,15 +106,15 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 	
 	public void drawPinButtonAndHeader(GuiGraphics context, int mouseX, int mouseY, int startX, int startY, int endX, int endY, boolean hasPins) {
-		if (this.selectedTab != null && PaginatedAdvancementsClient.CONFIG.PinningEnabled) {
+		if (this.selectedTab != null && PaginatedAdvancementsConfig.CONFIG.PinningEnabled.get()) {
 			if (isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
-				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id())) {
+				if (PaginatedAdvancementsConfig.isPinned(this.selectedTab.getRootNode().holder().id())) {
 					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				} else {
 					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				}
 			} else {
-				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id())) {
+				if (PaginatedAdvancementsConfig.isPinned(this.selectedTab.getRootNode().holder().id())) {
 					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				} else {
 					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
@@ -128,7 +129,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 	
 	public boolean isClickOnFavouritesButton(double mouseX, double mouseY, int minHeight, int maxWidth) {
-		return PaginatedAdvancementsClient.CONFIG.PinningEnabled
+		return PaginatedAdvancementsConfig.CONFIG.PinningEnabled.get()
 				&& mouseX > maxWidth - FAVOURITES_BUTTON_OFFSET_X
 				&& mouseX < maxWidth - FAVOURITES_BUTTON_OFFSET_X + FAVOURITES_BUTTON_WIDTH
 				&& mouseY > minHeight + FAVOURITES_BUTTON_OFFSET_Y
@@ -281,11 +282,11 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	
 	@Override
 	public void onAddAdvancementRoot(AdvancementNode root) {
-		int pinnedIndex = PaginatedAdvancementsClient.getPinIndex(root.holder().id());
+		int pinnedIndex = PaginatedAdvancementsConfig.getPinIndex(root.holder().id());
 		PaginatedAdvancementTab advancementTab = PaginatedAdvancementTab.create(this.minecraft, this, this.tabs.size(), pinnedIndex, root);
 		if (advancementTab != null) {
 			this.tabs.put(root.holder(), advancementTab);
-			if (PaginatedAdvancementsClient.isPinned(root.holder().id())) {
+			if (PaginatedAdvancementsConfig.isPinned(root.holder().id())) {
 				this.pinnedTabs.put(root.holder(), advancementTab);
 			}
 		}
@@ -324,7 +325,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	public void onSelectedTabChanged(@Nullable AdvancementHolder advancement) {
 		this.selectedTab = this.tabs.get(advancement);
 		if(this.selectedTab != null) {
-			PaginatedAdvancementsClient.saveSelectedTab(this.selectedTab.getRootNode().holder().id());
+			PaginatedAdvancementsConfig.saveSelectedTab(this.selectedTab.getRootNode().holder().id());
 		}
 	}
 	
@@ -340,8 +341,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			boolean isPaginated = isPaginated(startX, endXWindow);
 			
 			if (this.selectedTab != null && isClickOnFavouritesButton(click.x(), click.y(), startY, endXWindow)) {
-				ResourceLocation pageIdentifier = this.selectedTab.getRootNode().holder().id();
-				if(PaginatedAdvancementsClient.isPinned(pageIdentifier)) {
+				Identifier pageIdentifier = this.selectedTab.getRootNode().holder().id();
+				if (PaginatedAdvancementsConfig.isPinned(pageIdentifier)) {
 					unpinTab(pageIdentifier);
 				} else {
 					pinTab(pageIdentifier);
@@ -376,17 +377,17 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		return super.mouseClicked(click, doubled);
 	}
 	
-	private void pinTab(ResourceLocation pageIdentifier) {
+	private void pinTab(Identifier pageIdentifier) {
 		selectedTab.setPinIndex(this.pinnedTabs.size());
 		this.pinnedTabs.put(selectedTab.getRootNode().holder(), selectedTab);
-		PaginatedAdvancementsClient.pinTab(pageIdentifier);
+		PaginatedAdvancementsConfig.pinTab(pageIdentifier);
 	}
 	
-	private void unpinTab(ResourceLocation pageIdentifier) {
+	private void unpinTab(Identifier pageIdentifier) {
 		int oldPinIndex = selectedTab.getPinIndex();
 		selectedTab.setPinIndex(-1);
 		this.pinnedTabs.remove(selectedTab.getRootNode().holder());
-		PaginatedAdvancementsClient.unpinTab(pageIdentifier);
+		PaginatedAdvancementsConfig.unpinTab(pageIdentifier);
 		
 		// move all pinned tabs with a pin index > this up by 1 to fill its place
 		for(PaginatedAdvancementTab tab : this.pinnedTabs.values()) {
@@ -468,7 +469,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			this.selectedTab.drawWidgetTooltip(context, mouseX - startX - 9, mouseY - startY - 18, startX, startY, endXWindow, endY);
 			
 			context.pose().translate(0, 0);//, 400.0D);
-			if (PaginatedAdvancementsClient.CONFIG.shouldShowAdvancementDebug(this.minecraft)) {
+			if (PaginatedAdvancementsConfig.CONFIG.shouldShowAdvancementDebug(this.minecraft)) {
 				this.selectedTab.drawDebugInfo(context, startX, startY, endXWindow, endY);
 			}
 			
