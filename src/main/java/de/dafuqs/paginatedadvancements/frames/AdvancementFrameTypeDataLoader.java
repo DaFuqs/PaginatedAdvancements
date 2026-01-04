@@ -6,7 +6,8 @@ import net.fabricmc.fabric.api.resource.*;
 import net.minecraft.resource.*;
 import net.minecraft.util.*;
 import net.minecraft.util.profiler.*;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.*;
 
 import java.util.*;
 
@@ -42,7 +43,7 @@ public class AdvancementFrameTypeDataLoader extends JsonDataLoader<PaginatedAdva
 	}
 	
 	@Override
-	public Identifier getFabricId() {
+	public @NonNull Identifier getFabricId() {
 		return ID;
 	}
 	
