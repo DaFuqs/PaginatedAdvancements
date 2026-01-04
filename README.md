@@ -25,9 +25,9 @@ Each Frame requires:
 - 2 textures:
   - `assets/<mod_id>/textures/gui/sprites/advancements/<frame_name>_unobtained.png`
   - `assets/<mod_id>/textures/gui/sprites/advancements/<frame_name>_obtained.png`
-- a metadata file under `assets/<mod_id>/advancement_frame_types\<frame_name>.json`
+- a metadata file under `assets/<mod_id>/advancement_frame_types/<frame_name>.json`
 
-The json can have the following properties:
+The metadata.json can have the following properties:
 
 - style (optional): vanilla style specification for use in the advancement description text
 - item_offset_x (optional): horizontal offset for rendering the item in the frame
@@ -48,7 +48,7 @@ Example:
 
 ## Assigning frames to advancements
 
-Add a metadata file under `assets/<mod_id>/advancement_frames\<whatever_name_you_want>.json`.
+Add a metadata file under `assets/<mod_id>/advancement_frames/<whatever_name_you_want>.json`.
 That json should specify a list of advancement:frame entries.
 
 You can pick from the vanilla frames (task, challenge, goal), one of the
@@ -67,3 +67,5 @@ your own (see above).
   }
 ]
 ```
+
+You can find an example pack in `./examples/`

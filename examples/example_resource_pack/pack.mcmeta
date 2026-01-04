@@ -1,0 +1,18 @@
+{
+  "pack": {
+    "description": "Paginated Advancements Example Pack 1.21.11",
+    "pack_format": 15,
+    "min_format": [
+      15,
+      0
+    ],
+    "max_format": [
+      1000,
+      0
+    ],
+    "supported_formats": [
+      15,
+      1000
+    ]
+  }
+}
