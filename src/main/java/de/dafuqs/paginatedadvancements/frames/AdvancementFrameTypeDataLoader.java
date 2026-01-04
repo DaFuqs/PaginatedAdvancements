@@ -5,7 +5,8 @@ import de.dafuqs.paginatedadvancements.client.*;
 import net.minecraft.resources.*;
 import net.minecraft.server.packs.resources.*;
 import net.minecraft.util.profiling.*;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.*;
 
 import java.util.*;
 
@@ -26,12 +27,7 @@ public class AdvancementFrameTypeDataLoader extends SimpleJsonResourceReloadList
 	}
 	
 	@Override
-	protected Map<Identifier, PaginatedAdvancementFrame> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
-		return super.prepare(resourceManager, profiler);
-	}
-	
-	@Override
-	protected void apply(Map<Identifier, PaginatedAdvancementFrame> prepared, ResourceManager manager, ProfilerFiller profiler) {
+	protected void apply(Map<Identifier, PaginatedAdvancementFrame> prepared, @NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
 		for (Map.Entry<Identifier, PaginatedAdvancementFrame> entry : prepared.entrySet()) {
 			Identifier id = entry.getKey();
 			PaginatedAdvancementFrame frame = entry.getValue();

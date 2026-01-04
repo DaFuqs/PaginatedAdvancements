@@ -1,12 +1,14 @@
 package de.dafuqs.paginatedadvancements;
 
 import de.dafuqs.paginatedadvancements.config.*;
+import de.dafuqs.paginatedadvancements.frames.*;
 import net.minecraft.resources.*;
 import net.neoforged.api.distmarker.*;
 import net.neoforged.bus.api.*;
 import net.neoforged.fml.*;
 import net.neoforged.fml.common.*;
 import net.neoforged.fml.config.*;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.*;
 import org.jetbrains.annotations.*;
 import org.slf4j.*;
@@ -26,7 +28,13 @@ public class PaginatedAdvancementsClient {
 		modContainer.registerConfig(ModConfig.Type.COMMON, PaginatedAdvancementsConfig.CONFIG_SPEC);
 		modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 		
-		modBus.addListener(PaginatedAdvancementsConfig::registerResources);
+		modBus.addListener(PaginatedAdvancementsClient::registerResources);
+	}
+	
+	@SubscribeEvent
+	public static void registerResources(AddClientReloadListenersEvent event) {
+		event.addListener(AdvancementFrameTypeDataLoader.ID, AdvancementFrameTypeDataLoader.INSTANCE);
+		event.addListener(AdvancementFrameDataLoader.ID, AdvancementFrameDataLoader.INSTANCE);
 	}
 	
 }

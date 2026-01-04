@@ -1,11 +1,8 @@
 package de.dafuqs.paginatedadvancements.config;
 
 import com.electronwill.nightconfig.core.*;
-import de.dafuqs.paginatedadvancements.frames.*;
 import net.minecraft.client.*;
 import net.minecraft.resources.*;
-import net.neoforged.bus.api.*;
-import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.*;
 import org.apache.commons.lang3.tuple.*;
 import org.jetbrains.annotations.*;
@@ -28,12 +25,6 @@ public class PaginatedAdvancementsConfig {
 	
 	public ModConfigSpec.ConfigValue<Integer> SpacingBetweenHorizontalTabs;
 	public ModConfigSpec.ConfigValue<Integer> SpacingBetweenPinnedTabs;
-	
-	@SubscribeEvent
-	public static void registerResources(AddClientReloadListenersEvent event) {
-		event.addListener(AdvancementFrameTypeDataLoader.ID, AdvancementFrameTypeDataLoader.INSTANCE);
-		event.addListener(AdvancementFrameDataLoader.ID, AdvancementFrameDataLoader.INSTANCE);
-	}
 	
 	public static void saveSelectedTab(Identifier tabIdentifier) {
 		if (CONFIG.SaveLastSelectedTab.getAsBoolean()) {

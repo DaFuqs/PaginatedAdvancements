@@ -6,7 +6,8 @@ import de.dafuqs.paginatedadvancements.*;
 import net.minecraft.resources.*;
 import net.minecraft.server.packs.resources.*;
 import net.minecraft.util.profiling.*;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.*;
 
 import java.util.*;
 
@@ -24,7 +25,6 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 		).apply(instance, Entry::new));
 		
 		public static final Codec<List<Entry>> LIST_CODEC = CODEC.listOf();
-		
 	}
 	
 	protected static final Map<Identifier, FrameWrapper> CUSTOM_FRAMES = new HashMap<>();
@@ -38,12 +38,12 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 	}
 	
 	@Override
-	protected Map<Identifier, List<AdvancementFrameDataLoader.Entry>> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+	protected @NonNull Map<Identifier, List<AdvancementFrameDataLoader.Entry>> prepare(@NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
 		return super.prepare(resourceManager, profiler);
 	}
 	
 	@Override
-	protected void apply(Map<Identifier, List<Entry>> prepared, ResourceManager manager, ProfilerFiller profiler) {
+	protected void apply(Map<Identifier, List<Entry>> prepared, @NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
 		for (Map.Entry<Identifier, List<Entry>> list : prepared.entrySet()) {
 			for (Entry entry : list.getValue()) {
 				Identifier advancement = entry.advancementId();
