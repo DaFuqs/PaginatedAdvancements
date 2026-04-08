@@ -23,7 +23,7 @@
       "de.dafuqs.paginatedadvancements.config.ModMenuConfig"
     ]
   },
-  "accessWidener": "paginatedadvancements.accesswidener",
+  "accessWidener": "paginatedadvancements.classtweaker",
   "mixins": [
     "paginatedadvancements.mixins.json"
   ],

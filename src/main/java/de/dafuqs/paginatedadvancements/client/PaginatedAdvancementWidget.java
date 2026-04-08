@@ -51,7 +51,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 	}
 	
 	@Override
-	public void draw(@NonNull GuiGraphics context, int x, int y) {
+	public void extractRenderState(@NonNull GuiGraphicsExtractor context, int x, int y) {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
 		
 		if (!accessor.getDisplay().isHidden() || accessor.getProgress() != null && accessor.getProgress().isDone()) {
@@ -67,20 +67,20 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 			FrameWrapper frameWrapper = AdvancementFrameDataLoader.get(advancementID);
 			if (frameWrapper != null) {
 				context.blitSprite(RenderPipelines.GUI_TEXTURED, frameWrapper.getTexture(advancementObtainedStatus, accessor.getDisplay().getType()), x + accessor.getX() + 3, y + accessor.getY(), 26, 26);
-				context.renderFakeItem(accessor.getDisplay().getIcon(), x + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), y + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
+				context.fakeItem(accessor.getDisplay().getIcon().create(), x + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), y + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
 			} else {
 				context.blitSprite(RenderPipelines.GUI_TEXTURED, advancementObtainedStatus.frameSprite(accessor.getDisplay().getType()), x + accessor.getX() + 3, y + accessor.getY(), 26, 26);
-				context.renderFakeItem(accessor.getDisplay().getIcon(), x + accessor.getX() + 8, y + accessor.getY() + 5);
+				context.fakeItem(accessor.getDisplay().getIcon().create(), x + accessor.getX() + 8, y + accessor.getY() + 5);
 			}
 		}
 		
 		for (AdvancementWidget advancementWidget : accessor.getChildren()) {
-			advancementWidget.draw(context, x, y);
+			advancementWidget.extractRenderState(context, x, y);
 		}
 	}
 	
 	@Override
-	public void drawHover(@NonNull GuiGraphics context, int originX, int originY, float alpha, int x, int y) {
+	public void extractHover(@NonNull GuiGraphicsExtractor context, int originX, int originY, float alpha, int x, int y) {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
 		Font textRenderer = client.font;
 		
@@ -147,14 +147,14 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		}
 		
 		if (shouldRenderToTheLeft) {
-			this.drawMultilineText(context, accessor.getTitleLines(), startX + 5, originY + accessor.getY() + 9, -1);
+			this.extractMultilineText(context, accessor.getTitleLines(), startX + 5, originY + accessor.getY() + 9, -1);
 			if (string != null) {
-				context.drawString(textRenderer, string, originX + accessor.getX() - i, originY + accessor.getY() + 9, -1);
+				context.text(textRenderer, string, originX + accessor.getX() - i, originY + accessor.getY() + 9, -1);
 			}
 		} else {
-			this.drawMultilineText(context, accessor.getTitleLines(), originX + accessor.getX() + 32, originY + accessor.getY() + 9, -1);
+			this.extractMultilineText(context, accessor.getTitleLines(), originX + accessor.getX() + 32, originY + accessor.getY() + 9, -1);
 			if (string != null) {
-				context.drawString(textRenderer, string, originX + accessor.getX() + accessor.getWidth() - i - 5, originY + accessor.getY() + 9, -1);
+				context.text(textRenderer, string, originX + accessor.getX() + accessor.getWidth() - i - 5, originY + accessor.getY() + 9, -1);
 			}
 		}
 		
@@ -163,19 +163,19 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 		if (bl2) {
 			for (o = 0; o < description.size(); ++o) {
 				orderedDescription = description.get(o);
-				context.drawString(textRenderer, orderedDescription, startX + 5, l + 26 - n + 7 + o * 9, -5592406, false);
+				context.text(textRenderer, orderedDescription, startX + 5, l + 26 - n + 7 + o * 9, -5592406, false);
 			}
 		} else {
 			for (o = 0; o < description.size(); ++o) {
 				orderedDescription = description.get(o);
-				context.drawString(textRenderer, orderedDescription, startX + 5, originY + accessor.getY() + 9 + 17 + o * 9, -5592406, false);
+				context.text(textRenderer, orderedDescription, startX + 5, originY + accessor.getY() + 9 + 17 + o * 9, -5592406, false);
 			}
 		}
 		
 		if (frameWrapper == null) {
-			context.renderFakeItem(accessor.getDisplay().getIcon(), originX + accessor.getX() + 8, originY + accessor.getY() + 5);
+			context.fakeItem(accessor.getDisplay().getIcon().create(), originX + accessor.getX() + 8, originY + accessor.getY() + 5);
 		} else {
-			context.renderFakeItem(accessor.getDisplay().getIcon(), originX + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), originY + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
+			context.fakeItem(accessor.getDisplay().getIcon().create(), originX + accessor.getX() + 8 + frameWrapper.getItemOffsetX(), originY + accessor.getY() + 5 + frameWrapper.getItemOffsetY());
 		}
 	}
 	

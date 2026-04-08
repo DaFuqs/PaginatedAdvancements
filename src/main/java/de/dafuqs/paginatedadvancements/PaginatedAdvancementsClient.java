@@ -32,8 +32,8 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
         CONFIG_MANAGER = AutoConfig.register(PaginatedAdvancementsConfig.class, JanksonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(PaginatedAdvancementsConfig.class).getConfig();
 		
-		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(AdvancementFrameTypeDataLoader.ID, AdvancementFrameTypeDataLoader.INSTANCE);
-		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(AdvancementFrameDataLoader.ID, AdvancementFrameDataLoader.INSTANCE);
+		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameTypeDataLoader.ID, AdvancementFrameTypeDataLoader.INSTANCE);
+		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameDataLoader.ID, AdvancementFrameDataLoader.INSTANCE);
 	}
 	
 	public static void saveSelectedTab(Identifier tabIdentifier) {

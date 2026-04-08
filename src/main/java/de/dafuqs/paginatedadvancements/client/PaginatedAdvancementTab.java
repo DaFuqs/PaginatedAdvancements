@@ -6,7 +6,7 @@ import de.dafuqs.paginatedadvancements.mixin.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.advancements.*;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -53,7 +53,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		this.pinnedIndex = pinnedIndex;
 		this.root = root;
 		this.display = display;
-		this.icon = display.getIcon();
+		this.icon = display.getIcon().create();
 		this.title = display.getTitle();
 		this.rootWidget = new PaginatedAdvancementWidget(this, client, root, display);
 		this.addWidget(this.rootWidget, root.holder());
@@ -79,27 +79,27 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		return this.display;
 	}
 	
-	public void drawBackground(GuiGraphics context, int x, int y, boolean selected, int atIndex) {
+	public void drawBackground(GuiGraphicsExtractor context, int x, int y, boolean selected, int atIndex) {
 		PaginatedAdvancementTabType.drawBackground(context, x, y, selected, atIndex);
 	}
 	
-	public void drawIcon(GuiGraphics context, int x, int y, int index) {
+	public void drawIcon(GuiGraphicsExtractor context, int x, int y, int index) {
 		PaginatedAdvancementTabType.drawIcon(context, x, y, index, this.icon);
 	}
 	
-	public void drawPinnedBackground(GuiGraphics context, int x, int y, boolean selected, int maxPinnedIndex) {
+	public void drawPinnedBackground(GuiGraphicsExtractor context, int x, int y, boolean selected, int maxPinnedIndex) {
 		if (this.pinnedIndex <= maxPinnedIndex) {
 			PinnedAdvancementTabType.drawBackground(context, x, y, selected, this.pinnedIndex);
 		}
 	}
 	
-	public void drawPinnedIcon(GuiGraphics context, int x, int y, int maxPinnedIndex) {
+	public void drawPinnedIcon(GuiGraphicsExtractor context, int x, int y, int maxPinnedIndex) {
 		if (this.pinnedIndex <= maxPinnedIndex) {
 			PinnedAdvancementTabType.drawIcon(context, x, y, this.pinnedIndex, this.icon);
 		}
 	}
 	
-	public void render(GuiGraphics context, int startX, int startY, int endX, int endY) {
+	public void render(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY) {
 		startX = startX + 9;
 		startY = startY + 18;
 		int advancementTreeWindowWidth = endX - startX + 32;
@@ -130,15 +130,15 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			}
 		}
 		
-		this.rootWidget.drawConnectivity(context, i, j, true);
-		this.rootWidget.drawConnectivity(context, i, j, false);
-		this.rootWidget.draw(context, i, j);
+		this.rootWidget.extractConnectivity(context, i, j, true);
+		this.rootWidget.extractConnectivity(context, i, j, false);
+		this.rootWidget.extractRenderState(context, i, j);
 		
 		context.pose().popMatrix();
 		context.disableScissor();
 	}
 	
-	public void drawWidgetTooltip(GuiGraphics context, int mouseX, int mouseY, int startX, int startY, int endXWindow, int endY) {
+	public void drawWidgetTooltip(GuiGraphicsExtractor context, int mouseX, int mouseY, int startX, int startY, int endXWindow, int endY) {
 		context.pose().pushMatrix();
 		context.pose().translate(0.0F, 0.0F);
 		
@@ -155,7 +155,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			for (AdvancementWidget advancementWidget : this.widgets.values()) {
 				if (advancementWidget.isMouseOver(i, j, mouseX, mouseY)) {
 					hoversWidget = true;
-					advancementWidget.drawHover(context, i, j, this.alpha, startX, startY);
+					advancementWidget.extractHover(context, i, j, this.alpha, startX, startY);
 					
 					this.hoveredWidget = advancementWidget;
 					
@@ -173,7 +173,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 	}
 	
-	public void drawDebugInfo(GuiGraphics context, int startX, int startY, int endX, int endY) {
+	public void drawDebugInfo(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY) {
 		if (this.hoveredWidget != null) {
 			AdvancementWidgetAccessor advancementWidgetAccessor = (AdvancementWidgetAccessor) this.hoveredWidget;
 			AdvancementProgress progress = advancementWidgetAccessor.getProgress();
@@ -202,7 +202,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			int requirementY = startY + 15;
 			if (PaginatedAdvancementsClient.CONFIG.ShowAdvancementIDInDebugTooltip) {
 				Component idText = Component.literal("ID: " + advancementWidgetAccessor.getAdvancementNode().holder().id().toString() + " ").append(Component.translatable("text.paginated_advancements.copy_to_clipboard"));
-				context.drawString(this.client.font, idText, startX + 5, startY + 5, 0xFF_FFFFFF, true);
+				context.text(this.client.font, idText, startX + 5, startY + 5, 0xFF_FFFFFF, true);
 			} else {
 				requirementY = startY + 5;
 			}
@@ -264,7 +264,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		return combined;
 	}
 	
-	protected void drawDebugFrame(GuiGraphics context, int startX, int startY, int endX, int endY) {
+	protected void drawDebugFrame(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY) {
 		context.pose().pushMatrix();
 		
 		int TOP_ELEMENT_HEIGHT = 15;
@@ -328,18 +328,18 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		context.pose().popMatrix();
 	}
 	
-	protected void drawRequirementsWithOverflow(GuiGraphics context, int startX, int startY, int endX, int endY, List<MutableComponent> requirements, int lines) {
+	protected void drawRequirementsWithOverflow(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY, List<MutableComponent> requirements, int lines) {
 		for (int i = 0; i < lines; i++) {
 			if (i == lines - 1) {
-				context.drawString(this.client.font, Component.translatable("text.paginated_advancements.expand_debug"), startX, startY, 0xff999999, false);
+				context.text(this.client.font, Component.translatable("text.paginated_advancements.expand_debug"), startX, startY, 0xff999999, false);
 			} else {
-				context.drawString(this.client.font, requirements.get(i), startX, startY, 0xff00ff00, false);
+				context.text(this.client.font, requirements.get(i), startX, startY, 0xff00ff00, false);
 			}
 			startY += 10;
 		}
 	}
 	
-	protected void drawRequirements(GuiGraphics context, int startX, int startY, int endX, int endY, List<MutableComponent> requirements) {
+	protected void drawRequirements(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY, List<MutableComponent> requirements) {
 		int scrollAmount = 0;
 		assert this.hoveredWidget != null;
 		if (this.hoveredWidget instanceof PaginatedAdvancementWidget paginatedAdvancementWidget) {
@@ -351,17 +351,17 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		}
 		
 		if (scrollAmount > 0) {
-			context.drawString(this.client.font, Component.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0xff_999999, false);
+			context.text(this.client.font, Component.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0xff_999999, false);
 			scrollAmount += 1;
 			startY += 10;
 		}
 		for (int i = scrollAmount; i < requirements.size(); i++) {
 			if (startY + 10 >= endY) break;
 			else if (startY + 20 >= endY && i + 1 != requirements.size()) {
-				context.drawString(this.client.font, Component.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0xff_999999, false);
+				context.text(this.client.font, Component.translatable("text.paginated_advancements.scroll_debug"), startX, startY, 0xff_999999, false);
 				break;
 			}
-			context.drawString(this.client.font, requirements.get(i), startX, startY, 0xff_00ff00, false);
+			context.text(this.client.font, requirements.get(i), startX, startY, 0xff_00ff00, false);
 			startY += 10;
 		}
 	}

@@ -1,15 +1,8 @@
 package de.dafuqs.paginatedadvancements.mixin;
 
-import net.minecraft.advancement.*;
-import net.minecraft.advancements.AdvancementNode;
-import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.client.gui.screen.advancement.*;
-import net.minecraft.client.gui.screens.advancements.AdvancementTab;
-import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.text.*;
+import net.minecraft.advancements.*;
+import net.minecraft.client.gui.screens.advancements.*;
+import net.minecraft.network.chat.*;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.*;
 import org.spongepowered.asm.mixin.*;
