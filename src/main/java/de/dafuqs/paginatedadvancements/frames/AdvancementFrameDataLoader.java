@@ -1,15 +1,19 @@
 package de.dafuqs.paginatedadvancements.frames;
 
-import com.mojang.serialization.*;
-import com.mojang.serialization.codecs.*;
-import de.dafuqs.paginatedadvancements.*;
-import net.minecraft.resources.*;
-import net.minecraft.server.packs.resources.*;
-import net.minecraft.util.profiling.*;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.*;
+import org.jspecify.annotations.NonNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener<List<AdvancementFrameDataLoader.Entry>> {
 	
@@ -48,8 +52,8 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 			for (Entry entry : list.getValue()) {
 				Identifier advancement = entry.advancementId();
 				Identifier frame = entry.frameId();
-				
-				@Nullable FrameWrapper frameWrapper = FrameWrapper.of(frame);
+
+				FrameWrapper frameWrapper = FrameWrapper.of(frame);
 				if (frameWrapper == null) {
 					PaginatedAdvancementsClient.LOGGER.error("Advancement Frame '{}' for advancement  '{}' is unknown.", frame, advancement);
 				} else {
@@ -58,5 +62,5 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 			}
 		}
 	}
-	
+
 }

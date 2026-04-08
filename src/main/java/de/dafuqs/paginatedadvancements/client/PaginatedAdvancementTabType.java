@@ -1,10 +1,8 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import de.dafuqs.paginatedadvancements.config.*;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.renderer.*;
-import net.minecraft.resources.*;
-import net.minecraft.world.item.*;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
 
 public class PaginatedAdvancementTabType {
 	

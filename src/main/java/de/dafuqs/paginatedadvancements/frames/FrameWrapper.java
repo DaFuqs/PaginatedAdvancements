@@ -1,11 +1,11 @@
 package de.dafuqs.paginatedadvancements.frames;
 
-import de.dafuqs.paginatedadvancements.client.*;
-import net.minecraft.advancements.*;
-import net.minecraft.client.gui.screens.advancements.*;
-import net.minecraft.network.chat.*;
-import net.minecraft.resources.*;
-import org.jetbrains.annotations.*;
+import de.dafuqs.paginatedadvancements.client.PaginatedAdvancementFrame;
+import net.minecraft.advancements.AdvancementType;
+import net.minecraft.client.gui.screens.advancements.AdvancementWidgetType;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class FrameWrapper {
 	

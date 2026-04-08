@@ -1,16 +1,18 @@
 package de.dafuqs.paginatedadvancements.mixin;
 
-import de.dafuqs.paginatedadvancements.client.*;
-import net.minecraft.client.*;
-import net.minecraft.client.gui.screens.*;
-import net.minecraft.client.gui.screens.advancements.*;
-import net.minecraft.client.player.*;
-import org.jetbrains.annotations.*;
-import org.spongepowered.asm.mixin.*;
-import org.spongepowered.asm.mixin.injection.*;
+import de.dafuqs.paginatedadvancements.client.PaginatedAdvancementScreen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
+import net.minecraft.client.player.LocalPlayer;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(Minecraft.class)
-public abstract class MinecraftClientMixin {
+public abstract class MinecraftMixin {
 	
 	@Shadow
 	@Nullable

@@ -1,25 +1,32 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import com.google.common.collect.*;
-import de.dafuqs.paginatedadvancements.config.*;
-import de.dafuqs.paginatedadvancements.mixin.*;
-import net.minecraft.*;
+import com.google.common.collect.Maps;
+import de.dafuqs.paginatedadvancements.config.PaginatedAdvancementsConfig;
+import de.dafuqs.paginatedadvancements.mixin.AdvancementWidgetAccessor;
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.*;
-import net.minecraft.client.*;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screens.advancements.*;
-import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.texture.*;
-import net.minecraft.core.*;
-import net.minecraft.network.chat.*;
-import net.minecraft.resources.*;
-import net.minecraft.util.*;
-import net.minecraft.world.item.*;
-import org.jetbrains.annotations.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.advancements.AdvancementTab;
+import net.minecraft.client.gui.screens.advancements.AdvancementTabType;
+import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.core.ClientAsset;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import static de.dafuqs.paginatedadvancements.client.PaginatedAdvancementScreen.*;
+import static de.dafuqs.paginatedadvancements.client.PaginatedAdvancementScreen.BOTTOM_ELEMENT_HEIGHT;
+import static de.dafuqs.paginatedadvancements.client.PaginatedAdvancementScreen.ELEMENT_WIDTH;
 
 public class PaginatedAdvancementTab extends AdvancementTab {
 	
@@ -58,24 +65,24 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		this.rootWidget = new PaginatedAdvancementWidget(this, client, root, display);
 		this.addWidget(this.rootWidget, root.holder());
 	}
-	
-	public AdvancementTabType getType() {
+
+	public @NonNull AdvancementTabType getType() {
 		return AdvancementTabType.ABOVE;
 	}
 	
 	public int getIndex() {
 		return this.index;
 	}
-	
-	public AdvancementNode getRootNode() {
+
+	public @NonNull AdvancementNode getRootNode() {
 		return this.root;
 	}
-	
-	public Component getTitle() {
+
+	public @NonNull Component getTitle() {
 		return this.title;
 	}
-	
-	public DisplayInfo getDisplay() {
+
+	public @NonNull DisplayInfo getDisplay() {
 		return this.display;
 	}
 	
@@ -116,7 +123,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 		context.pose().pushMatrix();
 		context.pose().translate(startX, startY);
 		Identifier identifier = this.display.getBackground().map(ClientAsset.ResourceTexture::texturePath).orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
-		
+
 		int i = Mth.floor(this.originX);
 		int j = Mth.floor(this.originY);
 		int k = i % 16;
@@ -202,7 +209,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 			int requirementY = startY + 15;
 			if (PaginatedAdvancementsConfig.CONFIG.ShowAdvancementIDInDebugTooltip.get()) {
 				Component idText = Component.literal("ID: " + advancementWidgetAccessor.getAdvancementNode().holder().id().toString() + " ").append(Component.translatable("text.paginated_advancements.copy_to_clipboard"));
-				context.drawString(this.client.font, idText, startX + 5, startY + 5, 0xFF_FFFFFF, true);
+				context.drawString(this.client.font, idText, startX + 5, startY + 5, 0xFFFFFFFF, true);
 			} else {
 				requirementY = startY + 5;
 			}
@@ -236,7 +243,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 						break;
 					}
 				}
-				int newWidth = client.font.width(lines.get(lines.size() - 1)) + client.font.width(requirementString);
+				int newWidth = client.font.width(lines.getLast()) + client.font.width(requirementString);
 				if (newWidth > endX - startX) {
 					String indent = "";
 					while (client.font.width(indent) < client.font.width(Component.translatable("text.paginated_advancements.group"))) {
@@ -244,7 +251,7 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 					}
 					lines.add(Component.literal(indent).withStyle(ChatFormatting.DARK_RED));
 				}
-				lines.get(lines.size() - 1).append(Component.literal(requirementString + " ").withStyle(formatting));
+				lines.getLast().append(Component.literal(requirementString + " ").withStyle(formatting));
 			}
 			
 			if (anyDone) {
@@ -455,11 +462,11 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	
 	@Nullable
 	@Override
-	public AdvancementWidget getWidget(AdvancementHolder advancement) {
+	public AdvancementWidget getWidget(@NonNull AdvancementHolder advancement) {
 		return this.widgets.get(advancement);
 	}
-	
-	public PaginatedAdvancementScreen getScreen() {
+
+	public @NonNull PaginatedAdvancementScreen getScreen() {
 		return this.screen;
 	}
 	

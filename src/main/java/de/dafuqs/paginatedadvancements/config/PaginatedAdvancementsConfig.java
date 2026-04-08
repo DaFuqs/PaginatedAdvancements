@@ -1,17 +1,17 @@
 package de.dafuqs.paginatedadvancements.config;
 
-import com.electronwill.nightconfig.core.*;
-import net.minecraft.client.*;
-import net.minecraft.resources.*;
-import net.neoforged.neoforge.common.*;
-import org.apache.commons.lang3.tuple.*;
-import org.jetbrains.annotations.*;
+import com.electronwill.nightconfig.core.EnumGetMethod;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 
 public class PaginatedAdvancementsConfig {
-	
-	public static final PaginatedAdvancementsConfig CONFIG;
+
+    public static final PaginatedAdvancementsConfig CONFIG;
 	public static final ModConfigSpec CONFIG_SPEC;
 	
 	public ModConfigSpec.BooleanValue PinningEnabled;
@@ -22,46 +22,46 @@ public class PaginatedAdvancementsConfig {
 	public ModConfigSpec.BooleanValue SaveLastSelectedTab;
 	public ModConfigSpec.ConfigValue<List<String>> PinnedTabs;
 	public ModConfigSpec.ConfigValue<String> LastSelectedTab;
-	
-	public ModConfigSpec.ConfigValue<Integer> SpacingBetweenHorizontalTabs;
+
+    public ModConfigSpec.ConfigValue<Integer> SpacingBetweenHorizontalTabs;
 	public ModConfigSpec.ConfigValue<Integer> SpacingBetweenPinnedTabs;
-	
-	public static void saveSelectedTab(Identifier tabIdentifier) {
+
+    public static void saveSelectedTab(Identifier tabIdentifier) {
 		if (CONFIG.SaveLastSelectedTab.getAsBoolean()) {
 			CONFIG.LastSelectedTab.set(tabIdentifier.toString());
 			CONFIG_SPEC.save();
 		}
 	}
-	
-	public static void pinTab(Identifier tabIdentifier) {
+
+    public static void pinTab(Identifier tabIdentifier) {
 		String identifierString = tabIdentifier.toString();
 		if (!CONFIG.PinnedTabs.get().contains(identifierString)) {
 			CONFIG.PinnedTabs.get().add(identifierString);
 			CONFIG_SPEC.save();
 		}
 	}
-	
-	public static void unpinTab(Identifier tabIdentifier) {
+
+    public static void unpinTab(Identifier tabIdentifier) {
 		String identifierString = tabIdentifier.toString();
 		if (CONFIG.PinnedTabs.get().contains(identifierString)) {
 			CONFIG.PinnedTabs.get().remove(identifierString);
 			CONFIG_SPEC.save();
 		}
 	}
-	
-	public static boolean isPinned(Identifier tabIdentifier) {
+
+    public static boolean isPinned(Identifier tabIdentifier) {
 		return CONFIG.PinningEnabled.get() && CONFIG.PinnedTabs.get().contains(tabIdentifier.toString());
 	}
-	
-	public static boolean hasPins() {
+
+    public static boolean hasPins() {
 		return CONFIG.PinningEnabled.get() && !CONFIG.PinnedTabs.get().isEmpty();
 	}
-	
-	public static List<String> getPinnedTabs() {
+
+    public static List<String> getPinnedTabs() {
 		return CONFIG.PinnedTabs.get();
 	}
-	
-	public static int getPinIndex(Identifier tabIdentifier) {
+
+    public static int getPinIndex(Identifier tabIdentifier) {
 		return CONFIG.PinnedTabs.get().indexOf(tabIdentifier.toString());
 	}
 	

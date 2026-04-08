@@ -1,19 +1,29 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import de.dafuqs.paginatedadvancements.frames.*;
-import de.dafuqs.paginatedadvancements.mixin.*;
-import net.minecraft.advancements.*;
-import net.minecraft.client.*;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screens.advancements.*;
-import net.minecraft.client.renderer.*;
-import net.minecraft.locale.*;
-import net.minecraft.network.chat.*;
-import net.minecraft.resources.*;
-import net.minecraft.util.*;
-import org.jetbrains.annotations.*;
+import de.dafuqs.paginatedadvancements.frames.AdvancementFrameDataLoader;
+import de.dafuqs.paginatedadvancements.frames.FrameWrapper;
+import de.dafuqs.paginatedadvancements.mixin.AdvancementWidgetAccessor;
+import net.fabricmc.api.*;
+import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.advancements.AdvancementTab;
+import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
+import net.minecraft.client.gui.screens.advancements.AdvancementWidgetType;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
 public class PaginatedAdvancementWidget extends AdvancementWidget {
 	
@@ -49,7 +59,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 	}
 	
 	@Override
-	public void draw(GuiGraphics context, int x, int y) {
+	public void draw(@NonNull GuiGraphics context, int x, int y) {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
 		
 		if (!accessor.getDisplay().isHidden() || accessor.getProgress() != null && accessor.getProgress().isDone()) {
@@ -78,7 +88,7 @@ public class PaginatedAdvancementWidget extends AdvancementWidget {
 	}
 	
 	@Override
-	public void drawHover(GuiGraphics context, int originX, int originY, float alpha, int x, int y) {
+	public void drawHover(@NonNull GuiGraphics context, int originX, int originY, float alpha, int x, int y) {
 		AdvancementWidgetAccessor accessor = (AdvancementWidgetAccessor) this;
 		Font textRenderer = client.font;
 		
