@@ -2,31 +2,31 @@ package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.*;
 import de.dafuqs.paginatedadvancements.*;
-import net.minecraft.advancement.*;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screen.advancement.*;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.network.*;
-import net.minecraft.client.util.*;
-import net.minecraft.text.*;
-import net.minecraft.util.*;
-import org.jetbrains.annotations.*;
+import net.minecraft.advancements.*;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.advancements.*;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.multiplayer.ClientAdvancements;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.*;
 
 import java.util.*;
 
-public class PaginatedAdvancementScreen extends AdvancementsScreen implements ClientAdvancementManager.Listener {
+public class PaginatedAdvancementScreen extends AdvancementsScreen implements ClientAdvancements.Listener {
 
 	public static final Identifier PAGINATION_TEXTURE = PaginatedAdvancementsClient.locate("textures/gui/buttons.png");
-	public static final Identifier WINDOW_TEXTURE = Identifier.ofVanilla("textures/gui/advancements/window.png");
+	public static final Identifier WINDOW_TEXTURE = Identifier.withDefaultNamespace("textures/gui/advancements/window.png");
 
-	private static final Text SAD_LABEL_TEXT = Text.translatable("advancements.sad_label");
-	private static final Text EMPTY_TEXT = Text.translatable("advancements.empty");
-	private static final Text ADVANCEMENTS_TEXT = Text.translatable("gui.advancements");
+	private static final Component SAD_LABEL_TEXT = Component.translatable("advancements.sad_label");
+	private static final Component EMPTY_TEXT = Component.translatable("advancements.empty");
+	private static final Component ADVANCEMENTS_TEXT = Component.translatable("gui.advancements");
 
-	private final ClientAdvancementManager advancementHandler;
-	private final Map<AdvancementEntry, PaginatedAdvancementTab> tabs = Maps.newLinkedHashMap();
-	private final Map<AdvancementEntry, PaginatedAdvancementTab> pinnedTabs = Maps.newLinkedHashMap();
+	private final ClientAdvancements advancementHandler;
+	private final Map<AdvancementHolder, PaginatedAdvancementTab> tabs = Maps.newLinkedHashMap();
+	private final Map<AdvancementHolder, PaginatedAdvancementTab> pinnedTabs = Maps.newLinkedHashMap();
 	@Nullable private PaginatedAdvancementTab selectedTab;
 	private boolean movingTab;
 
@@ -45,7 +45,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	public static final int FAVOURITES_BUTTON_OFFSET_X = 32;
 	public static final int FAVOURITES_BUTTON_OFFSET_Y = 8;
 
-	public PaginatedAdvancementScreen(ClientAdvancementManager advancementHandler) {
+	public PaginatedAdvancementScreen(ClientAdvancements advancementHandler) {
 		super(advancementHandler);
 		this.advancementHandler = advancementHandler;
 	}
@@ -64,8 +64,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
 				Identifier savedTabIdentifier = Identifier.tryParse(PaginatedAdvancementsClient.CONFIG.LastSelectedTab);
 				for(AdvancementTab advancementTab : this.tabs.values()) {
-					if(advancementTab.getRoot().getAdvancementEntry().id().equals(savedTabIdentifier)) {
-						this.advancementHandler.selectTab(advancementTab.getRoot().getAdvancementEntry(), true);
+					if(advancementTab.getRootNode().holder().id().equals(savedTabIdentifier)) {
+						this.advancementHandler.setSelectedTab(advancementTab.getRootNode().holder(), true);
 						tabSelected = true;
 						break;
 					}
@@ -73,10 +73,10 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			}
 			if(!tabSelected) {
 				// vanilla default behavior: just open some random tab
-				this.advancementHandler.selectTab((this.tabs.values().iterator().next()).getRoot().getAdvancementEntry(), true);
+				this.advancementHandler.setSelectedTab((this.tabs.values().iterator().next()).getRootNode().holder(), true);
 			}
 		} else {
-			this.advancementHandler.selectTab(this.selectedTab == null ? null : this.selectedTab.getRoot().getAdvancementEntry(), true);
+			this.advancementHandler.setSelectedTab(this.selectedTab == null ? null : this.selectedTab.getRootNode().holder(), true);
 		}
 
 		// initialize pinned tabs
@@ -84,8 +84,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			for(String pinnedTabString : PaginatedAdvancementsClient.getPinnedTabs()) {
 				Identifier pinnedTabIdentifier = Identifier.tryParse(pinnedTabString);
 				for(PaginatedAdvancementTab advancementTab : this.tabs.values()) {
-					if(advancementTab.getRoot().getAdvancementEntry().id().equals(pinnedTabIdentifier)) {
-						this.pinnedTabs.put(advancementTab.getRoot().getAdvancementEntry(), advancementTab);
+					if(advancementTab.getRootNode().holder().id().equals(pinnedTabIdentifier)) {
+						this.pinnedTabs.put(advancementTab.getRootNode().holder(), advancementTab);
 						break;
 					}
 				}
@@ -100,30 +100,30 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
 	// instead of drawing the full texture here, we cut it into pieces and draw
 	// the top, sides and more piece by piece, making the size variable with the mc window size
-	public void drawWindow(DrawContext context, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
+	public void drawWindow(GuiGraphics context, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
 		drawFrame(context, minWidth, minHeight, maxWidth, maxHeight);
-		context.drawText(client.textRenderer, ADVANCEMENTS_TEXT, minWidth + 8, minHeight + 6, 4210752, false);
+		context.drawString(minecraft.font, ADVANCEMENTS_TEXT, minWidth + 8, minHeight + 6, 4210752, false);
 	}
 
-	public void drawPinButtonAndHeader(DrawContext context, int mouseX, int mouseY, int startX, int startY, int endX, int endY, boolean hasPins) {
+	public void drawPinButtonAndHeader(GuiGraphics context, int mouseX, int mouseY, int startX, int startY, int endX, int endY, boolean hasPins) {
 		if (this.selectedTab != null && PaginatedAdvancementsClient.CONFIG.PinningEnabled) {
 			if (isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
-				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRoot().getAdvancementEntry().id())) {
-					context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id())) {
+					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				} else {
-					context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				}
 			} else {
-				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRoot().getAdvancementEntry().id())) {
-					context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id())) {
+					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				} else {
-					context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
+					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				}
 			}
 
 			if(hasPins) {
 				// draw pinned tab header
-				context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 6, 46, 0, 32, 15, 256, 256);
+				context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX + PinnedAdvancementTabType.getTabX() + 1, startY + 6, 46, 0, 32, 15, 256, 256);
 			}
 		}
 	}
@@ -159,7 +159,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 
-	private void renderPaginatedTabs(DrawContext context, int startX, int startY, int endXTitle, int endXWindow, boolean paginated) {
+	private void renderPaginatedTabs(GuiGraphics context, int startX, int startY, int endXTitle, int endXWindow, boolean paginated) {
 		Iterator<PaginatedAdvancementTab> tabIterator = this.tabs.values().iterator();
 		int maxAdvancementTabsToRender = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, paginated);
 
@@ -194,7 +194,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 
-	private void renderPinnedTabs(DrawContext context, int startX, int startY, int endX, int endY) {
+	private void renderPinnedTabs(GuiGraphics context, int startX, int startY, int endX, int endY) {
 		int maxPinnedTabs = getMaxPinnedTabsToRender(startY, endY);
 
 		Iterator<PaginatedAdvancementTab> tabIterator = this.pinnedTabs.values().iterator();
@@ -214,21 +214,21 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
 	// instead of drawing the full texture here, we cut it into pieces and draw
 	// the top, sides and more piece by piece, making the size variable with the mc window size
-	public void drawPaginationButtons(DrawContext context, int mouseX, int mouseY, int startX, int endX) {
+	public void drawPaginationButtons(GuiGraphics context, int mouseX, int mouseY, int startX, int endX) {
 		if (isClickOnBackTab(mouseX, mouseY, startX, endX)) {
 			// hover
-			context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 23, 23, 23, 256, 256);
+			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 23, 23, 23, 256, 256);
 		} else {
 			// no hover
-			context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 0, 23, 23, 256, 256);
+			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 0, 23, 23, 256, 256);
 		}
 
 		if (isClickOnForwardTab(mouseX, mouseY, startX, endX)) {
 			// hover
-			context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 23, 23, 23, 256, 256);
+			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 23, 23, 23, 256, 256);
 		} else {
 			// no hover
-			context.drawTexture(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 0, 23, 23, 256, 256);
+			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 0, 23, 23, 256, 256);
 		}
 	}
 
@@ -244,12 +244,12 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		return mouseX > buttonStartX && mouseX < buttonStartX + 23 && mouseY > buttonStartY && mouseY < buttonStartY + 23;
 	}
 
-	private void drawFrame(DrawContext context, int startX, int startY, int endX, int endY) {
+	private void drawFrame(GuiGraphics context, int startX, int startY, int endX, int endY) {
 		// corners
-		context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top left
-		context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top right
-		context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom left
-		context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom right
+		context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top left
+		context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top right
+		context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, endY - BOTTOM_ELEMENT_HEIGHT, 0, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom left
+		context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, endY - BOTTOM_ELEMENT_HEIGHT, 237, 125, ELEMENT_WIDTH, BOTTOM_ELEMENT_HEIGHT, 256, 256); // bottom right
 
 		// left + right sides
 		int maxTopHeightInOneDrawCall = 100;
@@ -258,8 +258,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		while (middleHeight > 0) {
 			int currentDrawHeight = Math.min(middleHeight, maxTopHeightInOneDrawCall);
 
-			context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
-			context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
+			context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, currentY, 0, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
+			context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, currentY, 237, TOP_ELEMENT_HEIGHT, ELEMENT_WIDTH, currentDrawHeight, 256, 256);
 
 			middleHeight -= currentDrawHeight;
 			currentY += currentDrawHeight;
@@ -272,8 +272,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		while (middleWidth > 0) {
 			int currentDrawWidth = Math.min(middleWidth, maxTopWidthInOneDrawCall);
 
-			context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT, 256, 256);
-			context.drawTexture(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT, 256, 256);
+			context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, currentX, startY, ELEMENT_WIDTH, 0, currentDrawWidth, TOP_ELEMENT_HEIGHT, 256, 256);
+			context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, currentX, endY - BOTTOM_ELEMENT_HEIGHT, ELEMENT_WIDTH, 125, currentDrawWidth, BOTTOM_ELEMENT_HEIGHT, 256, 256);
 
 			middleWidth -= currentDrawWidth;
 			currentX += currentDrawWidth;
@@ -281,23 +281,23 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 
 	@Override
-	public void onRootAdded(PlacedAdvancement root) {
-		int pinnedIndex = PaginatedAdvancementsClient.getPinIndex(root.getAdvancementEntry().id());
-		PaginatedAdvancementTab advancementTab = PaginatedAdvancementTab.create(this.client, this, this.tabs.size(), pinnedIndex, root);
+	public void onAddAdvancementRoot(AdvancementNode root) {
+		int pinnedIndex = PaginatedAdvancementsClient.getPinIndex(root.holder().id());
+		PaginatedAdvancementTab advancementTab = PaginatedAdvancementTab.create(this.minecraft, this, this.tabs.size(), pinnedIndex, root);
 		if (advancementTab != null) {
-			this.tabs.put(root.getAdvancementEntry(), advancementTab);
-			if(PaginatedAdvancementsClient.isPinned(root.getAdvancementEntry().id())) {
-				this.pinnedTabs.put(root.getAdvancementEntry(), advancementTab);
+			this.tabs.put(root.holder(), advancementTab);
+			if(PaginatedAdvancementsClient.isPinned(root.holder().id())) {
+				this.pinnedTabs.put(root.holder(), advancementTab);
 			}
 		}
 	}
 
 	@Override
-	public void onRootRemoved(PlacedAdvancement root) {
+	public void onRemoveAdvancementRoot(@NonNull AdvancementNode root) {
 	}
 
 	@Override
-	public void onDependentAdded(PlacedAdvancement dependent) {
+	public void onAddAdvancementTask(@NonNull AdvancementNode dependent) {
 		PaginatedAdvancementTab advancementTab = this.getTab(dependent);
 		if (advancementTab != null) {
 			advancementTab.addAdvancement(dependent);
@@ -305,32 +305,32 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 
 	@Override
-	public void onDependentRemoved(PlacedAdvancement dependent) {
+	public void onRemoveAdvancementTask(@NonNull AdvancementNode dependent) {
 	}
 
 	@Nullable
-	private PaginatedAdvancementTab getTab(PlacedAdvancement advancement) {
-		PlacedAdvancement placedAdvancement = advancement.getRoot();
-		return this.tabs.get(placedAdvancement.getAdvancementEntry());
+	private PaginatedAdvancementTab getTab(AdvancementNode advancement) {
+		AdvancementNode placedAdvancement = advancement.root();
+		return this.tabs.get(placedAdvancement.holder());
 	}
 
 	@Override
-	public void onClear() {
+	public void onAdvancementsCleared() {
 		this.tabs.clear();
 		this.pinnedTabs.clear();
 		this.selectedTab = null;
 	}
 
 	@Override
-	public void selectTab(@Nullable AdvancementEntry advancement) {
+	public void onSelectedTabChanged(@Nullable AdvancementHolder advancement) {
 		this.selectedTab = this.tabs.get(advancement);
 		if(this.selectedTab != null) {
-			PaginatedAdvancementsClient.saveSelectedTab(this.selectedTab.getRoot().getAdvancementEntry().id());
+			PaginatedAdvancementsClient.saveSelectedTab(this.selectedTab.getRootNode().holder().id());
 		}
 	}
 
     @Override
-	public boolean mouseClicked(Click click, boolean doubled) {
+	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
 		if (click.button() == 0) {
 			int startX = BORDER_PADDING;
 			int endXWindow = !this.pinnedTabs.isEmpty() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH : this.width - BORDER_PADDING;
@@ -341,7 +341,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			boolean isPaginated = isPaginated(startX, endXWindow);
 
 			if(this.selectedTab != null && isClickOnFavouritesButton(click.x(), click.y(), startY, endXWindow)) {
-				Identifier pageIdentifier = this.selectedTab.getRoot().getAdvancementEntry().id();
+				Identifier pageIdentifier = this.selectedTab.getRootNode().holder().id();
 				if(PaginatedAdvancementsClient.isPinned(pageIdentifier)) {
 					unpinTab(pageIdentifier);
 				} else {
@@ -360,7 +360,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			int maxDisplayedTabs = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, isPaginated);
 			for (PaginatedAdvancementTab paginatedAdvancementTab : this.tabs.values()) {
 				if (paginatedAdvancementTab.isClickOnTab(BORDER_PADDING, BORDER_PADDING + ADDITIONAL_PADDING_TOP, click.x(), click.y(), isPaginated, maxDisplayedTabs, currentPage)) {
-					this.advancementHandler.selectTab(paginatedAdvancementTab.getRoot().getAdvancementEntry(), true);
+					this.advancementHandler.setSelectedTab(paginatedAdvancementTab.getRootNode().holder(), true);
 					break;
 				}
 			}
@@ -369,7 +369,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 				int maxPinnedTabs = getMaxPinnedTabsToRender(startY, endY);
 				for (PaginatedAdvancementTab paginatedAdvancementTab : this.pinnedTabs.values()) {
 					if (paginatedAdvancementTab.isClickOnPinnedTab(endXWindow, startY, click.x(), click.y(), maxPinnedTabs)) {
-						this.advancementHandler.selectTab(paginatedAdvancementTab.getRoot().getAdvancementEntry(), true);
+						this.advancementHandler.setSelectedTab(paginatedAdvancementTab.getRootNode().holder(), true);
 					}
 				}
 			}
@@ -379,14 +379,14 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
 	private void pinTab(Identifier pageIdentifier) {
 		selectedTab.setPinIndex(this.pinnedTabs.size());
-		this.pinnedTabs.put(selectedTab.getRoot().getAdvancementEntry(), selectedTab);
+		this.pinnedTabs.put(selectedTab.getRootNode().holder(), selectedTab);
 		PaginatedAdvancementsClient.pinTab(pageIdentifier);
 	}
 
 	private void unpinTab(Identifier pageIdentifier) {
 		int oldPinIndex = selectedTab.getPinIndex();
 		selectedTab.setPinIndex(-1);
-		this.pinnedTabs.remove(selectedTab.getRoot().getAdvancementEntry());
+		this.pinnedTabs.remove(selectedTab.getRootNode().holder());
 		PaginatedAdvancementsClient.unpinTab(pageIdentifier);
 
 		// move all pinned tabs with a pin index > this up by 1 to fill its place
@@ -422,10 +422,10 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 
     @Override
-	public boolean keyPressed(KeyInput input) {
-		if (this.client.options.advancementsKey.matchesKey(input)) {
-			this.client.setScreen(null);
-			this.client.mouse.lockCursor();
+	public boolean keyPressed(@NonNull KeyEvent input) {
+		if (this.minecraft.options.keyAdvancements.matches(input)) {
+			this.minecraft.setScreen(null);
+			this.minecraft.mouseHandler.grabMouse();
 			return true;
 		} else if (this.selectedTab != null && input.isCopy()) { // ctrl + c
 			this.selectedTab.copyHoveredAdvancementID();
@@ -444,7 +444,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 
     @Override
-	public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+	public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
 		if (click.button() != 0) {
 			this.movingTab = false;
 			return false;
@@ -462,18 +462,18 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 
-	private void drawWidgetTooltip(DrawContext context, int mouseX, int mouseY, int startX, int startY, int endXTitle, int endXWindow, int endY) {
+	private void drawWidgetTooltip(GuiGraphics context, int mouseX, int mouseY, int startX, int startY, int endXTitle, int endXWindow, int endY) {
 		if (this.selectedTab != null) {
-			context.getMatrices().pushMatrix();
-			context.getMatrices().translate((startX + 9), (startY + 18));//, 400.0D);
+			context.pose().pushMatrix();
+			context.pose().translate((startX + 9), (startY + 18));//, 400.0D);
 			this.selectedTab.drawWidgetTooltip(context, mouseX - startX - 9, mouseY - startY - 18, startX, startY, endXWindow, endY);
 
-			context.getMatrices().translate(0, 0);//, 400.0D);
-			if (PaginatedAdvancementsClient.CONFIG.shouldShowAdvancementDebug(this.client)) {
+			context.pose().translate(0, 0);//, 400.0D);
+			if (PaginatedAdvancementsClient.CONFIG.shouldShowAdvancementDebug(this.minecraft)) {
 				this.selectedTab.drawDebugInfo(context, startX, startY, endXWindow, endY);
 			}
 
-			context.getMatrices().popMatrix();
+			context.pose().popMatrix();
 		}
 
 		if (this.tabs.size() > 1) {
@@ -482,7 +482,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
 			for (PaginatedAdvancementTab paginatedAdvancementTab : this.tabs.values()) {
 				if (paginatedAdvancementTab.isClickOnTab(startX, startY, mouseX, mouseY, isPaginated, maxDisplayedTabs, currentPage)) {
-					context.drawTooltip(this.textRenderer, paginatedAdvancementTab.getTitle(), mouseX, mouseY);
+					context.setTooltipForNextFrame(this.font, paginatedAdvancementTab.getTitle(), mouseX, mouseY);
 				}
 			}
 		}
@@ -491,13 +491,13 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			int maxPinnedTabs = getMaxPinnedTabsToRender(startY, endY);
 			for (PaginatedAdvancementTab paginatedAdvancementTab : this.pinnedTabs.values()) {
 				if (paginatedAdvancementTab.isClickOnPinnedTab(endXWindow, startY, mouseX, mouseY, maxPinnedTabs)) {
-					context.drawTooltip(this.textRenderer, paginatedAdvancementTab.getTitle(), mouseX, mouseY);
+					context.setTooltipForNextFrame(this.font, paginatedAdvancementTab.getTitle(), mouseX, mouseY);
 				}
 			}
 		}
 	}
 
-	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
 		boolean hasPins = !this.pinnedTabs.isEmpty();
 		int startX = BORDER_PADDING;
 		int startY = BORDER_PADDING + ADDITIONAL_PADDING_TOP;
@@ -526,24 +526,24 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		this.drawWidgetTooltip(context, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
 	}
 
-	private void drawAdvancementTree(DrawContext context, int startX, int startY, int endX, int endY) {
+	private void drawAdvancementTree(GuiGraphics context, int startX, int startY, int endX, int endY) {
 		PaginatedAdvancementTab advancementTab = this.selectedTab;
 		if (advancementTab == null) {
 			context.fill(startX + 9, startY + 18, endX, endY, -16777216);
 
 			int textCenterX = startX + ((endX - startX) / 2);
 			int textY = startY + ((endY - startY) / 2);
-			context.drawCenteredTextWithShadow(this.textRenderer, EMPTY_TEXT, textCenterX, textY, -1);
-			context.drawCenteredTextWithShadow(this.textRenderer, SAD_LABEL_TEXT, textCenterX, textY + 16, -1);
+			context.drawCenteredString(this.font, EMPTY_TEXT, textCenterX, textY, -1);
+			context.drawCenteredString(this.font, SAD_LABEL_TEXT, textCenterX, textY + 16, -1);
 		} else {
 			advancementTab.render(context, startX, startY, endX, endY);
 		}
 	}
 
 	@Nullable
-	public AdvancementWidget getAdvancementWidget(PlacedAdvancement advancement) {
+	public AdvancementWidget getAdvancementWidget(@NonNull AdvancementNode advancement) {
 		AdvancementTab advancementTab = this.getTab(advancement);
-		return advancementTab == null ? null : advancementTab.getWidget(advancement.getAdvancementEntry());
+		return advancementTab == null ? null : advancementTab.getWidget(advancement.holder());
 	}
 
 }

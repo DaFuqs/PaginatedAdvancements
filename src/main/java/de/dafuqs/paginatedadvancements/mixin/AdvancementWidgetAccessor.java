@@ -1,8 +1,16 @@
 package de.dafuqs.paginatedadvancements.mixin;
 
 import net.minecraft.advancement.*;
+import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.gui.screen.advancement.*;
+import net.minecraft.client.gui.screens.advancements.AdvancementTab;
+import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.text.*;
+import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.gen.*;
@@ -18,11 +26,11 @@ public interface AdvancementWidgetAccessor {
 	@Accessor(value = "y")
 	int getY();
 	
-	@Accessor(value = "advancement")
-	PlacedAdvancement getAdvancement();
+	@Accessor(value = "advancementNode")
+    AdvancementNode getAdvancementNode();
 	
 	@Accessor(value = "display")
-	AdvancementDisplay getDisplay();
+    DisplayInfo getDisplay();
 	
 	@Accessor(value = "progress")
 	@Nullable AdvancementProgress getProgress();
@@ -34,15 +42,15 @@ public interface AdvancementWidgetAccessor {
 	int getWidth();
 	
 	@Accessor(value = "description")
-	List<OrderedText> getDescription();
+	List<FormattedCharSequence> getDescription();
 	
 	@Accessor(value = "tab")
-	AdvancementTab getTab();
+    AdvancementTab getTab();
 	
-	@Accessor(value = "title")
-	List<OrderedText> getTitle();
+	@Accessor(value = "titleLines")
+	List<FormattedCharSequence> getTitleLines();
 	
-	@Invoker(value = "wrapDescription")
-	List<StringVisitable> invokeWrapDescription(Text text, int width);
+	@Invoker(value = "findOptimalLines")
+	List<FormattedText> invokeFindOptimalLines(Component text, int width);
 	
 }

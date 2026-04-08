@@ -1,9 +1,10 @@
 package de.dafuqs.paginatedadvancements.frames;
 
 import de.dafuqs.paginatedadvancements.client.*;
-import net.minecraft.advancement.*;
-import net.minecraft.client.gui.screen.advancement.*;
-import net.minecraft.text.*;
+import net.minecraft.advancements.AdvancementType;
+import net.minecraft.client.gui.screens.advancements.AdvancementWidgetType;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.*;
 import org.jetbrains.annotations.*;
 
@@ -14,12 +15,12 @@ public abstract class FrameWrapper {
 	
 	public abstract Style getTitleStyle();
 	
-	public abstract Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame);
+	public abstract Identifier getTexture(AdvancementWidgetType status, AdvancementType vanillaFrame);
 	
 	public static class VanillaFrameWrapper extends FrameWrapper {
-		public final AdvancementFrame frame;
+		public final AdvancementType frame;
 		
-		private VanillaFrameWrapper(AdvancementFrame frame) {
+		private VanillaFrameWrapper(AdvancementType frame) {
 			this.frame = frame;
 		}
 		
@@ -35,11 +36,11 @@ public abstract class FrameWrapper {
 		
 		@Override
 		public Style getTitleStyle() {
-			return Style.EMPTY.withFormatting(frame.getTitleFormat());
+			return Style.EMPTY.applyFormat(frame.getChatColor());
 		}
 		
-		public Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame) {
-			return status.getFrameTexture(frame);
+		public Identifier getTexture(AdvancementWidgetType status, AdvancementType vanillaFrame) {
+			return status.frameSprite(frame);
 		}
 		
 	}
@@ -66,8 +67,8 @@ public abstract class FrameWrapper {
 			return frame.getTitleStyle();
 		}
 		
-		public Identifier getTexture(AdvancementObtainedStatus status, AdvancementFrame vanillaFrame) {
-			if (status == AdvancementObtainedStatus.OBTAINED) {
+		public Identifier getTexture(AdvancementWidgetType status, AdvancementType vanillaFrame) {
+			if (status == AdvancementWidgetType.OBTAINED) {
 				return frame.getTextureObtained();
 			}
 			return frame.getTextureUnobtained();
@@ -78,8 +79,8 @@ public abstract class FrameWrapper {
 	public static @Nullable FrameWrapper of(Identifier frame) {
 		String path = frame.getPath();
 		if (frame.getNamespace().equals("minecraft")) {
-			for (AdvancementFrame vanillaFrame : AdvancementFrame.values()) {
-				if (vanillaFrame.asString().equals(path)) {
+			for (AdvancementType vanillaFrame : AdvancementType.values()) {
+				if (vanillaFrame.getSerializedName().equals(path)) {
 					return new VanillaFrameWrapper(vanillaFrame);
 				}
 			}

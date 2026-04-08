@@ -5,8 +5,9 @@ import de.dafuqs.paginatedadvancements.frames.*;
 import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.serializer.*;
 import net.fabricmc.api.*;
-import net.fabricmc.fabric.api.resource.*;
-import net.minecraft.resource.*;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.util.*;
 import org.jetbrains.annotations.*;
 import org.slf4j.*;
@@ -18,22 +19,21 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("PaginatedAdvancements");
 	public static final String MOD_ID = "paginatedadvancements";
 	
-	public static ConfigManager<PaginatedAdvancementsConfig> CONFIG_MANAGER;
+	public static ConfigHolder<PaginatedAdvancementsConfig> CONFIG_MANAGER;
 	public static PaginatedAdvancementsConfig CONFIG;
 	
 	@Contract(value = "_ -> new", pure = true)
 	public static @NotNull Identifier locate(String name) {
-		return Identifier.of(MOD_ID, name);
+		return Identifier.fromNamespaceAndPath(MOD_ID, name);
 	}
 	
 	@Override
 	public void onInitializeClient() {
-		ConfigHolder<PaginatedAdvancementsConfig> configHolder = AutoConfig.register(PaginatedAdvancementsConfig.class, JanksonConfigSerializer::new);
-		CONFIG_MANAGER = ((ConfigManager<PaginatedAdvancementsConfig>) configHolder);
+        CONFIG_MANAGER = AutoConfig.register(PaginatedAdvancementsConfig.class, JanksonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(PaginatedAdvancementsConfig.class).getConfig();
 		
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameTypeDataLoader.INSTANCE);
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameDataLoader.INSTANCE);
+		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(AdvancementFrameTypeDataLoader.ID, AdvancementFrameTypeDataLoader.INSTANCE);
+		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(AdvancementFrameDataLoader.ID, AdvancementFrameDataLoader.INSTANCE);
 	}
 	
 	public static void saveSelectedTab(Identifier tabIdentifier) {
