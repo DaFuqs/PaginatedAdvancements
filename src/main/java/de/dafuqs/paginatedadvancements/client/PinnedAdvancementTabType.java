@@ -20,8 +20,8 @@ public class PinnedAdvancementTabType {
 	public static int getHeightWithSpacing() {
 		return HEIGHT + PaginatedAdvancementsConfig.CONFIG.SpacingBetweenPinnedTabs.get(); // includes the empty space between tabs
 	}
-	
-	public static void drawBackground(GuiGraphics context, int x, int y, boolean selected, int index) {
+
+	public static void drawBackground(GuiGraphicsExtractor context, int x, int y, boolean selected, int index) {
 		Identifier identifier;
 		if (index == 0) {
 			identifier = selected ? RIGHT_TOP_TEXTURE_SELECTED : RIGHT_TOP_TEXTURE;
@@ -29,14 +29,14 @@ public class PinnedAdvancementTabType {
 			identifier = selected ? RIGHT_MIDDLE_TEXTURE_SELECTED : RIGHT_MIDDLE_TEXTURE;
 		}
 		context.blitSprite(RenderPipelines.GUI_TEXTURED, identifier, x + getTabX(), y + getTabY(index), WIDTH, HEIGHT);
-		
-		AdvancementTabType.RIGHT.draw(context, x + getTabX(), y + getTabY(index), selected, index);
+
+		AdvancementTabType.RIGHT.extractRenderState(context, x + getTabX(), y + getTabY(index), selected, index);
 	}
-	
-	public static void drawIcon(GuiGraphics context, int x, int y, int index, ItemStack stack) {
+
+	public static void drawIcon(GuiGraphicsExtractor context, int x, int y, int index, ItemStack stack) {
 		int i = x + getTabX() + 6;
 		int j = y + getTabY(index) + 5;
-		context.renderFakeItem(stack, i, j);
+		context.fakeItem(stack, i, j);
 	}
 	
 	public static int getTabX() {

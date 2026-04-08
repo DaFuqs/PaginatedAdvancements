@@ -17,8 +17,8 @@ public class PaginatedAdvancementTabType {
 	public static int getWidthWithSpacing() {
 		return WIDTH + PaginatedAdvancementsConfig.CONFIG.SpacingBetweenHorizontalTabs.get(); // includes the empty space between tabs
 	}
-	
-	public static void drawBackground(GuiGraphics context, int x, int y, boolean selected, int index) {
+
+	public static void drawBackground(GuiGraphicsExtractor context, int x, int y, boolean selected, int index) {
 		Identifier identifier;
 		if (index == 0) {
 			identifier = selected ? TOP_LEFT_TEXTURE_SELECTED : TOP_LEFT_TEXTURE;
@@ -27,11 +27,11 @@ public class PaginatedAdvancementTabType {
 		}
 		context.blitSprite(RenderPipelines.GUI_TEXTURED, identifier, x + getTabX(index), y + getTabY(), WIDTH, HEIGHT);
 	}
-	
-	public static void drawIcon(GuiGraphics context, int x, int y, int index, ItemStack stack) {
+
+	public static void drawIcon(GuiGraphicsExtractor context, int x, int y, int index, ItemStack stack) {
 		int i = x + getTabX(index) + 6;
 		int j = y + getTabY() + 9;
-		context.renderFakeItem(stack, i, j);
+		context.fakeItem(stack, i, j);
 	}
 	
 	public static int getTabX(int index) {

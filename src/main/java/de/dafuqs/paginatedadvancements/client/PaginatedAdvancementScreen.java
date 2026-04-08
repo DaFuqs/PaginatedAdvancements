@@ -2,9 +2,9 @@ package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.Maps;
 import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
-import de.dafuqs.paginatedadvancements.config.PaginatedAdvancementsConfig;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.advancements.AdvancementTab;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -31,7 +32,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	private final ClientAdvancements advancementHandler;
 	private final Map<AdvancementHolder, PaginatedAdvancementTab> tabs = Maps.newLinkedHashMap();
 	private final Map<AdvancementHolder, PaginatedAdvancementTab> pinnedTabs = Maps.newLinkedHashMap();
-
 	@Nullable
 	private PaginatedAdvancementTab selectedTab;
 	private boolean movingTab;
@@ -106,12 +106,12 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
 	// instead of drawing the full texture here, we cut it into pieces and draw
 	// the top, sides and more piece by piece, making the size variable with the mc window size
-	public void drawWindow(GuiGraphics context, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
+	public void drawWindow(GuiGraphicsExtractor context, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
 		drawFrame(context, minWidth, minHeight, maxWidth, maxHeight);
-		context.drawString(minecraft.font, ADVANCEMENTS_TEXT, minWidth + 8, minHeight + 6, 4210752, false);
+		context.text(minecraft.font, ADVANCEMENTS_TEXT, minWidth + 8, minHeight + 6, 4210752, false);
 	}
 
-	public void drawPinButtonAndHeader(GuiGraphics context, int mouseX, int mouseY, int startX, int startY, int endX, int endY, boolean hasPins) {
+	public void drawPinButtonAndHeader(GuiGraphicsExtractor context, int mouseX, int mouseY, int startX, int startY, int endX, int endY, boolean hasPins) {
 		if (this.selectedTab != null && PaginatedAdvancementsClient.CONFIG.PinningEnabled) {
 			if (isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
 				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id())) {
@@ -165,7 +165,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 
-	private void renderPaginatedTabs(GuiGraphics context, int startX, int startY, int endXTitle, int endXWindow, boolean paginated) {
+	private void renderPaginatedTabs(GuiGraphicsExtractor context, int startX, int startY, int endXTitle, int endXWindow, boolean paginated) {
 		Iterator<PaginatedAdvancementTab> tabIterator = this.tabs.values().iterator();
 		int maxAdvancementTabsToRender = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, paginated);
 
@@ -200,7 +200,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 
-	private void renderPinnedTabs(GuiGraphics context, int startX, int startY, int endX, int endY) {
+	private void renderPinnedTabs(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY) {
 		int maxPinnedTabs = getMaxPinnedTabsToRender(startY, endY);
 
 		Iterator<PaginatedAdvancementTab> tabIterator = this.pinnedTabs.values().iterator();
@@ -220,7 +220,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
 	// instead of drawing the full texture here, we cut it into pieces and draw
 	// the top, sides and more piece by piece, making the size variable with the mc window size
-	public void drawPaginationButtons(GuiGraphics context, int mouseX, int mouseY, int startX, int endX) {
+	public void drawPaginationButtons(GuiGraphicsExtractor context, int mouseX, int mouseY, int startX, int endX) {
 		if (isClickOnBackTab(mouseX, mouseY, startX, endX)) {
 			// hover
 			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 23, 23, 23, 256, 256);
@@ -250,7 +250,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		return mouseX > buttonStartX && mouseX < buttonStartX + 23 && mouseY > buttonStartY && mouseY < buttonStartY + 23;
 	}
 
-	private void drawFrame(GuiGraphics context, int startX, int startY, int endX, int endY) {
+	private void drawFrame(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY) {
 		// corners
 		context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, startX, startY, 0, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top left
 		context.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, endX - ELEMENT_WIDTH, startY, 237, 0, ELEMENT_WIDTH, TOP_ELEMENT_HEIGHT, 256, 256); // top right
@@ -311,7 +311,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 
 	@Override
-	public void onRemoveAdvancementTask(AdvancementNode dependent) {
+	public void onRemoveAdvancementTask(@NonNull AdvancementNode dependent) {
 	}
 
 	@Nullable
@@ -468,7 +468,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 
-	private void drawWidgetTooltip(GuiGraphics context, int mouseX, int mouseY, int startX, int startY, int endXTitle, int endXWindow, int endY) {
+	private void drawWidgetTooltip(GuiGraphicsExtractor context, int mouseX, int mouseY, int startX, int startY, int endXTitle, int endXWindow, int endY) {
 		if (this.selectedTab != null) {
 			context.pose().pushMatrix();
 			context.pose().translate((startX + 9), (startY + 18));//, 400.0D);
@@ -503,7 +503,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		}
 	}
 
-	public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
+	@Override
+	public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
 		boolean hasPins = !this.pinnedTabs.isEmpty();
 		int startX = BORDER_PADDING;
 		int startY = BORDER_PADDING + ADDITIONAL_PADDING_TOP;
@@ -532,15 +533,15 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		this.drawWidgetTooltip(context, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
 	}
 
-	private void drawAdvancementTree(GuiGraphics context, int startX, int startY, int endX, int endY) {
+	private void drawAdvancementTree(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY) {
 		PaginatedAdvancementTab advancementTab = this.selectedTab;
 		if (advancementTab == null) {
 			context.fill(startX + 9, startY + 18, endX, endY, -16777216);
 
 			int textCenterX = startX + ((endX - startX) / 2);
 			int textY = startY + ((endY - startY) / 2);
-			context.drawCenteredString(this.font, EMPTY_TEXT, textCenterX, textY, -1);
-			context.drawCenteredString(this.font, SAD_LABEL_TEXT, textCenterX, textY + 16, -1);
+			context.centeredText(this.font, EMPTY_TEXT, textCenterX, textY, -1);
+			context.centeredText(this.font, SAD_LABEL_TEXT, textCenterX, textY + 16, -1);
 		} else {
 			advancementTab.render(context, startX, startY, endX, endY);
 		}
