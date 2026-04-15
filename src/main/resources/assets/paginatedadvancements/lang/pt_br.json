@@ -1,0 +1,19 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "Configuração do Paginated Advancements",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "Escurecer o fundo levemente para cinza ao passar o mouse sobre um progresso",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "Lista de Abas fixadas (identificador do progresso raiz)",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "Salvar e restaurar a última aba selecionada",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "O identificador da última aba selecionada",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "Espaçamento entre as abas horizontais",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "Espaçamento entre as abas fixadas",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "Mostrar informações de depuração ao passar o mouse sobre o progresso",
+  "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Máximo de entradas de critérios de progresso exibidas",
+  "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "Ativar a fixação de abas de progresso",
+  "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "Mostrar o ID do progresso na tooltip de depuração",
+
+  "text.paginated_advancements.copied_to_clipboard": "ID do Progresso copiado para a área de transferência",
+  "text.paginated_advancements.group": "Grupo: ",
+  "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C para copiar)",
+  "text.paginated_advancements.expand_debug": "[Shift] mais...",
+  "text.paginated_advancements.scroll_debug": "[Scroll] mais..."
+}
