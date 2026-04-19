@@ -1,6 +1,7 @@
 {
   "pack": {
-    "pack_format": 69.0,
-    "description": "Debug Advancements Pack 1.21.9"
+    "min_format": 82,
+    "max_format": 999,
+    "description": "Debug Advancements Pack 26.1"
   }
 }

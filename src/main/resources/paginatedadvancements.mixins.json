@@ -2,11 +2,11 @@
   "required": true,
   "minVersion": "0.8",
   "package": "de.dafuqs.paginatedadvancements.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [],
   "client": [
     "AdvancementWidgetAccessor",
-    "MinecraftClientMixin"
+    "MinecraftMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -3,15 +3,14 @@ package de.dafuqs.paginatedadvancements.frames;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.*;
 import de.dafuqs.paginatedadvancements.*;
-import net.fabricmc.fabric.api.resource.*;
-import net.minecraft.resource.*;
-import net.minecraft.util.*;
-import net.minecraft.util.profiler.*;
-import org.jetbrains.annotations.*;
+import net.minecraft.resources.*;
+import net.minecraft.server.packs.resources.*;
+import net.minecraft.util.profiling.ProfilerFiller;
+import org.jspecify.annotations.*;
 
 import java.util.*;
 
-public class AdvancementFrameDataLoader extends JsonDataLoader<List<AdvancementFrameDataLoader.Entry>> implements IdentifiableResourceReloadListener {
+public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener<List<AdvancementFrameDataLoader.Entry>> implements PreparableReloadListener {
 	
 	public static final String LOCATION = "advancement_frames";
 	public static final Identifier ID = PaginatedAdvancementsClient.locate(LOCATION);
@@ -31,7 +30,7 @@ public class AdvancementFrameDataLoader extends JsonDataLoader<List<AdvancementF
 	protected static final Map<Identifier, FrameWrapper> CUSTOM_FRAMES = new HashMap<>();
 	
 	public AdvancementFrameDataLoader() {
-		super(Entry.LIST_CODEC, ResourceFinder.json(LOCATION));
+		super(Entry.LIST_CODEC, FileToIdConverter.json(LOCATION));
 	}
 	
 	public static @Nullable FrameWrapper get(Identifier id) {
@@ -39,18 +38,18 @@ public class AdvancementFrameDataLoader extends JsonDataLoader<List<AdvancementF
 	}
 	
 	@Override
-	protected Map<Identifier, List<AdvancementFrameDataLoader.Entry>> prepare(ResourceManager resourceManager, Profiler profiler) {
+	protected @NonNull Map<Identifier, List<AdvancementFrameDataLoader.Entry>> prepare(@NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
 		return super.prepare(resourceManager, profiler);
 	}
 	
 	@Override
-	protected void apply(Map<Identifier, List<Entry>> prepared, ResourceManager manager, Profiler profiler) {
+	protected void apply(Map<Identifier, List<Entry>> prepared, @NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
 		for (Map.Entry<Identifier, List<Entry>> list : prepared.entrySet()) {
 			for (Entry entry : list.getValue()) {
 				Identifier advancement = entry.advancementId();
 				Identifier frame = entry.frameId();
 				
-				@Nullable FrameWrapper frameWrapper = FrameWrapper.of(frame);
+				FrameWrapper frameWrapper = FrameWrapper.of(frame);
 				if (frameWrapper == null) {
 					PaginatedAdvancementsClient.LOGGER.error("Advancement Frame '{}' for advancement  '{}' is unknown.", frame, advancement);
 				} else {
@@ -59,10 +58,5 @@ public class AdvancementFrameDataLoader extends JsonDataLoader<List<AdvancementF
 			}
 		}
 	}
-	
-	@Override
-	public Identifier getFabricId() {
-		return ID;
-	}
-	
+
 }

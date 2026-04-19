@@ -1,0 +1,10 @@
+classTweaker	v1	official
+
+accessible  class   net/minecraft/client/gui/screens/advancements/AdvancementTabType
+accessible class net/minecraft/client/gui/screens/advancements/AdvancementTabType$Sprites
+
+accessible method net/minecraft/client/gui/screens/advancements/AdvancementWidget getMaxProgressWidth ()I
+accessible method net/minecraft/client/gui/screens/advancements/AdvancementWidget extractMultilineText (Lnet/minecraft/client/gui/GuiGraphicsExtractor;Ljava/util/List;III)V
+
+accessible field net/minecraft/client/gui/screens/advancements/AdvancementTabType selectedSprites Lnet/minecraft/client/gui/screens/advancements/AdvancementTabType$Sprites;
+accessible field net/minecraft/client/gui/screens/advancements/AdvancementTabType unselectedSprites Lnet/minecraft/client/gui/screens/advancements/AdvancementTabType$Sprites;
