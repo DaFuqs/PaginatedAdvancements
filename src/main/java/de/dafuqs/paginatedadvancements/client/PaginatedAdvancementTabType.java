@@ -1,5 +1,7 @@
 package de.dafuqs.paginatedadvancements.client;
 
+import de.dafuqs.paginatedadvancements.config.PaginatedAdvancementsConfig;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;

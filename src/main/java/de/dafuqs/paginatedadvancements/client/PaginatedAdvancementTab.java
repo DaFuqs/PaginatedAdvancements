@@ -1,6 +1,7 @@
 package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.Maps;
+import de.dafuqs.paginatedadvancements.config.PaginatedAdvancementsConfig;
 import de.dafuqs.paginatedadvancements.mixin.AdvancementWidgetAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.*;

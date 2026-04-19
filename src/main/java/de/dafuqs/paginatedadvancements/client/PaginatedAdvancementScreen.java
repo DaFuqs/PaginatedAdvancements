@@ -2,6 +2,7 @@ package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.Maps;
 import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
+import de.dafuqs.paginatedadvancements.config.PaginatedAdvancementsConfig;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -112,15 +113,15 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 
 	public void drawPinButtonAndHeader(GuiGraphicsExtractor context, int mouseX, int mouseY, int startX, int startY, int endX, int endY, boolean hasPins) {
-		if (this.selectedTab != null && PaginatedAdvancementsClient.CONFIG.PinningEnabled) {
+		if (this.selectedTab != null && PaginatedAdvancementsConfig.CONFIG.PinningEnabled.get()) {
 			if (isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
-				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id())) {
+				if (PaginatedAdvancementsConfig.isPinned(this.selectedTab.getRootNode().holder().id())) {
 					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				} else {
 					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				}
 			} else {
-				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id())) {
+				if (PaginatedAdvancementsConfig.isPinned(this.selectedTab.getRootNode().holder().id())) {
 					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 				} else {
 					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
