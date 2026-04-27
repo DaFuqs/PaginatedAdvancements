@@ -84,7 +84,7 @@ public class PaginatedAdvancementsConfig {
 		MaxCriterionEntries = builder.define("max_criterion_entries", 2);
 		FadeOutBackgroundOnAdvancementHover = builder.define("fade_out_on_advancement_hover", true);
 		SaveLastSelectedTab = builder.define("save_last_selected_tab", true);
-		PinnedTabs = (ModConfigSpec.ConfigValue<List<String>>) (Object) builder.defineList("pinned_tabs", List.of(), () -> "mymod:myid", s -> true);
+		PinnedTabs = (ModConfigSpec.ConfigValue<List<String>>) (Object) builder.defineList("pinned_tabs", List.of(), () -> "mymod:my_id", s -> true);
 		LastSelectedTab = builder.define("last_selected_tab", "");
 		SpacingBetweenHorizontalTabs = builder.define("spacing_between_horizontal_tabs", 4);
 		SpacingBetweenPinnedTabs = builder.define("spacing_between_pinned_tabs", 2);
