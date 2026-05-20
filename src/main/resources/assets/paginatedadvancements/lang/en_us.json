@@ -1,5 +1,5 @@
 {
-  "paginatedadvancements.configuration.fade_out_at_advancement_hover": "Fade the background slightly gray when hovering over an advancement",
+  "paginatedadvancements.configuration.fade_out_on_advancement_hover": "Fade the background slightly gray when hovering over an advancement",
   "paginatedadvancements.configuration.pinned_tabs": "List of pinned Tabs (root advancement identifier)",
   "paginatedadvancements.configuration.save_last_selected_tab": "Save and restore the last selected tab",
   "paginatedadvancements.configuration.last_selected_tab": "The identifier of the last selected tab",
