@@ -522,8 +522,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if (hasPins) {
 			renderPinnedTabs(context, startX, startY, endXWindow, endY);
 		}
-		this.drawPinButtonAndHeader(context, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
 		this.drawWidgetTooltip(context, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
+		this.drawPinButtonAndHeader(context, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
 	}
 
 	private void drawAdvancementTree(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY) {
