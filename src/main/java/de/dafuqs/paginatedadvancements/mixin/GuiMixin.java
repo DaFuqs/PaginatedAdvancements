@@ -2,20 +2,14 @@ package de.dafuqs.paginatedadvancements.mixin;
 
 import de.dafuqs.paginatedadvancements.client.*;
 import net.minecraft.client.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
-import net.minecraft.client.player.LocalPlayer;
-import org.jetbrains.annotations.*;
+import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.screens.*;
+import net.minecraft.client.gui.screens.advancements.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 
-@Mixin(Minecraft.class)
-public abstract class MinecraftMixin {
-	
-	@Shadow
-	@Nullable
-	public LocalPlayer player;
+@Mixin(Gui.class)
+public abstract class GuiMixin {
 	
 	/**
 	 * Redirect all calls to the vanilla advancement screen to out custom one
@@ -24,7 +18,7 @@ public abstract class MinecraftMixin {
 	@ModifyVariable(method = "setScreen(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"), argsOnly = true)
 	private Screen paginatedAdvancements$modifyAdvancementsScreen(Screen screen) {
 		if (screen != null && AdvancementsScreen.class == screen.getClass()) {
-			return new PaginatedAdvancementScreen(player.connection.getAdvancements());
+			return new PaginatedAdvancementScreen(Minecraft.getInstance().player.connection.getAdvancements());
 		} else {
 			return screen;
 		}

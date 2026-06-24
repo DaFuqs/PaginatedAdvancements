@@ -3,18 +3,18 @@ package de.dafuqs.paginatedadvancements.client;
 import com.google.common.collect.*;
 import de.dafuqs.paginatedadvancements.*;
 import de.dafuqs.paginatedadvancements.mixin.*;
-import net.minecraft.ChatFormatting;
+import net.minecraft.*;
 import net.minecraft.advancements.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.*;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.advancements.*;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.core.ClientAsset;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.*;
+import net.minecraft.core.*;
 import net.minecraft.network.chat.*;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.*;
 import net.minecraft.util.*;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import org.jspecify.annotations.*;
 
 import java.util.*;
@@ -474,8 +474,9 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public void copyHoveredAdvancementID() {
 		if (this.hoveredWidget != null) {
 			AdvancementWidgetAccessor awa = (AdvancementWidgetAccessor) this.hoveredWidget;
-			Minecraft.getInstance().keyboardHandler.setClipboard(awa.getAdvancementNode().holder().id().toString());
-			Minecraft.getInstance().gui.setOverlayMessage(Component.translatable("text.paginated_advancements.copied_to_clipboard"), false);
+			String id = awa.getAdvancementNode().holder().id().toString();
+			Minecraft.getInstance().keyboardHandler.setClipboard(id);
+			Minecraft.getInstance().gui.hud.setOverlayMessage(Component.translatable("text.paginated_advancements.copied_to_clipboard", id), false);
 		}
 	}
 	

@@ -6,7 +6,7 @@
   "mixins": [],
   "client": [
     "AdvancementWidgetAccessor",
-    "MinecraftMixin"
+    "GuiMixin"
   ],
   "injectors": {
     "defaultRequire": 1

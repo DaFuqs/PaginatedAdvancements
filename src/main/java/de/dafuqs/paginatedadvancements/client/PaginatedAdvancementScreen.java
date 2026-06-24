@@ -3,13 +3,13 @@ package de.dafuqs.paginatedadvancements.client;
 import com.google.common.collect.*;
 import de.dafuqs.paginatedadvancements.*;
 import net.minecraft.advancements.*;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.advancements.*;
 import net.minecraft.client.input.*;
-import net.minecraft.client.multiplayer.ClientAdvancements;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.multiplayer.*;
+import net.minecraft.client.renderer.*;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.*;
 import org.jspecify.annotations.*;
 
 import java.util.*;
@@ -423,7 +423,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
     @Override
 	public boolean keyPressed(@NonNull KeyEvent input) {
 		if (this.minecraft.options.keyAdvancements.matches(input)) {
-			this.minecraft.setScreen(null);
+			this.minecraft.gui.setScreen(null);
 			this.minecraft.mouseHandler.grabMouse();
 			return true;
 		} else if (this.selectedTab != null && input.isCopy()) { // ctrl + c

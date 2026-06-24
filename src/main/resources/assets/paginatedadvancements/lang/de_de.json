@@ -10,10 +10,9 @@
   "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Zahl der angezeigten Kriterien",
   "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "Anheften von Tabs aktivieren",
   "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "Advancement-ID im Debug-Tooltip anzeigen",
-
-  "text.paginated_advancements.copied_to_clipboard": "Advancement-ID in die Zwischenablage kopiert",
+  "text.paginated_advancements.copied_to_clipboard": "Advancement-ID in die Zwischenablage kopiert: %s",
   "text.paginated_advancements.group": "Gruppe: ",
-  "text.paginated_advancements.copy_to_clipboard": "(Stry+C zum kopieren)",
+  "text.paginated_advancements.copy_to_clipboard": "(Strg+C zum kopieren)",
   "text.paginated_advancements.expand_debug": "[Shift] mehr...",
   "text.paginated_advancements.scroll_debug": "[Scrollen] mehr..."
 }
