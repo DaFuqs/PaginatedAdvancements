@@ -10,8 +10,7 @@
     "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Máximo de entradas de critérios de progresso exibidas",
     "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "Ativar fixação de separadores de progresso",
     "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "Mostrar ID de progresso na tooltip de depuração",
-  
-    "text.paginated_advancements.copied_to_clipboard": "ID de progresso copiado para a área de transferência",
+    "text.paginated_advancements.copied_to_clipboard": "ID de progresso copiado para a área de transferência: %s",
     "text.paginated_advancements.group": "Grupo: ",
     "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C para copiar)",
     "text.paginated_advancements.expand_debug": "[Shift] mais...",

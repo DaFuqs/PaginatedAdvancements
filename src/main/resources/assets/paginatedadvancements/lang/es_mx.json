@@ -8,8 +8,7 @@
   "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "Espaciado entre las pestañas fijadas",
   "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "Mostrar información de depuración al pasar el cursor sobre un avance",
   "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Número máximo de entradas de criterios de avance mostradas",
-
-  "text.paginated_advancements.copied_to_clipboard": "ID de avance copiado al portapapeles",
+  "text.paginated_advancements.copied_to_clipboard": "ID de avance copiado al portapapeles: %s",
   "text.paginated_advancements.group": "Grupo: ",
   "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C para copiar)",
   "text.paginated_advancements.expand_debug": "[Shift] más...",

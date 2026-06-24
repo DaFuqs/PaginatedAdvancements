@@ -10,8 +10,7 @@
   "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Максимальнальна кількість записів, що відображаються, критерію досягнення",
   "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "Увімкнути закріплення вкладок досягнень",
   "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "Показувати ідентифікатор досягнення в підказці налагодження",
-
-  "text.paginated_advancements.copied_to_clipboard": "Ідентифікатор досягнення скопійовано в буфер обміну",
+  "text.paginated_advancements.copied_to_clipboard": "Ідентифікатор досягнення скопійовано в буфер обміну: %s",
   "text.paginated_advancements.group": "Група: ",
   "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C для копіювання)",
   "text.paginated_advancements.expand_debug": "[Shift] більше...",

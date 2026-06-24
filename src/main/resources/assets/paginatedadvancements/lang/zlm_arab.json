@@ -10,7 +10,7 @@
   "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "بيلڠن اينتري مکسيموم کريتيريا کماجوان يڠ دڤاڤرکن",
   "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "منداياکن ڤڽمتن تب کماجوان",
   "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "تونجوقکن ID کماجوان ڤد ڤتوا الت ڽهڤڤيجت",
-  "text.paginated_advancements.copied_to_clipboard": "ID کماجوان دسالين کڤاڤن کرتن",
+  "text.paginated_advancements.copied_to_clipboard": "ID کماجوان دسالين کڤاڤن کرتن: %s",
   "text.paginated_advancements.group": "کومڤولن: ",
   "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C اونتوق سالين)",
   "text.paginated_advancements.expand_debug": "[Shift] لبيه لاݢي...",
