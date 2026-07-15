@@ -1,5 +1,5 @@
 {
-  "paginatedadvancements.configuration.fade_out_at_advancement_hover": "Злегка затемнювати фон при наведенні курсору на досягнення",
+  "paginatedadvancements.configuration.fade_out_on_advancement_hover": "Злегка затемнювати фон при наведенні курсору на досягнення",
   "paginatedadvancements.configuration.pinned_tabs": "Список закріплених вкладок (ідентифікатор кореневого досягнення)",
   "paginatedadvancements.configuration.save_last_selected_tab": "Зберігати та відновлювати останню вибрану вкладку",
   "paginatedadvancements.configuration.last_selected_tab": "Ідентифікатор останньої вибраної вкладки",
@@ -9,8 +9,7 @@
   "paginatedadvancements.configuration.max_criterion_entries": "Максимальнальна кількість записів, що відображаються, критерію досягнення",
   "paginatedadvancements.configuration.pinning_enabled": "Увімкнути закріплення вкладок досягнень",
   "paginatedadvancements.configuration.show_advancement_id_in_debug_tooltip": "Показувати ідентифікатор досягнення в підказці налагодження",
-
-  "text.paginated_advancements.copied_to_clipboard": "Ідентифікатор досягнення скопійовано в буфер обміну",
+  "text.paginated_advancements.copied_to_clipboard": "Ідентифікатор досягнення скопійовано в буфер обміну: %s",
   "text.paginated_advancements.group": "Група: ",
   "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C для копіювання)",
   "text.paginated_advancements.expand_debug": "[Shift] більше...",

@@ -1,25 +1,19 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import com.google.common.collect.Maps;
-import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
-import de.dafuqs.paginatedadvancements.config.PaginatedAdvancementsConfig;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementNode;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.screens.advancements.AdvancementTab;
-import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
-import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.multiplayer.ClientAdvancements;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import com.google.common.collect.*;
+import de.dafuqs.paginatedadvancements.*;
+import de.dafuqs.paginatedadvancements.config.*;
+import net.minecraft.advancements.*;
+import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.screens.advancements.*;
+import net.minecraft.client.input.*;
+import net.minecraft.client.multiplayer.*;
+import net.minecraft.client.renderer.*;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.*;
+import org.jspecify.annotations.*;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class PaginatedAdvancementScreen extends AdvancementsScreen implements ClientAdvancements.Listener {
 
@@ -431,7 +425,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	@Override
 	public boolean keyPressed(KeyEvent event) {
 		if (this.minecraft.options.keyAdvancements.matches(event)) {
-			this.minecraft.setScreen(null);
+			this.minecraft.gui.setScreen(null);
 			this.minecraft.mouseHandler.grabMouse();
 			return true;
 		} else if (this.selectedTab != null && event.isCopy()) { // ctrl + c
@@ -530,8 +524,8 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 		if (hasPins) {
 			renderPinnedTabs(context, startX, startY, endXWindow, endY);
 		}
-		this.drawPinButtonAndHeader(context, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
 		this.drawWidgetTooltip(context, mouseX, mouseY, startX, startY, endXTitle, endXWindow, endY);
+		this.drawPinButtonAndHeader(context, mouseX, mouseY, startX, startY, endXWindow, endY, hasPins);
 	}
 
 	private void drawAdvancementTree(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY) {

@@ -1,5 +1,5 @@
 {
-  "paginatedadvancements.configuration.fade_out_at_advancement_hover": "Den Hintergrund ausgrauen, wenn man den Mauszeiger über ein Advancement bewegt",
+  "paginatedadvancements.configuration.fade_out_on_advancement_hover": "Den Hintergrund ausgrauen, wenn man den Mauszeiger über ein Advancement bewegt",
   "paginatedadvancements.configuration.pinned_tabs": "Liste der angehefteten Tabs (Root Advancement Identifier)",
   "paginatedadvancements.configuration.save_last_selected_tab": "Speichern und Wiederherstellen des zuletzt ausgewählten Tabs",
   "paginatedadvancements.configuration.last_selected_tab": "Die Kennung der zuletzt ausgewählten Tabs",
@@ -9,10 +9,9 @@
   "paginatedadvancements.configuration.max_criterion_entries": "Zahl der angezeigten Kriterien",
   "paginatedadvancements.configuration.pinning_enabled": "Anheften von Tabs aktivieren",
   "paginatedadvancements.configuration.show_advancement_id_in_debug_tooltip": "Advancement-ID im Debug-Tooltip anzeigen",
-
-  "text.paginated_advancements.copied_to_clipboard": "Advancement-ID in die Zwischenablage kopiert",
+  "text.paginated_advancements.copied_to_clipboard": "Advancement-ID in die Zwischenablage kopiert: %s",
   "text.paginated_advancements.group": "Gruppe: ",
-  "text.paginated_advancements.copy_to_clipboard": "(Stry+C zum kopieren)",
+  "text.paginated_advancements.copy_to_clipboard": "(Strg+C zum kopieren)",
   "text.paginated_advancements.expand_debug": "[Shift] mehr...",
   "text.paginated_advancements.scroll_debug": "[Scrollen] mehr..."
 }

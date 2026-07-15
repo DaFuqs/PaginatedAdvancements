@@ -1,5 +1,5 @@
 {
-  "paginatedadvancements.configuration.fade_out_at_advancement_hover": "Pudarkan latar belakang menjadi sedikit kelabu apabila meletakkan kursor di atas kemajuan",
+  "paginatedadvancements.configuration.fade_out_on_advancement_hover": "Pudarkan latar belakang menjadi sedikit kelabu apabila meletakkan kursor di atas kemajuan",
   "paginatedadvancements.configuration.pinned_tabs": "Senarai Tab yang disemat (pengecam kemajuan akar)",
   "paginatedadvancements.configuration.save_last_selected_tab": "Simpan dan pulihkan tab yang kali terakhir dipilih",
   "paginatedadvancements.configuration.last_selected_tab": "Pengecam tab yang kali terakhir dipilih",
@@ -9,8 +9,7 @@
   "paginatedadvancements.configuration.max_criterion_entries": "Bilangan entri maksimum kriteria kemajuan yang dipaparkan",
   "paginatedadvancements.configuration.pinning_enabled": "Mendayakan penyematan tab kemajuan",
   "paginatedadvancements.configuration.show_advancement_id_in_debug_tooltip": "Tunjukkan ID kemajuan pada petua alat nyahpepijat",
-
-  "text.paginated_advancements.copied_to_clipboard": "ID Kemajuan disalin ke papan keratan",
+  "text.paginated_advancements.copied_to_clipboard": "ID Kemajuan disalin ke papan keratan: %s",
   "text.paginated_advancements.group": "Kumpulan: ",
   "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C untuk salin)",
   "text.paginated_advancements.expand_debug": "[Shift] lebih lagi...",

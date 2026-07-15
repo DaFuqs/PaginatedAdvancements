@@ -1,5 +1,5 @@
 {
-  "paginatedadvancements.configuration.fade_out_at_advancement_hover": "Desvanecer ligeramente el fondo al pasar el cursor sobre un avance",
+  "paginatedadvancements.configuration.fade_out_on_advancement_hover": "Desvanecer ligeramente el fondo al pasar el cursor sobre un avance",
   "paginatedadvancements.configuration.pinned_tabs": "Lista de pestañas fijadas (identificador del avance raíz)",
   "paginatedadvancements.configuration.save_last_selected_tab": "Guardar y restaurar la última pestaña seleccionada",
   "paginatedadvancements.configuration.last_selected_tab": "El identificador de la última pestaña abierta",
@@ -7,8 +7,7 @@
   "paginatedadvancements.configuration.spacing_between_pinned_tabs": "Espaciado entre las pestañas fijadas",
   "paginatedadvancements.configuration.show_debug_info": "Mostrar información de depuración al pasar el cursor sobre un avance",
   "paginatedadvancements.configuration.max_criterion_entries": "Número máximo de entradas de criterios de avance mostradas",
-
-  "text.paginated_advancements.copied_to_clipboard": "ID de avance copiado al portapapeles",
+  "text.paginated_advancements.copied_to_clipboard": "ID de avance copiado al portapapeles: %s",
   "text.paginated_advancements.group": "Grupo: ",
   "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C para copiar)",
   "text.paginated_advancements.expand_debug": "[Shift] más...",

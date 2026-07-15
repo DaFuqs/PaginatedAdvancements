@@ -1,5 +1,5 @@
 {
-  "paginatedadvancements.configuration.fade_out_at_advancement_hover": "Làm mờ nền thành hơi xám khi di chuột qua thành tựu",
+  "paginatedadvancements.configuration.fade_out_on_advancement_hover": "Làm mờ nền thành hơi xám khi di chuột qua thành tựu",
   "paginatedadvancements.configuration.pinned_tabs": "Danh sách các Tab được ghim (định danh thành tựu gốc)",
   "paginatedadvancements.configuration.save_last_selected_tab": "Lưu và khôi phục tab đã chọn cuối cùng",
   "paginatedadvancements.configuration.last_selected_tab": "Định danh của tab được chọn cuối cùng",
@@ -9,8 +9,7 @@
   "paginatedadvancements.configuration.max_criterion_entries": "Các mục tiêu chí thành tựu được hiển thị tối đa",
   "paginatedadvancements.configuration.pinning_enabled": "Cho phép ghim các tab thành tựu",
   "paginatedadvancements.configuration.show_advancement_id_in_debug_tooltip": "Hiển thị ID tiến bộ trong chú giải công cụ gỡ lỗi",
-
-  "text.paginated_advancements.copied_to_clipboard": "Đã sao chép ID thành tựu vào bảng nhớ tạm",
+  "text.paginated_advancements.copied_to_clipboard": "Đã sao chép ID thành tựu vào bảng nhớ tạm: %s",
   "text.paginated_advancements.group": "Nhóm: ",
   "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C để sao chép)",
   "text.paginated_advancements.expand_debug": "[Shift] thêm...",

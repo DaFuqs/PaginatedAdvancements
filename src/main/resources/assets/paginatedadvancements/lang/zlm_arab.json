@@ -1,5 +1,5 @@
 {
-  "paginatedadvancements.configuration.fade_out_at_advancement_hover": "ڤودرکن لاتر بلاکڠ منجادي سديکيت کلابو اڤابيلا ملتقکن کورسور داتس کماجوان",
+  "paginatedadvancements.configuration.fade_out_on_advancement_hover": "ڤودرکن لاتر بلاکڠ منجادي سديکيت کلابو اڤابيلا ملتقکن کورسور داتس کماجوان",
   "paginatedadvancements.configuration.pinned_tabs": "سناراي تب يڠ دسمت (ڤڠچم کماجوان اکر)",
   "paginatedadvancements.configuration.save_last_selected_tab": "سيمڤن دان ڤوليهکن تب يڠ کالي تراخير دڤيليه",
   "paginatedadvancements.configuration.last_selected_tab": "ڤڠچم تب يڠ کالي تراخير دڤيليه",
@@ -9,8 +9,7 @@
   "paginatedadvancements.configuration.max_criterion_entries": "بيلڠن اينتري مکسيموم کريتيريا کماجوان يڠ دڤاڤرکن",
   "paginatedadvancements.configuration.pinning_enabled": "منداياکن ڤڽمتن تب کماجوان",
   "paginatedadvancements.configuration.show_advancement_id_in_debug_tooltip": "تونجوقکن ID کماجوان ڤد ڤتوا الت ڽهڤڤيجت",
-
-  "text.paginated_advancements.copied_to_clipboard": "ID کماجوان دسالين کڤاڤن کرتن",
+  "text.paginated_advancements.copied_to_clipboard": "ID کماجوان دسالين کڤاڤن کرتن: %s",
   "text.paginated_advancements.group": "کومڤولن: ",
   "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C اونتوق سالين)",
   "text.paginated_advancements.expand_debug": "[Shift] لبيه لاݢي...",

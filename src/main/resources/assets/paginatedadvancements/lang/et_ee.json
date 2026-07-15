@@ -1,5 +1,5 @@
 {
-  "paginatedadvancements.configuration.fade_out_at_advancement_hover": "Edasijõudmisel kursoriga hõljudes tumenda tausta",
+  "paginatedadvancements.configuration.fade_out_on_advancement_hover": "Edasijõudmisel kursoriga hõljudes tumenda tausta",
   "paginatedadvancements.configuration.pinned_tabs": "Kinnitatud vahekaartide nimekiri (juur-edasijõudmise identifikaator)",
   "paginatedadvancements.configuration.save_last_selected_tab": "Salvesta ja taasta viimati valitud vahekaart",
   "paginatedadvancements.configuration.last_selected_tab": "Viimati valitud vahekaardi identifikaator",
@@ -9,8 +9,7 @@
   "paginatedadvancements.configuration.max_criterion_entries": "Maksimaalne kuvatav edasijõudmise kriteeriumite arv",
   "paginatedadvancements.configuration.pinning_enabled": "Luba edasijõudmise vahekaartide kinnitamine",
   "paginatedadvancements.configuration.show_advancement_id_in_debug_tooltip": "Kuva silumishüpikul edasijõudmise identifikaatorit",
-
-  "text.paginated_advancements.copied_to_clipboard": "Edasijõudmise ID lõikelauale kopeeritud",
+  "text.paginated_advancements.copied_to_clipboard": "Edasijõudmise ID lõikelauale kopeeritud: %s",
   "text.paginated_advancements.group": "Grupp: ",
   "text.paginated_advancements.copy_to_clipboard": "(Kopeerimiseks Ctrl+C)",
   "text.paginated_advancements.expand_debug": "[Shift] rohkem...",

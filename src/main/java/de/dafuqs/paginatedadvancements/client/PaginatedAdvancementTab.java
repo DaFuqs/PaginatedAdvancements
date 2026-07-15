@@ -1,33 +1,25 @@
 package de.dafuqs.paginatedadvancements.client;
 
-import com.google.common.collect.Maps;
-import de.dafuqs.paginatedadvancements.config.PaginatedAdvancementsConfig;
-import de.dafuqs.paginatedadvancements.mixin.AdvancementWidgetAccessor;
-import net.minecraft.ChatFormatting;
+import com.google.common.collect.*;
+import de.dafuqs.paginatedadvancements.config.*;
+import de.dafuqs.paginatedadvancements.mixin.*;
+import net.minecraft.*;
 import net.minecraft.advancements.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.screens.advancements.AdvancementTab;
-import net.minecraft.client.gui.screens.advancements.AdvancementTabType;
-import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.core.ClientAsset;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.client.*;
+import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.screens.advancements.*;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.*;
+import net.minecraft.core.*;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.*;
+import net.minecraft.util.*;
+import net.minecraft.world.item.*;
+import org.jspecify.annotations.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-import static de.dafuqs.paginatedadvancements.client.PaginatedAdvancementScreen.BOTTOM_ELEMENT_HEIGHT;
-import static de.dafuqs.paginatedadvancements.client.PaginatedAdvancementScreen.ELEMENT_WIDTH;
+import static de.dafuqs.paginatedadvancements.client.PaginatedAdvancementScreen.*;
 
 public class PaginatedAdvancementTab extends AdvancementTab {
 	
@@ -482,8 +474,9 @@ public class PaginatedAdvancementTab extends AdvancementTab {
 	public void copyHoveredAdvancementID() {
 		if (this.hoveredWidget != null) {
 			AdvancementWidgetAccessor awa = (AdvancementWidgetAccessor) this.hoveredWidget;
-			Minecraft.getInstance().keyboardHandler.setClipboard(awa.getAdvancementNode().holder().id().toString());
-			Minecraft.getInstance().gui.setOverlayMessage(Component.translatable("text.paginated_advancements.copied_to_clipboard"), false);
+			String id = awa.getAdvancementNode().holder().id().toString();
+			Minecraft.getInstance().keyboardHandler.setClipboard(id);
+			Minecraft.getInstance().gui.hud.setOverlayMessage(Component.translatable("text.paginated_advancements.copied_to_clipboard", id), false);
 		}
 	}
 	

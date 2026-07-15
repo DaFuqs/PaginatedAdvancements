@@ -1,5 +1,5 @@
 {
-  "paginatedadvancements.configuration.fade_out_at_advancement_hover": "游標懸停在進度上時將背景稍微變暗",
+  "paginatedadvancements.configuration.fade_out_on_advancement_hover": "游標懸停在進度上時將背景稍微變暗",
   "paginatedadvancements.configuration.pinned_tabs": "已釘選標籤清單（根進度識別符）",
   "paginatedadvancements.configuration.save_last_selected_tab": "儲存和恢復上次選取的頁籤",
   "paginatedadvancements.configuration.last_selected_tab": "上次選取的頁籤識別符",
@@ -9,8 +9,7 @@
   "paginatedadvancements.configuration.max_criterion_entries": "進度條目顯示上限",
   "paginatedadvancements.configuration.pinning_enabled": "啟用進度分頁固定",
   "paginatedadvancements.configuration.show_advancement_id_in_debug_tooltip": "在除錯物品提示中顯示進度 ID",
-  
-  "text.paginated_advancements.copied_to_clipboard": "已複製將進度 ID 到剪貼簿",
+  "text.paginated_advancements.copied_to_clipboard": "已複製將進度 ID 到剪貼簿: %s",
   "text.paginated_advancements.group": "群組：",
   "text.paginated_advancements.copy_to_clipboard": "（按下 Ctrl+C 以複製）",
   "text.paginated_advancements.expand_debug": "[Shift] 更多...",
