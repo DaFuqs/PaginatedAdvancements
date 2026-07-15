@@ -1,4 +1,5 @@
 license = "${mod_license}"
+issueTrackerURL = "${issue_tracker_url}"
 
 [[mods]]
 modId = "${mod_id}"
@@ -7,6 +8,7 @@ displayName = "${mod_name}"
 authors = "${mod_authors}"
 logoFile = "assets/paginatedadvancements/icon.png"
 description = '''${mod_description}'''
+displayURL = "${display_url}"
 
 [[mixins]]
 config = "${mod_id}.mixins.json"
