@@ -1,0 +1,18 @@
+{
+  "text.autoconfig.PaginatedAdvancements.title": "Настройки Paginated Advancements",
+  "text.autoconfig.PaginatedAdvancements.option.FadeOutBackgroundOnAdvancementHover": "Слегка затемнять фон при наведении на достижение",
+  "text.autoconfig.PaginatedAdvancements.option.PinnedTabs": "Список закреплённых вкладок (идентификаторы корневых достижений)",
+  "text.autoconfig.PaginatedAdvancements.option.SaveLastSelectedTab": "Сохранять и восстанавливать последнюю выбранную вкладку",
+  "text.autoconfig.PaginatedAdvancements.option.LastSelectedTab": "Идентификатор последней выбранной вкладки",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenHorizontalTabs": "Расстояние между горизонтальными вкладками",
+  "text.autoconfig.PaginatedAdvancements.option.SpacingBetweenPinnedTabs": "Расстояние между закреплёнными вкладками",
+  "text.autoconfig.PaginatedAdvancements.option.ShowDebugInfo": "Показывать отладочную информацию при наведении на достижение",
+  "text.autoconfig.PaginatedAdvancements.option.MaxCriterionEntries": "Максимальное число отображаемых критериев достижения",
+  "text.autoconfig.PaginatedAdvancements.option.PinningEnabled": "Включить закрепление вкладок достижений",
+  "text.autoconfig.PaginatedAdvancements.option.ShowAdvancementIDInDebugTooltip": "Показывать идентификатор достижения в отладочной подсказке",
+  "text.paginated_advancements.copied_to_clipboard": "Идентификатор достижения скопирован в буфер обмена: %s",
+  "text.paginated_advancements.group": "Группа: ",
+  "text.paginated_advancements.copy_to_clipboard": "(Ctrl+C — скопировать)",
+  "text.paginated_advancements.expand_debug": "[Shift] подробнее...",
+  "text.paginated_advancements.scroll_debug": "[Прокрутка] подробнее..."
+}
