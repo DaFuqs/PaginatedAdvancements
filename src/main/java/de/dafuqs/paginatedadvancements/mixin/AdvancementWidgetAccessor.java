@@ -4,6 +4,7 @@ import net.minecraft.advancements.*;
 import net.minecraft.client.gui.screens.advancements.*;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.gen.*;
@@ -24,6 +25,9 @@ public interface AdvancementWidgetAccessor {
 	
 	@Accessor(value = "display")
     DisplayInfo getDisplay();
+
+	@Accessor(value = "icon")
+	ItemStack getIcon();
 	
 	@Accessor(value = "progress")
 	@Nullable AdvancementProgress getProgress();
@@ -36,9 +40,6 @@ public interface AdvancementWidgetAccessor {
 	
 	@Accessor(value = "description")
 	List<FormattedCharSequence> getDescription();
-	
-	@Accessor(value = "tab")
-    AdvancementTab getTab();
 	
 	@Accessor(value = "titleLines")
 	List<FormattedCharSequence> getTitleLines();

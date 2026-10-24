@@ -23,16 +23,12 @@ public class AdvancementFrameTypeDataLoader extends SimpleJsonResourceReloadList
 	}
 	
 	public static @Nullable PaginatedAdvancementFrame getFrameForAdvancement(Identifier id) {
-		return ADVANCEMENT_TO_FRAME.getOrDefault(id, null);
-	}
-	
-	@Override
-	protected @NonNull Map<Identifier, PaginatedAdvancementFrame> prepare(@NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
-		return super.prepare(resourceManager, profiler);
+		return ADVANCEMENT_TO_FRAME.get(id);
 	}
 	
 	@Override
 	protected void apply(Map<Identifier, PaginatedAdvancementFrame> prepared, @NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
+		ADVANCEMENT_TO_FRAME.clear();
 		for (Map.Entry<Identifier, PaginatedAdvancementFrame> entry : prepared.entrySet()) {
 			Identifier id = entry.getKey();
 			PaginatedAdvancementFrame frame = entry.getValue();

@@ -29,7 +29,8 @@ public class PaginatedAdvancementsConfig implements ConfigData {
 	
 	@Override
 	public void validatePostLoad() {
-	
+		SpacingBetweenHorizontalTabs = Math.max(0, SpacingBetweenHorizontalTabs);
+		SpacingBetweenPinnedTabs = Math.max(0, SpacingBetweenPinnedTabs);
 	}
 	
 	public boolean shouldShowAdvancementDebug(Minecraft client) {
