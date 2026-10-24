@@ -1,6 +1,7 @@
 package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.*;
+import com.mojang.blaze3d.platform.InputConstants;
 import de.dafuqs.paginatedadvancements.*;
 import de.dafuqs.paginatedadvancements.frames.AdvancementFrameDataLoader;
 import net.minecraft.advancements.*;
@@ -337,7 +338,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
     @Override
 	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-		if (click.button() == 0) {
+		if (click.button() == InputConstants.MOUSE_BUTTON_LEFT) {
 			int startX = BORDER_PADDING;
 			int endXWindow = !this.pinnedTabs.isEmpty() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH : this.width - BORDER_PADDING;
 			int endXTitle = this.width - BORDER_PADDING;
@@ -440,7 +441,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
     @Override
 	public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
-		if (click.button() != 0) {
+		if (click.button() != InputConstants.MOUSE_BUTTON_LEFT) {
 			this.movingTab = false;
 			return false;
 		} else {
