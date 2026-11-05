@@ -1,7 +1,9 @@
 package de.dafuqs.paginatedadvancements.client;
 
 import com.google.common.collect.*;
+import com.mojang.blaze3d.platform.InputConstants;
 import de.dafuqs.paginatedadvancements.*;
+import de.dafuqs.paginatedadvancements.frames.AdvancementFrameDataLoader;
 import net.minecraft.advancements.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.advancements.*;
@@ -10,6 +12,7 @@ import net.minecraft.client.multiplayer.*;
 import net.minecraft.client.renderer.*;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.*;
+import net.minecraft.locale.Language;
 import org.jspecify.annotations.*;
 
 import java.util.*;
@@ -26,6 +29,9 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	private final ClientAdvancements advancementHandler;
 	private final Map<AdvancementHolder, PaginatedAdvancementTab> tabs = Maps.newLinkedHashMap();
 	private final Map<AdvancementHolder, PaginatedAdvancementTab> pinnedTabs = Maps.newLinkedHashMap();
+	private final Map<AdvancementHolder, AdvancementLayout> advancementLayouts = new HashMap<>();
+	@Nullable private Language language;
+	private int frameReloadVersion = -1;
 	@Nullable private PaginatedAdvancementTab selectedTab;
 	private boolean movingTab;
 
@@ -44,6 +50,16 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	public static final int FAVOURITES_BUTTON_OFFSET_X = 32;
 	public static final int FAVOURITES_BUTTON_OFFSET_Y = 8;
 
+	private record AdvancementLayout(AdvancementNode node, float x, float y) {
+		private AdvancementLayout(AdvancementNode node) {
+			this(node, node.x(), node.y());
+		}
+
+		private boolean matches(AdvancementNode node) {
+			return this.node == node && Float.compare(this.x, node.x()) == 0 && Float.compare(this.y, node.y()) == 0;
+		}
+	}
+
 	public PaginatedAdvancementScreen(ClientAdvancements advancementHandler) {
 		super(advancementHandler);
 		this.advancementHandler = advancementHandler;
@@ -51,74 +67,28 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
 	@Override
 	protected void init() {
-		super.init();
-		this.tabs.clear();
-		this.selectedTab = null;
+		this.language = null;
 		this.advancementHandler.setListener(this);
-
-		if (this.selectedTab == null && !this.tabs.isEmpty()) {
-			boolean tabSelected = false;
-			if(PaginatedAdvancementsClient.CONFIG.SaveLastSelectedTab && !PaginatedAdvancementsClient.CONFIG.LastSelectedTab.isEmpty()) {
-				// search for the tab and if that is existent open that instead
-
-				Identifier savedTabIdentifier = Identifier.tryParse(PaginatedAdvancementsClient.CONFIG.LastSelectedTab);
-				for(AdvancementTab advancementTab : this.tabs.values()) {
-					if(advancementTab.getRootNode().holder().id().equals(savedTabIdentifier)) {
-						this.advancementHandler.setSelectedTab(advancementTab.getRootNode().holder(), true);
-						tabSelected = true;
-						break;
-					}
-				}
-			}
-			if(!tabSelected) {
-				// vanilla default behavior: just open some random tab
-				this.advancementHandler.setSelectedTab((this.tabs.values().iterator().next()).getRootNode().holder(), true);
-			}
-		} else {
-			this.advancementHandler.setSelectedTab(this.selectedTab == null ? null : this.selectedTab.getRootNode().holder(), true);
-		}
-
-		// initialize pinned tabs
-		if(!this.tabs.isEmpty() && PaginatedAdvancementsClient.hasPins()) {
-			for(String pinnedTabString : PaginatedAdvancementsClient.getPinnedTabs()) {
-				Identifier pinnedTabIdentifier = Identifier.tryParse(pinnedTabString);
-				for(PaginatedAdvancementTab advancementTab : this.tabs.values()) {
-					if(advancementTab.getRootNode().holder().id().equals(pinnedTabIdentifier)) {
-						this.pinnedTabs.put(advancementTab.getRootNode().holder(), advancementTab);
-						break;
-					}
-				}
-			}
-		}
 	}
 
 	@Override
-	public void removed() {
-		super.removed();
+	protected void repositionElements() {
+		this.advancementHandler.setListener(this);
+		rebuildPinnedTabs();
 	}
 
 	// instead of drawing the full texture here, we cut it into pieces and draw
 	// the top, sides and more piece by piece, making the size variable with the mc window size
-	public void drawWindow(GuiGraphicsExtractor context, int mouseX, int mouseY, int minWidth, int minHeight, int maxWidth, int maxHeight) {
-		drawFrame(context, minWidth, minHeight, maxWidth, maxHeight);
-		context.text(minecraft.font, ADVANCEMENTS_TEXT, minWidth + 8, minHeight + 6, 4210752, false);
+	public void drawWindow(GuiGraphicsExtractor context, int mouseX, int mouseY, int startX, int startY, int endX, int endY) {
+		drawFrame(context, startX, startY, endX, endY);
+		context.text(minecraft.font, ADVANCEMENTS_TEXT, startX + 8, startY + 6, 0xFF404040, false);
 	}
 
 	public void drawPinButtonAndHeader(GuiGraphicsExtractor context, int mouseX, int mouseY, int startX, int startY, int endX, int endY, boolean hasPins) {
 		if (this.selectedTab != null && PaginatedAdvancementsClient.CONFIG.PinningEnabled) {
-			if (isClickOnFavouritesButton(mouseX, mouseY, startY, endX)) {
-				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id())) {
-					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
-				} else {
-					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46 + FAVOURITES_BUTTON_HEIGHT, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
-				}
-			} else {
-				if (PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id())) {
-					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, FAVOURITES_BUTTON_WIDTH, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
-				} else {
-					context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, 0, 46, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
-				}
-			}
+			int textureX = PaginatedAdvancementsClient.isPinned(this.selectedTab.getRootNode().holder().id()) ? FAVOURITES_BUTTON_WIDTH : 0;
+			int textureY = 46 + (isClickOnFavouritesButton(mouseX, mouseY, startY, endX) ? FAVOURITES_BUTTON_HEIGHT : 0);
+			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - FAVOURITES_BUTTON_OFFSET_X, startY + FAVOURITES_BUTTON_OFFSET_Y, textureX, textureY, FAVOURITES_BUTTON_WIDTH, FAVOURITES_BUTTON_HEIGHT, 256, 256);
 
 			if(hasPins) {
 				// draw pinned tab header
@@ -136,102 +106,62 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 
 	public int getMaxPaginatedTabsToRender(int startX, int endXTitle, int endXWindow, boolean paginated) {
-		if(paginated) {
-			int usableWidth = endXTitle - startX;
-			return ((usableWidth - 58) / PaginatedAdvancementTabType.getWidthWithSpacing()); // room for forward and back button
-		} else {
-			int usableWidth = endXWindow - startX;
-			return ((usableWidth - 28) / PaginatedAdvancementTabType.getWidthWithSpacing());
-		}
+		int usableWidth = (paginated ? endXTitle : endXWindow) - startX;
+		return Math.max(1, (usableWidth - (paginated ? 58 : 28)) / PaginatedAdvancementTabType.getWidthWithSpacing());
 	}
 
 	public int getMaxPinnedTabsToRender(int startY, int endY) {
 		int usableHeight = endY - startY;
-		return (usableHeight - 56 + PaginatedAdvancementTabType.getWidthWithSpacing()) / PinnedAdvancementTabType.getHeightWithSpacing(); // room for pin button + spacing
+		return (int) Math.max(0, ((long) usableHeight - 56 + PaginatedAdvancementTabType.getWidthWithSpacing()) / PinnedAdvancementTabType.getHeightWithSpacing()); // room for pin button + spacing
 	}
 
 	private boolean isPaginated(int startX, int endXWindow) {
-		if(tabs.size() < 3) {
-			return false; // fast fail. Does not make sense to paginate
-		} else {
-			return endXWindow - startX < tabs.size() * PaginatedAdvancementTabType.getWidthWithSpacing();
-		}
+		return tabs.size() >= 3 && endXWindow - startX < (long) tabs.size() * PaginatedAdvancementTabType.getWidthWithSpacing();
 	}
 
 	private void renderPaginatedTabs(GuiGraphicsExtractor context, int startX, int startY, int endXTitle, int endXWindow, boolean paginated) {
-		Iterator<PaginatedAdvancementTab> tabIterator = this.tabs.values().iterator();
-		int maxAdvancementTabsToRender = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, paginated);
-
-		int index = 0;
-		PaginatedAdvancementTab advancementTab;
-		while (tabIterator.hasNext()) {
-			advancementTab = tabIterator.next();
-			if (paginated) {
-				if(advancementTab.getPaginatedDisplayedPage(maxAdvancementTabsToRender) == this.currentPage) {
-					int displayedPosition = advancementTab.getPaginatedDisplayedPosition(maxAdvancementTabsToRender, this.currentPage);
-					advancementTab.drawBackground(context, startX, startY, advancementTab == this.selectedTab, displayedPosition);
-				}
-			} else {
-				advancementTab.drawBackground(context, startX, startY, advancementTab == this.selectedTab, index);
-				index++;
+		int maxDisplayedTabs = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, paginated);
+		int tabIndex = 0;
+		for (PaginatedAdvancementTab tab : this.tabs.values()) {
+			if (paginated && tab.getPaginatedDisplayedPage(maxDisplayedTabs) != this.currentPage) {
+				continue;
 			}
+			int displayedPosition = paginated ? tab.getPaginatedDisplayedPosition(maxDisplayedTabs, this.currentPage) : tabIndex++;
+			tab.drawBackground(context, startX, startY, tab == this.selectedTab, displayedPosition);
 		}
 
-		index = 0;
-		tabIterator = this.tabs.values().iterator();
-		while(tabIterator.hasNext()) {
-			advancementTab = tabIterator.next();
-			if(paginated) {
-				if(advancementTab.getPaginatedDisplayedPage(maxAdvancementTabsToRender) == this.currentPage) {
-					int displayedPosition = advancementTab.getPaginatedDisplayedPosition(maxAdvancementTabsToRender, this.currentPage);
-					advancementTab.drawIcon(context, startX, startY, displayedPosition);
-				}
-			} else {
-				advancementTab.drawIcon(context, startX, startY, index);
-				index++;
+		tabIndex = 0;
+		for (PaginatedAdvancementTab tab : this.tabs.values()) {
+			if (paginated && tab.getPaginatedDisplayedPage(maxDisplayedTabs) != this.currentPage) {
+				continue;
 			}
+			int displayedPosition = paginated ? tab.getPaginatedDisplayedPosition(maxDisplayedTabs, this.currentPage) : tabIndex++;
+			tab.drawIcon(context, startX, startY, displayedPosition);
 		}
 	}
 
 	private void renderPinnedTabs(GuiGraphicsExtractor context, int startX, int startY, int endX, int endY) {
 		int maxPinnedTabs = getMaxPinnedTabsToRender(startY, endY);
-
-		Iterator<PaginatedAdvancementTab> tabIterator = this.pinnedTabs.values().iterator();
-
-		PaginatedAdvancementTab advancementTab;
-		while (tabIterator.hasNext()) {
-			advancementTab = tabIterator.next();
-			advancementTab.drawPinnedBackground(context, endX, startY, advancementTab == this.selectedTab, maxPinnedTabs);
+		for (PaginatedAdvancementTab tab : this.pinnedTabs.values()) {
+			tab.drawPinnedBackground(context, endX, startY, tab == this.selectedTab, maxPinnedTabs);
 		}
 
-		tabIterator = this.pinnedTabs.values().iterator();
-		while(tabIterator.hasNext()) {
-			advancementTab = tabIterator.next();
-			advancementTab.drawPinnedIcon(context, endX, startY, maxPinnedTabs);
+		for (PaginatedAdvancementTab tab : this.pinnedTabs.values()) {
+			tab.drawPinnedIcon(context, endX, startY, maxPinnedTabs);
 		}
 	}
 
 	// instead of drawing the full texture here, we cut it into pieces and draw
 	// the top, sides and more piece by piece, making the size variable with the mc window size
 	public void drawPaginationButtons(GuiGraphicsExtractor context, int mouseX, int mouseY, int startX, int endX) {
-		if (isClickOnBackTab(mouseX, mouseY, startX, endX)) {
-			// hover
-			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 23, 23, 23, 256, 256);
-		} else {
-			// no hover
-			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 0, 0, 23, 23, 256, 256);
-		}
-
-		if (isClickOnForwardTab(mouseX, mouseY, startX, endX)) {
-			// hover
-			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 23, 23, 23, 256, 256);
-		} else {
-			// no hover
-			context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - startX + 4, TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15, 23, 0, 23, 23, 256, 256);
-		}
+		int buttonY = TOP_ELEMENT_HEIGHT + ADDITIONAL_PADDING_TOP - 15;
+		int backTextureY = isClickOnBackTab(mouseX, mouseY, startX, endX) ? 23 : 0;
+		int forwardTextureY = isClickOnForwardTab(mouseX, mouseY, startX, endX) ? 23 : 0;
+		context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, startX + 4, buttonY, 0, backTextureY, 23, 23, 256, 256);
+		context.blit(RenderPipelines.GUI_TEXTURED, PAGINATION_TEXTURE, endX - startX + 4, buttonY, 23, forwardTextureY, 23, 23, 256, 256);
 	}
 
-	public static boolean isClickOnBackTab(double mouseX, double mouseY, int startX, int enX) {
+	public static boolean isClickOnBackTab(double mouseX, double mouseY, int startX, int endX) {
 		int buttonStartX = startX + 4;
 		int buttonStartY = PaginatedAdvancementScreen.TOP_ELEMENT_HEIGHT + PaginatedAdvancementScreen.ADDITIONAL_PADDING_TOP - 15;
 		return mouseX > buttonStartX && mouseX < buttonStartX + 23 && mouseY > buttonStartY && mouseY < buttonStartY + 23;
@@ -280,44 +210,122 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 
 	@Override
-	public void onAddAdvancementRoot(AdvancementNode root) {
-		int pinnedIndex = PaginatedAdvancementsClient.getPinIndex(root.holder().id());
-		PaginatedAdvancementTab advancementTab = PaginatedAdvancementTab.create(this.minecraft, this, this.tabs.size(), pinnedIndex, root);
-		if (advancementTab != null) {
-			this.tabs.put(root.holder(), advancementTab);
-			if(PaginatedAdvancementsClient.isPinned(root.holder().id())) {
-				this.pinnedTabs.put(root.holder(), advancementTab);
+	public void onAdvancementsUpdated() {
+		AdvancementTree tree = this.advancementHandler.tree();
+		if (hasSameLayout(tree)) {
+			updateProgress(tree);
+			return;
+		}
+
+		Map<AdvancementHolder, PaginatedAdvancementTab> oldTabs = Map.copyOf(this.tabs);
+		AdvancementHolder selectedRoot = this.selectedTab == null ? null : this.selectedTab.getRootAdvancement();
+		this.tabs.clear();
+		this.pinnedTabs.clear();
+		this.advancementLayouts.clear();
+
+		for (AdvancementNode root : tree.roots()) {
+			PaginatedAdvancementTab tab = PaginatedAdvancementTab.create(this.minecraft, this, this.tabs.size(), -1, root);
+			if (tab != null) {
+				PaginatedAdvancementTab oldTab = oldTabs.get(root.holder());
+				if (oldTab != null) {
+					tab.copyPosition(oldTab);
+				}
+				this.tabs.put(root.holder(), tab);
+			}
+		}
+
+		for (AdvancementNode task : tree.tasks()) {
+			PaginatedAdvancementTab tab = this.getTab(task);
+			if (tab != null) {
+				tab.addAdvancement(task);
+			}
+		}
+		for (PaginatedAdvancementTab tab : this.tabs.values()) {
+			tab.finishLoading();
+		}
+		for (AdvancementNode node : tree.nodes()) {
+			this.advancementLayouts.put(node.holder(), new AdvancementLayout(node));
+		}
+		this.language = Language.getInstance();
+		this.frameReloadVersion = AdvancementFrameDataLoader.getReloadVersion();
+		rebuildPinnedTabs();
+		updateProgress(tree);
+
+		this.selectedTab = this.tabs.get(selectedRoot);
+		if (this.selectedTab == null && PaginatedAdvancementsClient.CONFIG.SaveLastSelectedTab) {
+			Identifier savedTab = Identifier.tryParse(PaginatedAdvancementsClient.CONFIG.LastSelectedTab);
+			for (PaginatedAdvancementTab tab : this.tabs.values()) {
+				if (tab.getRootAdvancement().id().equals(savedTab)) {
+					this.selectedTab = tab;
+					break;
+				}
+			}
+		}
+		if (this.selectedTab == null && !this.tabs.isEmpty()) {
+			this.selectedTab = this.tabs.values().iterator().next();
+		}
+		AdvancementHolder newSelectedRoot = this.selectedTab == null ? null : this.selectedTab.getRootAdvancement();
+		if (!Objects.equals(selectedRoot, newSelectedRoot)) {
+			this.advancementHandler.setSelectedTab(newSelectedRoot, true);
+		}
+	}
+
+	private boolean hasSameLayout(AdvancementTree tree) {
+		if (this.language != Language.getInstance() || this.frameReloadVersion != AdvancementFrameDataLoader.getReloadVersion() || this.advancementLayouts.size() != tree.nodes().size()) {
+			return false;
+		}
+		for (AdvancementNode node : tree.nodes()) {
+			AdvancementLayout layout = this.advancementLayouts.get(node.holder());
+			if (layout == null || !layout.matches(node)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private void updateProgress(AdvancementTree tree) {
+		this.advancementHandler.progress().forEach((holder, progress) -> {
+			AdvancementNode node = tree.get(holder);
+			if (node != null) {
+				AdvancementWidget widget = this.getAdvancementWidget(node);
+				if (widget != null) {
+					widget.setProgress(progress);
+				}
+			}
+		});
+	}
+
+	private void rebuildPinnedTabs() {
+		this.pinnedTabs.clear();
+		for (PaginatedAdvancementTab tab : this.tabs.values()) {
+			tab.setPinIndex(-1);
+		}
+		if (!PaginatedAdvancementsClient.CONFIG.PinningEnabled) {
+			return;
+		}
+		for (String savedPin : PaginatedAdvancementsClient.getPinnedTabs()) {
+			Identifier id = Identifier.tryParse(savedPin);
+			AdvancementHolder holder = id == null ? null : this.advancementHandler.get(id);
+			PaginatedAdvancementTab tab = this.tabs.get(holder);
+			if (tab != null && !this.pinnedTabs.containsKey(holder)) {
+				tab.setPinIndex(this.pinnedTabs.size());
+				this.pinnedTabs.put(holder, tab);
 			}
 		}
 	}
 
-	@Override
-	public void onRemoveAdvancementRoot(@NonNull AdvancementNode root) {
-	}
-
-	@Override
-	public void onAddAdvancementTask(@NonNull AdvancementNode dependent) {
-		PaginatedAdvancementTab advancementTab = this.getTab(dependent);
-		if (advancementTab != null) {
-			advancementTab.addAdvancement(dependent);
-		}
-	}
-
-	@Override
-	public void onRemoveAdvancementTask(@NonNull AdvancementNode dependent) {
-	}
-
 	@Nullable
 	private PaginatedAdvancementTab getTab(AdvancementNode advancement) {
-		AdvancementNode placedAdvancement = advancement.root();
-		return this.tabs.get(placedAdvancement.holder());
+		return this.tabs.get(advancement.root().holder());
 	}
 
 	@Override
 	public void onAdvancementsCleared() {
 		this.tabs.clear();
 		this.pinnedTabs.clear();
+		this.advancementLayouts.clear();
 		this.selectedTab = null;
+		this.currentPage = 0;
 	}
 
 	@Override
@@ -330,7 +338,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
     @Override
 	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-		if (click.button() == 0) {
+		if (click.button() == InputConstants.MOUSE_BUTTON_LEFT) {
 			int startX = BORDER_PADDING;
 			int endXWindow = !this.pinnedTabs.isEmpty() ? this.width - BORDER_PADDING - PinnedAdvancementTabType.WIDTH : this.width - BORDER_PADDING;
 			int endXTitle = this.width - BORDER_PADDING;
@@ -377,33 +385,22 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 	}
 
 	private void pinTab(Identifier pageIdentifier) {
-		selectedTab.setPinIndex(this.pinnedTabs.size());
-		this.pinnedTabs.put(selectedTab.getRootNode().holder(), selectedTab);
 		PaginatedAdvancementsClient.pinTab(pageIdentifier);
+		rebuildPinnedTabs();
 	}
 
 	private void unpinTab(Identifier pageIdentifier) {
-		int oldPinIndex = selectedTab.getPinIndex();
-		selectedTab.setPinIndex(-1);
-		this.pinnedTabs.remove(selectedTab.getRootNode().holder());
 		PaginatedAdvancementsClient.unpinTab(pageIdentifier);
-
-		// move all pinned tabs with a pin index > this up by 1 to fill its place
-		for(PaginatedAdvancementTab tab : this.pinnedTabs.values()) {
-			int currentPinIndex = tab.getPinIndex();
-			if(currentPinIndex > oldPinIndex) {
-				tab.setPinIndex(currentPinIndex -1);
-			}
-		}
+		rebuildPinnedTabs();
 	}
 
 	public int getMaxPageIndex(int startX, int endXTitle, int endXWindow) {
 		int maxDisplayedTabsPerPage = getMaxPaginatedTabsToRender(startX, endXTitle, endXWindow, true);
-		return (this.tabs.size() - 1) / maxDisplayedTabsPerPage;
+		return Math.max(0, (this.tabs.size() - 1) / maxDisplayedTabsPerPage);
 	}
 
 	public void clampCurrentPage(int startX, int endXTitle, int endXWindow) {
-		this.currentPage = Math.min(this.currentPage, getMaxPageIndex(startX, endXTitle, endXWindow));
+		this.currentPage = Math.clamp(this.currentPage, 0, getMaxPageIndex(startX, endXTitle, endXWindow));
 	}
 
 	public void pageForward(int startX, int endXTitle, int endXWindow) {
@@ -444,7 +441,7 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
     @Override
 	public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
-		if (click.button() != 0) {
+		if (click.button() != InputConstants.MOUSE_BUTTON_LEFT) {
 			this.movingTab = false;
 			return false;
 		} else {
@@ -467,7 +464,6 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 			context.pose().translate((startX + 9), (startY + 18));//, 400.0D);
 			this.selectedTab.drawWidgetTooltip(context, mouseX - startX - 9, mouseY - startY - 18, startX, startY, endXWindow, endY);
 
-			context.pose().translate(0, 0);//, 400.0D);
 			if (PaginatedAdvancementsClient.CONFIG.shouldShowAdvancementDebug(this.minecraft)) {
 				this.selectedTab.drawDebugInfo(context, startX, startY, endXWindow, endY);
 			}
@@ -498,6 +494,9 @@ public class PaginatedAdvancementScreen extends AdvancementsScreen implements Cl
 
 	@Override
 	public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+		if (this.language != Language.getInstance() || this.frameReloadVersion != AdvancementFrameDataLoader.getReloadVersion()) {
+			onAdvancementsUpdated();
+		}
 		boolean hasPins = !this.pinnedTabs.isEmpty();
 		int startX = BORDER_PADDING;
 		int startY = BORDER_PADDING + ADDITIONAL_PADDING_TOP;

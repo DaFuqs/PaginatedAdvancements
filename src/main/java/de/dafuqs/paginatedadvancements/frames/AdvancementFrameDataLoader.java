@@ -28,24 +28,25 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 	}
 	
 	protected static final Map<Identifier, FrameWrapper> CUSTOM_FRAMES = new HashMap<>();
+	private static int reloadVersion;
 	
 	public AdvancementFrameDataLoader() {
 		super(Entry.LIST_CODEC, FileToIdConverter.json(LOCATION));
 	}
 	
 	public static @Nullable FrameWrapper get(Identifier id) {
-		return CUSTOM_FRAMES.getOrDefault(id, null);
+		return CUSTOM_FRAMES.get(id);
 	}
 	
-	@Override
-	protected @NonNull Map<Identifier, List<AdvancementFrameDataLoader.Entry>> prepare(@NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
-		return super.prepare(resourceManager, profiler);
+	public static int getReloadVersion() {
+		return reloadVersion;
 	}
 	
 	@Override
 	protected void apply(Map<Identifier, List<Entry>> prepared, @NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
-		for (Map.Entry<Identifier, List<Entry>> list : prepared.entrySet()) {
-			for (Entry entry : list.getValue()) {
+		CUSTOM_FRAMES.clear();
+		for (List<Entry> entries : prepared.values()) {
+			for (Entry entry : entries) {
 				Identifier advancement = entry.advancementId();
 				Identifier frame = entry.frameId();
 				
@@ -57,6 +58,7 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 				}
 			}
 		}
+		reloadVersion++;
 	}
 
 }

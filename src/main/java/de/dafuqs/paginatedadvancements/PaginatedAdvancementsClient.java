@@ -34,11 +34,13 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 		
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameTypeDataLoader.ID, AdvancementFrameTypeDataLoader.INSTANCE);
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(AdvancementFrameDataLoader.ID, AdvancementFrameDataLoader.INSTANCE);
+		ResourceLoader.get(PackType.CLIENT_RESOURCES).addListenerOrdering(AdvancementFrameTypeDataLoader.ID, AdvancementFrameDataLoader.ID);
 	}
 	
 	public static void saveSelectedTab(Identifier tabIdentifier) {
-		if(CONFIG.SaveLastSelectedTab) {
-			CONFIG.LastSelectedTab = tabIdentifier.toString();
+		String identifierString = tabIdentifier.toString();
+		if(CONFIG.SaveLastSelectedTab && !identifierString.equals(CONFIG.LastSelectedTab)) {
+			CONFIG.LastSelectedTab = identifierString;
 			CONFIG_MANAGER.save();
 		}
 	}
@@ -53,8 +55,7 @@ public class PaginatedAdvancementsClient implements ClientModInitializer {
 	
 	public static void unpinTab(Identifier tabIdentifier) {
 		String identifierString = tabIdentifier.toString();
-		if(CONFIG.PinnedTabs.contains(identifierString)) {
-			CONFIG.PinnedTabs.remove(identifierString);
+		if(CONFIG.PinnedTabs.remove(identifierString)) {
 			CONFIG_MANAGER.save();
 		}
 	}
