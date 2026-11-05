@@ -1,19 +1,15 @@
 package de.dafuqs.paginatedadvancements.mixin;
 
-import net.minecraft.advancements.AdvancementNode;
-import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.client.gui.screens.advancements.AdvancementTab;
-import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.util.FormattedCharSequence;
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import net.minecraft.advancements.*;
+import net.minecraft.client.gui.screens.advancements.*;
+import net.minecraft.network.chat.*;
+import net.minecraft.util.*;
+import net.minecraft.world.item.*;
+import org.jetbrains.annotations.*;
+import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.gen.*;
 
-import java.util.List;
+import java.util.*;
 
 @Mixin(AdvancementWidget.class)
 public interface AdvancementWidgetAccessor {
@@ -29,7 +25,10 @@ public interface AdvancementWidgetAccessor {
 	
 	@Accessor(value = "display")
     DisplayInfo getDisplay();
-	
+
+	@Accessor(value = "icon")
+	ItemStack getIcon();
+
 	@Accessor(value = "progress")
 	@Nullable AdvancementProgress getProgress();
 	
@@ -41,10 +40,7 @@ public interface AdvancementWidgetAccessor {
 	
 	@Accessor(value = "description")
 	List<FormattedCharSequence> getDescription();
-	
-	@Accessor(value = "tab")
-    AdvancementTab getTab();
-	
+
 	@Accessor(value = "titleLines")
 	List<FormattedCharSequence> getTitleLines();
 	

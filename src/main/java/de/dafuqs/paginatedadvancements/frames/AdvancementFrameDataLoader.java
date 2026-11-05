@@ -28,7 +28,6 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 	}
 	
 	protected static final Map<Identifier, FrameWrapper> CUSTOM_FRAMES = new HashMap<>();
-	private static int reloadVersion;
 	
 	public AdvancementFrameDataLoader() {
 		super(Entry.LIST_CODEC, FileToIdConverter.json(LOCATION));
@@ -36,10 +35,6 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 	
 	public static @Nullable FrameWrapper get(Identifier id) {
 		return CUSTOM_FRAMES.get(id);
-	}
-
-	public static int getReloadVersion() {
-		return reloadVersion;
 	}
 	
 	@Override
@@ -58,7 +53,6 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 				}
 			}
 		}
-		reloadVersion++;
 	}
 
 }

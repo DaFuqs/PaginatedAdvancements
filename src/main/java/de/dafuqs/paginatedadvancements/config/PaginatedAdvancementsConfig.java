@@ -1,13 +1,13 @@
 package de.dafuqs.paginatedadvancements.config;
 
-import com.electronwill.nightconfig.core.EnumGetMethod;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.common.ModConfigSpec;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
+import com.electronwill.nightconfig.core.*;
+import net.minecraft.client.*;
+import net.minecraft.resources.*;
+import net.neoforged.neoforge.common.*;
+import org.apache.commons.lang3.tuple.*;
+import org.jetbrains.annotations.*;
 
-import java.util.List;
+import java.util.*;
 
 public class PaginatedAdvancementsConfig {
 
@@ -76,7 +76,7 @@ public class PaginatedAdvancementsConfig {
 		CONFIG = pair.getLeft();
 		CONFIG_SPEC = pair.getRight();
 	}
-	
+
 	private PaginatedAdvancementsConfig(ModConfigSpec.Builder builder) {
 		PinningEnabled = builder.define("pinning_enabled", true);
 		ShowAdvancementIDInDebugTooltip = builder.define("show_advancement_id_in_debug_tooltip", true);
