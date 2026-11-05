@@ -1,18 +1,14 @@
 package de.dafuqs.paginatedadvancements.frames;
 
-import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
-import de.dafuqs.paginatedadvancements.client.PaginatedAdvancementFrame;
-import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
+import de.dafuqs.paginatedadvancements.*;
+import de.dafuqs.paginatedadvancements.client.*;
+import net.minecraft.resources.*;
+import net.minecraft.server.packs.resources.*;
+import net.minecraft.util.profiling.*;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class AdvancementFrameTypeDataLoader extends SimpleJsonResourceReloadListener<PaginatedAdvancementFrame> implements PreparableReloadListener {
 	
@@ -27,16 +23,12 @@ public class AdvancementFrameTypeDataLoader extends SimpleJsonResourceReloadList
 	}
 	
 	public static @Nullable PaginatedAdvancementFrame getFrameForAdvancement(Identifier id) {
-		return ADVANCEMENT_TO_FRAME.getOrDefault(id, null);
-	}
-	
-	@Override
-	protected @NonNull Map<Identifier, PaginatedAdvancementFrame> prepare(@NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
-		return super.prepare(resourceManager, profiler);
+		return ADVANCEMENT_TO_FRAME.get(id);
 	}
 
 	@Override
 	protected void apply(Map<Identifier, PaginatedAdvancementFrame> prepared, @NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
+		ADVANCEMENT_TO_FRAME.clear();
 		for (Map.Entry<Identifier, PaginatedAdvancementFrame> entry : prepared.entrySet()) {
 			Identifier id = entry.getKey();
 			PaginatedAdvancementFrame frame = entry.getValue();

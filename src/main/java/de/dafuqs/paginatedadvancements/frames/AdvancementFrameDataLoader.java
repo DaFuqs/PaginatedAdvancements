@@ -1,19 +1,15 @@
 package de.dafuqs.paginatedadvancements.frames;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import de.dafuqs.paginatedadvancements.PaginatedAdvancementsClient;
-import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
+import com.mojang.serialization.*;
+import com.mojang.serialization.codecs.*;
+import de.dafuqs.paginatedadvancements.*;
+import net.minecraft.resources.*;
+import net.minecraft.server.packs.resources.*;
+import net.minecraft.util.profiling.*;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener<List<AdvancementFrameDataLoader.Entry>> {
 	
@@ -32,24 +28,25 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 	}
 	
 	protected static final Map<Identifier, FrameWrapper> CUSTOM_FRAMES = new HashMap<>();
+	private static int reloadVersion;
 	
 	public AdvancementFrameDataLoader() {
 		super(Entry.LIST_CODEC, FileToIdConverter.json(LOCATION));
 	}
 	
 	public static @Nullable FrameWrapper get(Identifier id) {
-		return CUSTOM_FRAMES.getOrDefault(id, null);
+		return CUSTOM_FRAMES.get(id);
 	}
-	
-	@Override
-	protected @NonNull Map<Identifier, List<AdvancementFrameDataLoader.Entry>> prepare(@NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
-		return super.prepare(resourceManager, profiler);
+
+	public static int getReloadVersion() {
+		return reloadVersion;
 	}
 	
 	@Override
 	protected void apply(Map<Identifier, List<Entry>> prepared, @NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
-		for (Map.Entry<Identifier, List<Entry>> list : prepared.entrySet()) {
-			for (Entry entry : list.getValue()) {
+		CUSTOM_FRAMES.clear();
+		for (List<Entry> entries : prepared.values()) {
+			for (Entry entry : entries) {
 				Identifier advancement = entry.advancementId();
 				Identifier frame = entry.frameId();
 
@@ -61,6 +58,7 @@ public class AdvancementFrameDataLoader extends SimpleJsonResourceReloadListener
 				}
 			}
 		}
+		reloadVersion++;
 	}
 
 }

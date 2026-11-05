@@ -1,22 +1,17 @@
 package de.dafuqs.paginatedadvancements;
 
-import de.dafuqs.paginatedadvancements.config.PaginatedAdvancementsConfig;
-import de.dafuqs.paginatedadvancements.frames.AdvancementFrameDataLoader;
-import de.dafuqs.paginatedadvancements.frames.AdvancementFrameTypeDataLoader;
-import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.dafuqs.paginatedadvancements.config.*;
+import de.dafuqs.paginatedadvancements.frames.*;
+import net.minecraft.resources.*;
+import net.neoforged.api.distmarker.*;
+import net.neoforged.bus.api.*;
+import net.neoforged.fml.*;
+import net.neoforged.fml.common.*;
+import net.neoforged.fml.config.*;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.*;
+import org.jetbrains.annotations.*;
+import org.slf4j.*;
 
 @Mod(value = PaginatedAdvancementsClient.MOD_ID, dist = Dist.CLIENT)
 public class PaginatedAdvancementsClient {
@@ -40,6 +35,8 @@ public class PaginatedAdvancementsClient {
 	public static void registerResources(AddClientReloadListenersEvent event) {
 		event.addListener(AdvancementFrameTypeDataLoader.ID, AdvancementFrameTypeDataLoader.INSTANCE);
 		event.addListener(AdvancementFrameDataLoader.ID, AdvancementFrameDataLoader.INSTANCE);
+
+		event.addDependency(AdvancementFrameTypeDataLoader.ID, AdvancementFrameDataLoader.ID);
 	}
 	
 }
